@@ -18,8 +18,8 @@ export default async function OGImage({ params }: { params: Promise<{ locale: Lo
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "#0c0a09",
-          color: "#f7f3ee",
+          background: "#0b1220",
+          color: "#eef2f7",
           fontFamily: "sans-serif",
         }}
       >
@@ -37,7 +37,7 @@ export default async function OGImage({ params }: { params: Promise<{ locale: Lo
               width: 64,
               height: 64,
               borderRadius: 16,
-              background: "linear-gradient(100deg, #e6321f 0%, #ff7a1a 55%, #ffb443 100%)",
+              background: "linear-gradient(100deg, #0b2545 0%, #1d4ed8 100%)",
               alignItems: "center",
               justifyContent: "center",
               fontSize: 26,
@@ -52,7 +52,7 @@ export default async function OGImage({ params }: { params: Promise<{ locale: Lo
         <div style={{ display: "flex", fontSize: 54, fontWeight: 800, lineHeight: 1.15, maxWidth: 980 }}>
           {dict.hero.title} {dict.hero.titleHighlight}
         </div>
-        <div style={{ display: "flex", fontSize: 26, color: "#a89e93", marginTop: 24, maxWidth: 900 }}>
+        <div style={{ display: "flex", fontSize: 26, color: "#93a1b3", marginTop: 24, maxWidth: 900 }}>
           {dict.services.subtitle}
         </div>
       </div>

@@ -29,7 +29,7 @@ export default function FAQ({ dict }: { dict: Dictionary }) {
                     <span className="font-display text-base font-medium sm:text-lg">{item.q}</span>
                     <Plus
                       size={18}
-                      className={`shrink-0 text-accent-gold transition-transform ${
+                      className={`shrink-0 text-accent transition-transform ${
                         isOpen ? "rotate-45" : ""
                       }`}
                     />

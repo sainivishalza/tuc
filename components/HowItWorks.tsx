@@ -21,10 +21,10 @@ export default function HowItWorks({ dict }: { dict: Dictionary }) {
             const Icon = icons[i % icons.length];
             return (
               <Reveal key={step.title} delay={i * 0.08} className="relative flex flex-col items-center text-center">
-                <div className="glass-strong relative z-10 flex h-14 w-14 items-center justify-center rounded-full text-accent-gold shadow-md">
+                <div className="glass-strong relative z-10 flex h-14 w-14 items-center justify-center rounded-full text-accent shadow-md">
                   <Icon size={20} strokeWidth={1.6} />
                 </div>
-                <span className="eyebrow gold-text mt-4 text-sm">Step {i + 1}</span>
+                <span className="eyebrow accent-text mt-4 text-xs">Step {i + 1}</span>
                 <h3 className="font-display mt-1 text-base font-semibold sm:text-lg">{step.title}</h3>
                 <p className="mt-1.5 text-xs leading-relaxed text-muted sm:text-sm">{step.desc}</p>
               </Reveal>

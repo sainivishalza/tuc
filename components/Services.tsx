@@ -44,7 +44,7 @@ export default function Services({ dict }: { dict: Dictionary }) {
               <Reveal key={item.title} delay={(i % 3) * 0.08}>
                 <TiltCard className="glass-strong group flex h-full flex-col gap-5 rounded-2xl border p-7 transition hover:shadow-xl">
                   <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-accent-gold/40 text-accent-gold transition group-hover:border-accent-gold group-hover:bg-accent-gold/10">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-accent/35 text-accent transition group-hover:border-accent group-hover:bg-accent/10">
                       <Icon size={19} strokeWidth={1.6} />
                     </div>
                     <span className="section-number text-2xl">
@@ -76,11 +76,11 @@ export function SectionHeading({
 }) {
   return (
     <Reveal className="mx-auto max-w-2xl text-center">
-      <span className="eyebrow gold-text text-base sm:text-lg">{badge}</span>
-      <h2 className="font-display mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">
+      <span className="eyebrow accent-text text-xs sm:text-sm">{badge}</span>
+      <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
         {title}
       </h2>
-      <div className="brand-gradient mx-auto mt-4 h-px w-16 opacity-70" />
+      <div className="brand-gradient mx-auto mt-4 h-1 w-14 rounded-full" />
       {subtitle && <p className="mt-5 text-sm text-muted sm:text-base">{subtitle}</p>}
     </Reveal>
   );

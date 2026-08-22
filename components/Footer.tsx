@@ -9,7 +9,7 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
       <div className="mx-auto flex max-w-6xl flex-col gap-8 sm:flex-row sm:justify-between">
         <div className="max-w-sm">
           <Link href={`/${locale}`} className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-accent-gold/50 font-display text-sm italic gold-text">
+            <span className="brand-gradient flex h-8 w-8 items-center justify-center rounded-lg font-display text-sm font-semibold text-white">
               U
             </span>
             <span className="font-display text-base font-semibold">The Unique Choice</span>

@@ -6,13 +6,11 @@ import { whatsappLink, WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 export default function ContactCTA({ dict }: { dict: Dictionary }) {
   return (
     <section id="contact" className="relative px-4 py-20 sm:px-6">
-      <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-accent-gold/25 bg-[#151109] text-white">
-        <div className="blob -top-20 left-1/3 h-72 w-72 bg-brand-gold/25" />
-        <div className="brand-gradient absolute inset-x-0 top-0 h-px" />
+      <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-brand-navy text-white">
+        <div className="blob -top-20 left-1/3 h-72 w-72 bg-brand-blue/30" />
+        <div className="brand-gradient absolute inset-x-0 top-0 h-1" />
         <Reveal className="relative flex flex-col items-center gap-4 px-6 py-16 text-center sm:py-20">
-          <span className="eyebrow text-base text-accent-gold sm:text-lg">
-            {dict.contact.badge}
-          </span>
+          <span className="eyebrow text-xs text-accent sm:text-sm">{dict.contact.badge}</span>
           <h2 className="font-display max-w-xl text-3xl font-medium tracking-tight sm:text-5xl">
             {dict.contact.title}
           </h2>
@@ -22,7 +20,7 @@ export default function ContactCTA({ dict }: { dict: Dictionary }) {
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 flex items-center gap-2 rounded-full bg-accent-gold px-6 py-3.5 text-sm font-semibold text-[#151109] shadow-lg transition hover:opacity-90"
+            className="mt-3 flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-brand-navy shadow-lg transition hover:opacity-90"
           >
             <MessageCircle size={18} />
             {dict.contact.whatsappCta}

@@ -29,7 +29,7 @@ export default function Header({
     <header className="sticky top-0 z-50 w-full">
       <div className="glass mx-auto mt-3 flex max-w-6xl items-center justify-between rounded-2xl px-4 py-3 sm:px-6">
         <Link href={`/${locale}`} className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-accent-gold/50 font-display text-base italic gold-text">
+          <span className="brand-gradient flex h-9 w-9 items-center justify-center rounded-lg font-display text-base font-semibold text-white">
             U
           </span>
           <span className="font-display text-base font-semibold tracking-tight sm:text-lg">
@@ -45,7 +45,7 @@ export default function Header({
               className="group relative text-sm font-medium text-foreground/75 transition hover:text-foreground"
             >
               {l.label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-accent-gold transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 h-0.5 w-0 rounded-full bg-accent transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>

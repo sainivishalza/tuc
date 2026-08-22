@@ -51,7 +51,7 @@ export default function LanguageSwitcher({ locale }: { locale: Locale }) {
               aria-selected={l === locale}
               onClick={() => switchTo(l)}
               className={`block w-full px-3 py-2 text-left text-sm transition hover:bg-surface-2 ${
-                l === locale ? "font-semibold text-brand-orange" : "text-foreground/80"
+                l === locale ? "font-semibold text-accent" : "text-foreground/80"
               }`}
             >
               {localeNames[l]}

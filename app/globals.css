@@ -1,37 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f3ec;
-  --surface: #fffdf9;
-  --surface-2: #efe9dd;
-  --foreground: #1c1712;
-  --muted: #6e6355;
-  --border: #e2d9c8;
+  --background: #f7f9fb;
+  --surface: #ffffff;
+  --surface-2: #eef2f6;
+  --foreground: #0f1b2d;
+  --muted: #5a6b80;
+  --border: #dde4ec;
 
-  --brand-red: #b3311f;
-  --brand-orange: #d8641f;
-  --brand-gold: #c99a44;
-  --accent-gold: #a97e2e;
+  --brand-navy: #0b2545;
+  --brand-blue: #1d4ed8;
+  --accent: #1d4ed8;
 
-  --glass-bg: rgba(255, 253, 249, 0.6);
-  --glass-border: rgba(28, 23, 18, 0.08);
-  --glass-shadow: 0 20px 50px -12px rgba(28, 20, 10, 0.14);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(15, 27, 45, 0.08);
+  --glass-shadow: 0 16px 40px -14px rgba(11, 37, 69, 0.16);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0b0a08;
-    --surface: #15130f;
-    --surface-2: #1d1a14;
-    --foreground: #f4efe4;
-    --muted: #a79c88;
-    --border: #2a2620;
+    --background: #090e17;
+    --surface: #111a2b;
+    --surface-2: #16223a;
+    --foreground: #eef2f7;
+    --muted: #93a1b3;
+    --border: #223047;
 
-    --accent-gold: #d9b164;
+    --accent: #5b9dff;
 
-    --glass-bg: rgba(21, 19, 15, 0.6);
-    --glass-border: rgba(244, 239, 228, 0.08);
-    --glass-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+    --glass-bg: rgba(17, 26, 43, 0.6);
+    --glass-border: rgba(238, 242, 247, 0.08);
+    --glass-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -42,10 +41,9 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
-  --color-brand-red: var(--brand-red);
-  --color-brand-orange: var(--brand-orange);
-  --color-brand-gold: var(--brand-gold);
-  --color-accent-gold: var(--accent-gold);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-blue: var(--brand-blue);
+  --color-accent: var(--accent);
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
 }
@@ -59,29 +57,9 @@ html {
 }
 
 body {
-  position: relative;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
-}
-
-#__next,
-main,
-header,
-footer {
-  position: relative;
-  z-index: 1;
 }
 
 .font-display {
@@ -89,34 +67,25 @@ footer {
 }
 
 .eyebrow {
-  font-family: var(--font-heading), serif;
-  font-style: italic;
-  letter-spacing: 0.02em;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .brand-gradient {
-  background-image: linear-gradient(
-    100deg,
-    var(--brand-red) 0%,
-    var(--brand-orange) 55%,
-    var(--brand-gold) 100%
-  );
+  background-image: linear-gradient(100deg, var(--brand-navy) 0%, var(--brand-blue) 100%);
 }
 
 .brand-gradient-text {
-  background-image: linear-gradient(
-    100deg,
-    var(--brand-red) 0%,
-    var(--brand-orange) 55%,
-    var(--brand-gold) 100%
-  );
+  background-image: linear-gradient(100deg, var(--brand-navy) 0%, var(--brand-blue) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
 }
 
-.gold-text {
-  color: var(--accent-gold);
+.accent-text {
+  color: var(--accent);
 }
 
 .glass {
@@ -137,15 +106,15 @@ footer {
   position: absolute;
   border-radius: 9999px;
   filter: blur(80px);
-  opacity: 0.35;
+  opacity: 0.3;
   pointer-events: none;
 }
 
 .section-number {
   font-family: var(--font-heading), serif;
-  font-style: italic;
-  color: var(--accent-gold);
-  opacity: 0.6;
+  font-weight: 600;
+  color: var(--accent);
+  opacity: 0.5;
 }
 
 @media (prefers-reduced-motion: reduce) {
