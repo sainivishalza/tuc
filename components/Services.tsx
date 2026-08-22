@@ -40,8 +40,13 @@ export default function Services({ dict }: { dict: Dictionary }) {
         <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {dict.services.items.map((item, i) => {
             const Icon = icons[i % icons.length];
+            const isLastOrphan = i === dict.services.items.length - 1 && i % 3 === 0;
             return (
-              <Reveal key={item.title} delay={(i % 3) * 0.08}>
+              <Reveal
+                key={item.title}
+                delay={(i % 3) * 0.08}
+                className={isLastOrphan ? "lg:col-start-2" : undefined}
+              >
                 <TiltCard className="glass-strong group flex h-full flex-col gap-5 rounded-2xl border p-7 transition hover:shadow-xl">
                   <div className="flex items-center justify-between">
                     <div className="flex h-11 w-11 items-center justify-center rounded-full border border-accent/35 text-accent transition group-hover:border-accent group-hover:bg-accent/10">

@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { MessageCircle, ArrowRight, ShieldCheck, PackageCheck, Globe2 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -13,40 +10,20 @@ export default function Hero({ dict }: { dict: Dictionary }) {
       <div className="blob bottom-0 left-1/3 h-72 w-72 bg-accent/15" />
 
       <div className="relative mx-auto max-w-4xl text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="glass mx-auto mb-7 inline-flex items-center gap-2 rounded-full border border-accent/25 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent sm:text-[13px]"
-        >
+        <div className="glass mx-auto mb-7 inline-flex items-center gap-2 rounded-full border border-accent/25 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent sm:text-[13px]">
           <Globe2 size={13} />
           {dict.hero.badge}
-        </motion.div>
+        </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-display text-4xl font-medium leading-[1.1] tracking-tight sm:text-6xl"
-        >
+        <h1 className="font-display text-4xl font-medium leading-[1.1] tracking-tight sm:text-6xl">
           {dict.hero.title} <span className="brand-gradient-text">{dict.hero.titleHighlight}</span>
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mx-auto mt-5 max-w-2xl text-balance text-base text-muted sm:text-lg"
-        >
+        <p className="mx-auto mt-5 max-w-2xl text-balance text-base text-muted sm:text-lg">
           {dict.hero.subtitle}
-        </motion.p>
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
-        >
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <a
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
@@ -63,18 +40,13 @@ export default function Hero({ dict }: { dict: Dictionary }) {
             {dict.hero.ctaServices}
             <ArrowRight size={16} />
           </a>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="glass mx-auto mt-14 grid max-w-2xl grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl"
-        >
+        <div className="glass mx-auto mt-14 grid max-w-2xl grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl">
           <Stat icon={<PackageCheck size={18} />} value="10" label={dict.hero.stat1Label} />
           <Stat icon={<Globe2 size={18} />} value="3" label={dict.hero.stat2Label} />
           <Stat icon={<ShieldCheck size={18} />} value="< 24h" label={dict.hero.stat3Label} />
-        </motion.div>
+        </div>
       </div>
     </section>
   );
