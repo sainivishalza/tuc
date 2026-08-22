@@ -9,6 +9,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://theuniquechoice.example.com"),
   title: "The Unique Choice",
   description:
     "Sourcing, inspection, and door-to-door shipping from China & Hong Kong.",

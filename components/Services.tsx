@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import Reveal from "./Reveal";
+import TiltCard from "./TiltCard";
 
 const icons = [
   Factory,
@@ -41,7 +42,7 @@ export default function Services({ dict }: { dict: Dictionary }) {
             const Icon = icons[i % icons.length];
             return (
               <Reveal key={item.title} delay={(i % 3) * 0.08}>
-                <div className="glass-strong group flex h-full flex-col gap-4 rounded-2xl p-6 transition hover:-translate-y-1 hover:shadow-lg">
+                <TiltCard className="glass-strong group flex h-full flex-col gap-4 rounded-2xl p-6 transition hover:shadow-xl">
                   <div className="brand-gradient flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-sm transition group-hover:scale-105">
                     <Icon size={20} />
                   </div>
@@ -49,7 +50,7 @@ export default function Services({ dict }: { dict: Dictionary }) {
                     <h3 className="font-display text-base font-bold">{item.title}</h3>
                     <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.desc}</p>
                   </div>
-                </div>
+                </TiltCard>
               </Reveal>
             );
           })}

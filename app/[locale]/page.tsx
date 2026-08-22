@@ -25,6 +25,20 @@ export async function generateMetadata({
   return {
     title: dict.meta.title,
     description: dict.meta.description,
+    alternates: {
+      languages: Object.fromEntries(locales.map((l) => [l, `/${l}`])),
+    },
+    openGraph: {
+      title: dict.meta.title,
+      description: dict.meta.description,
+      locale,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.meta.title,
+      description: dict.meta.description,
+    },
   };
 }
 
@@ -36,8 +50,21 @@ export default async function LocalePage({
   const { locale } = await params;
   const dict = await getDictionary(locale);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "The Unique Choice",
+    description: dict.meta.description,
+    areaServed: ["Hong Kong", "India", "South Africa"],
+    sameAs: [] as string[],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header dict={dict} locale={locale} />
       <main>
         <Hero dict={dict} />
