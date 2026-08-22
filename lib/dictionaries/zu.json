@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "title": "The Unique Choice — Umlingani Othenjwayo Wokuthola Izimpahla e-China nase-Hong Kong",
+    "description": "Ukuthola izimpahla, ukuhlola nokuthumela izimpahla ngqo emnyango isuka e-China nase-Hong Kong. Abahlinzeki abaqinisekisiwe, ukukhokha okuphephile, nokuhlolwa kwezimpahla."
+  },
+  "nav": {
+    "services": "Izinsizakalo",
+    "howItWorks": "Indlela Esisebenza Ngayo",
+    "whyUs": "Kungani Usithembe",
+    "faq": "Imibuzo",
+    "contact": "Xhumana Nathi",
+    "chatWhatsapp": "Xoxa nathi ku-WhatsApp"
+  },
+  "hero": {
+    "badge": "Umlingani Wokuthola Izimpahla · China ne-Hong Kong",
+    "title": "Umlingani Wakho Othenjwayo Wokuthola Izimpahla",
+    "titleHighlight": "e-China nase-Hong Kong",
+    "subtitle": "Kusuka efektri kuze kufike emnyango wakho — abahlinzeki abaqinisekisiwe, izimpahla ezihloliwe, nokukhokha okuphephile. Sibhekelela ukuthola izimpahla, amasampula, ukuhlola nokuthumela, ukuze wena ungakhathazeki.",
+    "ctaWhatsapp": "Sithumele i-WhatsApp",
+    "ctaServices": "Buka Izinsizakalo Zethu",
+    "stat1Label": "Izinsizakalo Ezitholakalayo",
+    "stat2Label": "Izifunda Zokuthola Izimpahla",
+    "stat3Label": "Isikhathi Sokuphendula"
+  },
+  "services": {
+    "badge": "Esikwenzayo",
+    "title": "Izinsizakalo Ezitholakalayo",
+    "subtitle": "Konke okudingayo ukuthola, ukuqinisekisa nokuthumela izimpahla ezivela e-China nase-Hong Kong — kusukela ekuqaleni kuze kube sekugcineni.",
+    "items": [
+      { "title": "Ukuthola Izimpahla e-China nase-Hong Kong", "desc": "Sithola amafektri nabahlinzeki abafanele umkhiqizo wakho, ngentengo efanele." },
+      { "title": "Ukuthumela Kusuka Emnyango Kuya Emnyango", "desc": "Ukuhanjiswa okugcwele kusuka efektri kuze kufike emnyango wakho, kulandelelwa sonke isikhathi." },
+      { "title": "Iphakethe Elincane", "desc": "Ama-oda amancane namasampula ayathunyelwa ngaphandle kwenkathazo yomthwalo omkhulu." },
+      { "title": "Ukuhlolwa Kwefektri", "desc": "Sivakashela futhi siqinisekise amafektri ngokwethu ngaphambi kokuba wenze i-oda." },
+      { "title": "Umhlinzeki Oqinisekisiwe", "desc": "Wonke umhlinzeki esimncoma uyahlolwa ngokusemthethweni nomlando wakhe." },
+      { "title": "Ukuphepha Kwenkokhelo", "desc": "Inqubo yenkokhelo ehlelekile neyophepha ukuvikela imali yakho izigaba zonke." },
+      { "title": "Ukuhlolwa Kwemikhiqizo", "desc": "Ukuhlolwa kwekhwalithi ngaphambi kokuthunyelwa, ukuze lokho okuwodile yikho okutholayo." },
+      { "title": "Izicelo Ezizenzelwe", "desc": "Awukutholi ku-inthanethi? Sitshele ofunayo, sikuthungathele khona." },
+      { "title": "Ukuhlela Ukuxhumana Nefektri", "desc": "Ukuxhumana ngqo namafektri — ngaphandle kwabathengisi abangaphakathi abangadingekile." },
+      { "title": "Ukuhlela Amasampula Akhokhelwayo Nokuthunyelwa", "desc": "Thola amasampula angempela esandleni sakho ngaphambi kokwenza i-oda elikhulu." }
+    ]
+  },
+  "howItWorks": {
+    "badge": "Inqubo",
+    "title": "Indlela Esisebenza Ngayo",
+    "subtitle": "Inqubo elula, ecacile kusukela emlayezweni wokuqala kuze kube sekulethweni.",
+    "steps": [
+      { "title": "Sithumele Umlayezo", "desc": "Sitshele ku-WhatsApp ukuthi yimuphi umkhiqizo owufunayo." },
+      { "title": "Siyathola Futhi Siqinisekise", "desc": "Sithola abahlinzeki namafektri aqinisekisiwe afanele izidingo zakho." },
+      { "title": "Uyagunyaza Amasampula", "desc": "Sihlela amasampula akhokhelwayo ukuze uhlole ikhwalithi ngaphambi kokuqinisa i-oda." },
+      { "title": "Ukuhlola Nokuthumela", "desc": "Sihlola imikhiqizo yokugcina futhi sihlele ukuthunyelwa okuphephile nokulandelelekayo." },
+      { "title": "Kulethwa Kuwe", "desc": "Ukulethwa kusuka emnyango kuya emnyango, kulandelelwa kusukela efektri kuze kufike ekhelini lakho." }
+    ]
+  },
+  "whyUs": {
+    "badge": "Kungani Usithembe",
+    "title": "Sakhelwe Phezu Kokuqinisekiswa, Hhayi Izithembiso",
+    "subtitle": "Asitsho nje ukuthi kwenziwa — isinyathelo ngasinye siyahlolwa, sibhalwe phansi, futhi siqinisekiswe nawe.",
+    "items": [
+      { "title": "Uxhumano Lwabahlinzeki Abaqinisekisiwe", "desc": "Sisebenza kuphela nabahlinzeki esibahlole ngokwethu." },
+      { "title": "Ukuhlolwa Kwemikhiqizo Ngaphambi Kokuthunyelwa", "desc": "Akukho okuthunyelwayo ngaphandle kokuphumelela ukuhlolwa kwekhwalithi." },
+      { "title": "Ukuphathwa Okuphephile Kwenkokhelo", "desc": "Izinkokhelo zakho ziphathwa ngezinyathelo ezihlelekile neziphephile." },
+      { "title": "Ukuhlolwa Kwefektri Kuyatholakala", "desc": "Singavakashela futhi siqinisekise ifektri uma ucela." },
+      { "title": "Ukulandelela Kusuka Emnyango Kuya Emnyango", "desc": "Yazi ukuthi umthwalo wakho ukuphi kuzo zonke izigaba zohambo." },
+      { "title": "Uxhumano Oluqondile Namafektri", "desc": "Sikuxhumanisa ngqo — ngaphandle kwezingxenye ezifihlekile zabathengisi abangaphakathi." }
+    ]
+  },
+  "testimonials": {
+    "badge": "Impendulo Yamakhasimende",
+    "title": "Okushiwo Amakhasimende",
+    "subtitle": "Impendulo yangempela evela emakhasimendeni angempela — ibuyekezwa njengoba ama-oda eqedwa.",
+    "emptyTitle": "Sisakha umlando wethu",
+    "emptyDesc": "Le ngxenye izokhombisa ukubuyekezwa kwamakhasimende angempela njengoba ama-oda eqedwa. Yiba omunye wamakhasimende ethu okuqala — sithumele umlayezo ukuze siqale."
+  },
+  "faq": {
+    "badge": "Imibuzo",
+    "title": "Imibuzo Ebuzwa Kaningi",
+    "items": [
+      { "q": "Ngiqala kanjani i-oda?", "a": "Sithumele umlayezo ku-WhatsApp ngomkhiqizo owufunayo. Sizobuza imibuzo embalwa bese siqala ukuthola izimpahla ngokushesha." },
+      { "q": "Ngingathola amasampula ngaphambi kwe-oda elikhulu?", "a": "Yebo — sihlela amasampula akhokhelwayo ukuze uhlole ikhwalithi ngaphambi kokwenza i-oda elikhulu." },
+      { "q": "Inkokhelo yami ivikelwa kanjani?", "a": "Sisebenzisa inqubo yenkokhelo ehlelekile, isigaba ngesigaba, ukuze imali ikhishwe kuphela lapho izigaba ezivunyelwene zifezekile." },
+      { "q": "Niyayihlola imikhiqizo ngaphambi kokuthumela?", "a": "Yebo, i-oda ngalinye lidlula ekuhlolweni kwemikhiqizo ngaphambi kokuvunyelwa ukuthunyelwa." },
+      { "q": "Yiziphi izindlela zokuthumela ezitholakalayo?", "a": "Sinikeza ukuthunyelwa kwamaphakethe amancane samasampula nama-oda amancane, kanye nokuthunyelwa okugcwele kusuka emnyango kuya emnyango kwama-oda amakhulu." },
+      { "q": "Nithumela kumaphi amazwe?", "a": "Njengamanje sithumela kusuka e-China nase-Hong Kong siye e-Hong Kong, e-India, nase-South Africa, izifunda ezengeziwe ziyongezwa." }
+    ]
+  },
+  "contact": {
+    "badge": "Qala Manje",
+    "title": "Usukulungele Ukuthola Umkhiqizo Wakho Olandelayo?",
+    "subtitle": "Sithumele umlayezo ku-WhatsApp usitshele ofunayo. Iningi lezimpendulo lifika emahoreni ambalwa.",
+    "whatsappCta": "Xoxa nathi ku-WhatsApp",
+    "whatsappNumberLabel": "Noma usithinte ngqo ku",
+    "whatsappMessage": "Sawubona! Ngingathanda ukubuza mayelana nokuthola umkhiqizo e-China/e-Hong Kong."
+  },
+  "footer": {
+    "tagline": "Umlingani wakho othenjwayo wokuthola izimpahla phakathi kwe-China, i-Hong Kong, nomhlaba wonke.",
+    "rights": "Wonke amalungelo agodliwe.",
+    "servicesLabel": "Izinsizakalo",
+    "companyLabel": "Inkampani"
+  }
+}

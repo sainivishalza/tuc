@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "title": "The Unique Choice — Trusted Sourcing from China & Hong Kong",
+    "description": "Sourcing, inspection, and door-to-door shipping from China & Hong Kong. Verified suppliers, secure payments, and hands-on quality checks."
+  },
+  "nav": {
+    "services": "Services",
+    "howItWorks": "How It Works",
+    "whyUs": "Why Trust Us",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "chatWhatsapp": "Chat on WhatsApp"
+  },
+  "hero": {
+    "badge": "Sourcing Agent · China & Hong Kong",
+    "title": "Your Trusted Partner for",
+    "titleHighlight": "Sourcing from China & Hong Kong",
+    "subtitle": "From factory to your door — verified suppliers, inspected products, and secure payments. We handle sourcing, samples, inspection, and shipping so you don't have to.",
+    "ctaWhatsapp": "Message Us on WhatsApp",
+    "ctaServices": "View Our Services",
+    "stat1Label": "Services Offered",
+    "stat2Label": "Sourcing Regions",
+    "stat3Label": "Response Time"
+  },
+  "services": {
+    "badge": "What We Do",
+    "title": "Services Available",
+    "subtitle": "Everything you need to source, verify, and ship products from China and Hong Kong — handled end to end.",
+    "items": [
+      { "title": "Sourcing From China & Hong Kong", "desc": "We find the right factories and suppliers for your product, at the right price." },
+      { "title": "Door To Door Shipping", "desc": "Full logistics from the factory floor to your doorstep, tracked the whole way." },
+      { "title": "Small Parcel", "desc": "Low-volume orders and samples shipped without the bulk-freight hassle." },
+      { "title": "Factory Inspection", "desc": "We visit and verify factories in person before you commit to an order." },
+      { "title": "Verified Supplier", "desc": "Every supplier we recommend is checked for legitimacy and track record." },
+      { "title": "Payment Security", "desc": "Structured, secure payment handling to protect your money at every step." },
+      { "title": "Products Inspection", "desc": "Quality checks before shipping, so what you ordered is what you receive." },
+      { "title": "Manual Requests", "desc": "Can't find it online? Tell us what you need and we'll track it down." },
+      { "title": "Arrange Factory Contacts", "desc": "Direct introductions to factories — no unnecessary middlemen or markups." },
+      { "title": "Arrange Paid Samples & Shipping", "desc": "Get real samples in hand before you commit to a bulk order." }
+    ]
+  },
+  "howItWorks": {
+    "badge": "The Process",
+    "title": "How It Works",
+    "subtitle": "A simple, transparent process from first message to delivery.",
+    "steps": [
+      { "title": "Message Us", "desc": "Tell us what product you're looking for on WhatsApp." },
+      { "title": "We Source & Verify", "desc": "We find verified suppliers and factories that match your needs." },
+      { "title": "You Approve Samples", "desc": "We arrange paid samples so you can check quality before committing." },
+      { "title": "Inspect & Ship", "desc": "We inspect the final products and arrange secure, tracked shipping." },
+      { "title": "Delivered to You", "desc": "Door-to-door delivery, tracked from the factory to your address." }
+    ]
+  },
+  "whyUs": {
+    "badge": "Why Trust Us",
+    "title": "Built on Verification, Not Promises",
+    "subtitle": "We don't just say it's handled — every step is checked, documented, and confirmed with you.",
+    "items": [
+      { "title": "Verified Supplier Network", "desc": "We only work with suppliers we've personally vetted." },
+      { "title": "Product Inspection Before Shipping", "desc": "Nothing ships until it passes a quality check." },
+      { "title": "Secure Payment Handling", "desc": "Your payments are handled through structured, protected steps." },
+      { "title": "Factory Inspection Available", "desc": "We can visit and verify a factory in person on request." },
+      { "title": "Door-to-Door Tracking", "desc": "Know where your shipment is at every stage of the journey." },
+      { "title": "Direct Factory Contacts", "desc": "We connect you directly — no hidden layers of middlemen." }
+    ]
+  },
+  "testimonials": {
+    "badge": "Client Feedback",
+    "title": "What Clients Say",
+    "subtitle": "Real feedback from real clients — updated as orders complete.",
+    "emptyTitle": "We're building our track record",
+    "emptyDesc": "This section will feature real client reviews as orders are completed. Be one of our first featured clients — message us to get started."
+  },
+  "faq": {
+    "badge": "Questions",
+    "title": "Frequently Asked Questions",
+    "items": [
+      { "q": "How do I start an order?", "a": "Message us on WhatsApp with the product you're looking for. We'll ask a few questions and start sourcing right away." },
+      { "q": "Can I get samples before a bulk order?", "a": "Yes — we arrange paid samples so you can check quality and fit before committing to a larger order." },
+      { "q": "How is my payment protected?", "a": "We use structured, step-by-step payment handling so funds are only released as agreed milestones are met." },
+      { "q": "Do you inspect products before shipping?", "a": "Yes, every order goes through a product inspection before it's cleared for shipping." },
+      { "q": "What shipping options are available?", "a": "We offer both small parcel shipping for samples and low-volume orders, and full door-to-door freight for bulk orders." },
+      { "q": "Which countries do you ship to?", "a": "We currently ship from China & Hong Kong to Hong Kong, India, and South Africa, with more regions being added." }
+    ]
+  },
+  "contact": {
+    "badge": "Get Started",
+    "title": "Ready to Source Your Next Product?",
+    "subtitle": "Message us on WhatsApp and tell us what you're looking for. Most replies come within a few hours.",
+    "whatsappCta": "Chat on WhatsApp",
+    "whatsappNumberLabel": "Or reach us directly at",
+    "whatsappMessage": "Hi! I'd like to ask about sourcing a product from China/Hong Kong."
+  },
+  "footer": {
+    "tagline": "Your trusted sourcing partner between China, Hong Kong, and the world.",
+    "rights": "All rights reserved.",
+    "servicesLabel": "Services",
+    "companyLabel": "Company"
+  }
+}

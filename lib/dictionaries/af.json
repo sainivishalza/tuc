@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "title": "The Unique Choice — Betroubare Verskaffing vanaf China & Hongkong",
+    "description": "Verskaffing, inspeksie en deur-tot-deur-verskeping vanaf China & Hongkong. Geverifieerde verskaffers, veilige betalings en persoonlike kwaliteitskontrole."
+  },
+  "nav": {
+    "services": "Dienste",
+    "howItWorks": "Hoe Dit Werk",
+    "whyUs": "Waarom Ons Vertrou",
+    "faq": "Vrae",
+    "contact": "Kontak",
+    "chatWhatsapp": "Gesels op WhatsApp"
+  },
+  "hero": {
+    "badge": "Verskaffingsagent · China & Hongkong",
+    "title": "Jou Betroubare Vennoot vir",
+    "titleHighlight": "Verskaffing vanaf China & Hongkong",
+    "subtitle": "Van fabriek tot jou deur — geverifieerde verskaffers, geïnspekteerde produkte en veilige betalings. Ons hanteer verskaffing, monsters, inspeksie en verskeping sodat jy dit nie hoef te doen nie.",
+    "ctaWhatsapp": "Stuur Vir Ons 'n WhatsApp",
+    "ctaServices": "Bekyk Ons Dienste",
+    "stat1Label": "Dienste Beskikbaar",
+    "stat2Label": "Verskaffingstreke",
+    "stat3Label": "Reaksietyd"
+  },
+  "services": {
+    "badge": "Wat Ons Doen",
+    "title": "Beskikbare Dienste",
+    "subtitle": "Alles wat jy nodig het om produkte vanaf China en Hongkong te verskaf, te verifieer en te verskeep — van begin tot einde.",
+    "items": [
+      { "title": "Verskaffing vanaf China & Hongkong", "desc": "Ons vind die regte fabrieke en verskaffers vir jou produk, teen die regte prys." },
+      { "title": "Deur-tot-Deur Verskeping", "desc": "Volle logistiek van die fabrieksvloer tot by jou voordeur, deurentyd nagespoor." },
+      { "title": "Klein Pakkie", "desc": "Klein bestellings en monsters word verskeep sonder die opgaaf van volvraglading." },
+      { "title": "Fabrieksinspeksie", "desc": "Ons besoek en verifieer fabrieke persoonlik voordat jy 'n bestelling plaas." },
+      { "title": "Geverifieerde Verskaffer", "desc": "Elke verskaffer wat ons aanbeveel, word nagegaan vir legitimiteit en rekord." },
+      { "title": "Betalingsekuriteit", "desc": "Gestruktureerde, veilige betalingshantering om jou geld elke stap van die pad te beskerm." },
+      { "title": "Produkinspeksie", "desc": "Kwaliteitskontrole voor verskeping, sodat wat jy bestel het, is wat jy ontvang." },
+      { "title": "Persoonlike Versoeke", "desc": "Kan dit nie aanlyn kry nie? Sê vir ons wat jy nodig het en ons spoor dit op." },
+      { "title": "Reël Fabriekskontakte", "desc": "Direkte skakeling met fabrieke — geen onnodige tussengangers of opslae nie." },
+      { "title": "Reël Betaalde Monsters & Verskeping", "desc": "Kry werklike monsters in die hand voordat jy 'n grootmaatbestelling plaas." }
+    ]
+  },
+  "howItWorks": {
+    "badge": "Die Proses",
+    "title": "Hoe Dit Werk",
+    "subtitle": "'n Eenvoudige, deursigtige proses vanaf die eerste boodskap tot aflewering.",
+    "steps": [
+      { "title": "Stuur Vir Ons 'n Boodskap", "desc": "Vertel ons op WhatsApp watter produk jy soek." },
+      { "title": "Ons Verskaf & Verifieer", "desc": "Ons vind geverifieerde verskaffers en fabrieke wat by jou behoeftes pas." },
+      { "title": "Jy Keur Monsters Goed", "desc": "Ons reël betaalde monsters sodat jy kwaliteit kan nagaan voor jy verbind." },
+      { "title": "Inspekteer & Verskeep", "desc": "Ons inspekteer die finale produkte en reël veilige, nagespoorde verskeping." },
+      { "title": "Afgelewer Aan Jou", "desc": "Deur-tot-deur aflewering, nagespoor vanaf die fabriek tot by jou adres." }
+    ]
+  },
+  "whyUs": {
+    "badge": "Waarom Ons Vertrou",
+    "title": "Gebou op Verifikasie, Nie Beloftes Nie",
+    "subtitle": "Ons sê nie net dit is hanteer nie — elke stap word nagegaan, gedokumenteer en met jou bevestig.",
+    "items": [
+      { "title": "Geverifieerde Verskaffernetwerk", "desc": "Ons werk slegs met verskaffers wat ons persoonlik ondersoek het." },
+      { "title": "Produkinspeksie Voor Verskeping", "desc": "Niks word verskeep voordat dit 'n kwaliteitskontrole slaag nie." },
+      { "title": "Veilige Betalingshantering", "desc": "Jou betalings word deur gestruktureerde, beskermde stappe hanteer." },
+      { "title": "Fabrieksinspeksie Beskikbaar", "desc": "Ons kan op versoek 'n fabriek persoonlik besoek en verifieer." },
+      { "title": "Deur-tot-Deur Naspoor", "desc": "Weet presies waar jou vrag is in elke fase van die reis." },
+      { "title": "Direkte Fabriekskontakte", "desc": "Ons skakel jou direk — geen verborge lae tussengangers nie." }
+    ]
+  },
+  "testimonials": {
+    "badge": "Klantterugvoer",
+    "title": "Wat Kliënte Sê",
+    "subtitle": "Werklike terugvoer van werklike kliënte — opgedateer soos bestellings voltooi word.",
+    "emptyTitle": "Ons bou tans ons rekord op",
+    "emptyDesc": "Hierdie afdeling sal werklike klantresensies wys soos bestellings voltooi word. Wees een van ons eerste uitgeligte kliënte — stuur vir ons 'n boodskap om te begin."
+  },
+  "faq": {
+    "badge": "Vrae",
+    "title": "Gereelde Vrae",
+    "items": [
+      { "q": "Hoe begin ek 'n bestelling?", "a": "Stuur vir ons 'n WhatsApp-boodskap met die produk wat jy soek. Ons sal 'n paar vrae vra en dadelik begin verskaf." },
+      { "q": "Kan ek monsters kry voor 'n grootmaatbestelling?", "a": "Ja — ons reël betaalde monsters sodat jy kwaliteit en pasvorm kan nagaan voor jy 'n groter bestelling plaas." },
+      { "q": "Hoe word my betaling beskerm?", "a": "Ons gebruik gestruktureerde, stap-vir-stap betalingshantering sodat fondse slegs vrygestel word soos ooreengekome mylpale bereik word." },
+      { "q": "Inspekteer julle produkte voor verskeping?", "a": "Ja, elke bestelling gaan deur 'n produkinspeksie voordat dit vir verskeping goedgekeur word." },
+      { "q": "Watter verskepingsopsies is beskikbaar?", "a": "Ons bied beide klein-pakkie-verskeping vir monsters en klein bestellings, sowel as volledige deur-tot-deur-vrag vir grootmaatbestellings." },
+      { "q": "Na watter lande verskeep julle?", "a": "Ons verskeep tans vanaf China & Hongkong na Hongkong, Indië en Suid-Afrika, met meer streke wat bygevoeg word." }
+    ]
+  },
+  "contact": {
+    "badge": "Begin Nou",
+    "title": "Gereed Om Jou Volgende Produk Te Verskaf?",
+    "subtitle": "Stuur vir ons 'n WhatsApp-boodskap en vertel ons wat jy soek. Meeste antwoorde kom binne 'n paar uur.",
+    "whatsappCta": "Gesels op WhatsApp",
+    "whatsappNumberLabel": "Of kontak ons direk by",
+    "whatsappMessage": "Hallo! Ek wil graag vra oor die verskaffing van 'n produk vanaf China/Hongkong."
+  },
+  "footer": {
+    "tagline": "Jou betroubare verskaffingsvennoot tussen China, Hongkong en die wêreld.",
+    "rights": "Alle regte voorbehou.",
+    "servicesLabel": "Dienste",
+    "companyLabel": "Maatskappy"
+  }
+}
