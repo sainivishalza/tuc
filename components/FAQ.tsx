@@ -26,10 +26,10 @@ export default function FAQ({ dict }: { dict: Dictionary }) {
                     className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
                     aria-expanded={isOpen}
                   >
-                    <span className="font-display text-sm font-bold sm:text-base">{item.q}</span>
+                    <span className="font-display text-base font-medium sm:text-lg">{item.q}</span>
                     <Plus
                       size={18}
-                      className={`shrink-0 text-brand-orange transition-transform ${
+                      className={`shrink-0 text-accent-gold transition-transform ${
                         isOpen ? "rotate-45" : ""
                       }`}
                     />

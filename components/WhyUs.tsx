@@ -16,17 +16,17 @@ export default function WhyUs({ dict }: { dict: Dictionary }) {
           subtitle={dict.whyUs.subtitle}
         />
 
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {dict.whyUs.items.map((item, i) => {
             const Icon = icons[i % icons.length];
             return (
               <Reveal key={item.title} delay={(i % 3) * 0.08}>
-                <div className="glass flex h-full items-start gap-4 rounded-2xl p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background text-brand-orange shadow-sm">
-                    <Icon size={19} />
+                <div className="glass flex h-full items-start gap-4 rounded-2xl p-6">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent-gold/40 text-accent-gold">
+                    <Icon size={18} strokeWidth={1.6} />
                   </div>
                   <div>
-                    <h3 className="font-display text-sm font-bold sm:text-base">{item.title}</h3>
+                    <h3 className="font-display text-base font-semibold">{item.title}</h3>
                     <p className="mt-1 text-xs leading-relaxed text-muted sm:text-sm">{item.desc}</p>
                   </div>
                 </div>

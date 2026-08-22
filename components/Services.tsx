@@ -42,12 +42,17 @@ export default function Services({ dict }: { dict: Dictionary }) {
             const Icon = icons[i % icons.length];
             return (
               <Reveal key={item.title} delay={(i % 3) * 0.08}>
-                <TiltCard className="glass-strong group flex h-full flex-col gap-4 rounded-2xl p-6 transition hover:shadow-xl">
-                  <div className="brand-gradient flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-sm transition group-hover:scale-105">
-                    <Icon size={20} />
+                <TiltCard className="glass-strong group flex h-full flex-col gap-5 rounded-2xl border p-7 transition hover:shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-accent-gold/40 text-accent-gold transition group-hover:border-accent-gold group-hover:bg-accent-gold/10">
+                      <Icon size={19} strokeWidth={1.6} />
+                    </div>
+                    <span className="section-number text-2xl">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                   </div>
                   <div>
-                    <h3 className="font-display text-base font-bold">{item.title}</h3>
+                    <h3 className="font-display text-lg font-semibold">{item.title}</h3>
                     <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.desc}</p>
                   </div>
                 </TiltCard>
@@ -71,13 +76,12 @@ export function SectionHeading({
 }) {
   return (
     <Reveal className="mx-auto max-w-2xl text-center">
-      <span className="brand-gradient-text text-xs font-bold uppercase tracking-wider sm:text-sm">
-        {badge}
-      </span>
-      <h2 className="font-display mt-2 text-2xl font-extrabold tracking-tight sm:text-4xl">
+      <span className="eyebrow gold-text text-base sm:text-lg">{badge}</span>
+      <h2 className="font-display mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">
         {title}
       </h2>
-      {subtitle && <p className="mt-3 text-sm text-muted sm:text-base">{subtitle}</p>}
+      <div className="brand-gradient mx-auto mt-4 h-px w-16 opacity-70" />
+      {subtitle && <p className="mt-5 text-sm text-muted sm:text-base">{subtitle}</p>}
     </Reveal>
   );
 }

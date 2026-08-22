@@ -8,11 +8,11 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
     <footer className="border-t border-border px-4 py-12 sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 sm:flex-row sm:justify-between">
         <div className="max-w-sm">
-          <Link href={`/${locale}`} className="flex items-center gap-2">
-            <span className="brand-gradient flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white">
-              TU
+          <Link href={`/${locale}`} className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-accent-gold/50 font-display text-sm italic gold-text">
+              U
             </span>
-            <span className="font-display text-base font-bold">The Unique Choice</span>
+            <span className="font-display text-base font-semibold">The Unique Choice</span>
           </Link>
           <p className="mt-3 text-sm text-muted">{dict.footer.tagline}</p>
         </div>

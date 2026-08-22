@@ -23,10 +23,10 @@ export default function Testimonials({ dict }: { dict: Dictionary }) {
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong flex flex-col items-center gap-3 rounded-2xl px-6 py-12 text-center">
-            <div className="brand-gradient flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-sm">
-              <Sparkles size={22} />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent-gold/40 text-accent-gold">
+              <Sparkles size={20} strokeWidth={1.6} />
             </div>
-            <h3 className="font-display text-lg font-bold sm:text-xl">
+            <h3 className="font-display text-xl font-semibold sm:text-2xl">
               {dict.testimonials.emptyTitle}
             </h3>
             <p className="max-w-md text-sm text-muted sm:text-base">
