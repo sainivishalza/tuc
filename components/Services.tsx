@@ -13,6 +13,7 @@ import {
 import type { Dictionary } from "@/lib/i18n";
 import Reveal from "./Reveal";
 import TiltCard from "./TiltCard";
+import ServiceIllustration from "./ServiceIllustration";
 
 const icons = [
   Factory,
@@ -48,10 +49,8 @@ export default function Services({ dict }: { dict: Dictionary }) {
                 className={isLastOrphan ? "lg:col-start-2" : undefined}
               >
                 <TiltCard className="glass-strong group flex h-full flex-col gap-5 rounded-2xl border p-7 transition hover:shadow-xl">
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-accent/35 text-accent transition group-hover:border-accent group-hover:bg-accent/10">
-                      <Icon size={19} strokeWidth={1.6} />
-                    </div>
+                  <div className="flex items-start justify-between">
+                    <ServiceIllustration icon={Icon} variant={i % 2 === 0 ? "blue" : "navy"} />
                     <span className="section-number text-2xl">
                       {String(i + 1).padStart(2, "0")}
                     </span>

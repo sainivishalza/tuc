@@ -2,6 +2,7 @@ import { Network, BadgeCheck, ShieldCheck, Building2, MapPin, Users } from "luci
 import type { Dictionary } from "@/lib/i18n";
 import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
+import ServiceIllustration from "./ServiceIllustration";
 
 const icons = [Network, BadgeCheck, ShieldCheck, Building2, MapPin, Users];
 
@@ -22,9 +23,7 @@ export default function WhyUs({ dict }: { dict: Dictionary }) {
             return (
               <Reveal key={item.title} delay={(i % 3) * 0.08}>
                 <div className="glass flex h-full items-start gap-4 rounded-2xl p-6">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent/35 text-accent">
-                    <Icon size={18} strokeWidth={1.6} />
-                  </div>
+                  <ServiceIllustration icon={Icon} variant={i % 2 === 0 ? "navy" : "blue"} size={48} />
                   <div>
                     <h3 className="font-display text-base font-semibold">{item.title}</h3>
                     <p className="mt-1 text-xs leading-relaxed text-muted sm:text-sm">{item.desc}</p>
