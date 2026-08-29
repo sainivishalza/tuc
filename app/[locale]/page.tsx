@@ -5,9 +5,9 @@ import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
 import WhyUs from "@/components/WhyUs";
-import Testimonials from "@/components/Testimonials";
-import FAQ from "@/components/FAQ";
-import ContactCTA from "@/components/ContactCTA";
+import LazyTestimonials from "@/components/LazyTestimonials";
+import LazyFAQ from "@/components/LazyFAQ";
+import LazyContactCTA from "@/components/LazyContactCTA";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 
@@ -71,9 +71,9 @@ export default async function LocalePage({
         <Services dict={dict} />
         <HowItWorks dict={dict} />
         <WhyUs dict={dict} />
-        <Testimonials dict={dict} />
-        <FAQ dict={dict} />
-        <ContactCTA dict={dict} />
+        <LazyTestimonials dict={dict} />
+        <LazyFAQ dict={dict} />
+        <LazyContactCTA dict={dict} />
       </main>
       <Footer dict={dict} locale={locale} />
       <WhatsAppFloat message={dict.contact.whatsappMessage} />

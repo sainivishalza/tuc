@@ -2,7 +2,7 @@
 
 import { Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, Float, MeshDistortMaterial } from "@react-three/drei";
+import { Float, MeshDistortMaterial } from "@react-three/drei";
 import type { Mesh } from "three";
 
 function CenterBlob() {
@@ -52,16 +52,17 @@ export default function Hero3D() {
       gl={{ antialias: true, alpha: true }}
       dpr={[1, 1.75]}
     >
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[4, 4, 4]} intensity={1.4} />
-      <directionalLight position={[-4, -2, -3]} intensity={0.4} color="#5b9dff" />
+      <ambientLight intensity={0.5} />
+      <hemisphereLight args={["#5b9dff", "#0b2545", 0.6]} />
+      <directionalLight position={[4, 4, 4]} intensity={1.6} />
+      <directionalLight position={[-4, -2, -3]} intensity={0.5} color="#5b9dff" />
+      <directionalLight position={[0, -3, 2]} intensity={0.3} color="#eef2f7" />
 
       <Suspense fallback={null}>
         <CenterBlob />
         <OrbitNode position={[-1.9, 1.05, -0.5]} scale={0.26} color="#0b2545" />
         <OrbitNode position={[1.95, -0.55, 0.3]} scale={0.18} color="#5b9dff" />
         <OrbitNode position={[1.4, 1.25, -1]} scale={0.14} color="#eef2f7" />
-        <Environment preset="city" />
       </Suspense>
     </Canvas>
   );

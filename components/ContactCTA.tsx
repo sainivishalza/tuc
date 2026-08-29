@@ -1,9 +1,14 @@
+"use client";
+
 import { MessageCircle, Phone } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import Reveal from "./Reveal";
 import { whatsappLink, WHATSAPP_DISPLAY } from "@/lib/whatsapp";
+import { trackCtaClick } from "@/lib/analytics";
+import { usePathname } from "next/navigation";
 
 export default function ContactCTA({ dict }: { dict: Dictionary }) {
+  const pathname = usePathname() ?? "/";
   return (
     <section id="contact" className="relative px-4 py-20 sm:px-6">
       <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-brand-navy text-white">
@@ -20,7 +25,8 @@ export default function ContactCTA({ dict }: { dict: Dictionary }) {
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-brand-navy shadow-lg transition hover:opacity-90"
+            onClick={() => trackCtaClick("Contact CTA", pathname)}
+            className="mt-3 flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-brand-navy shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]"
           >
             <MessageCircle size={18} />
             {dict.contact.whatsappCta}

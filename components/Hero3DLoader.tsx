@@ -1,11 +1,28 @@
 "use client";
 
+import { Component, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 
 const Hero3D = dynamic(() => import("./Hero3D"), {
   ssr: false,
   loading: () => null,
 });
+
+class WebGLErrorBoundary extends Component<
+  { children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? null : this.children;
+  }
+  get children() {
+    return this.props.children;
+  }
+}
 
 export default function Hero3DLoader() {
   return (
@@ -20,7 +37,9 @@ export default function Hero3DLoader() {
             "radial-gradient(closest-side, var(--brand-blue) 0%, transparent 75%)",
         }}
       />
-      <Hero3D />
+      <WebGLErrorBoundary>
+        <Hero3D />
+      </WebGLErrorBoundary>
     </div>
   );
 }

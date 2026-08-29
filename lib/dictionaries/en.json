@@ -8,7 +8,9 @@
     "howItWorks": "How It Works",
     "whyUs": "Why Trust Us",
     "faq": "FAQ",
+    "about": "About",
     "contact": "Contact",
+    "contactPage": "Contact Us",
     "chatWhatsapp": "Chat on WhatsApp"
   },
   "hero": {
@@ -90,6 +92,33 @@
     "whatsappCta": "Chat on WhatsApp",
     "whatsappNumberLabel": "Or reach us directly at",
     "whatsappMessage": "Hi! I'd like to ask about sourcing a product from China/Hong Kong."
+  },
+  "about": {
+    "badge": "About Us",
+    "title": "Connecting You to China's Best Factories",
+    "subtitle": "We bridge the gap between international buyers and verified Chinese manufacturers — with transparency, inspection, and trust at every step.",
+    "story": "The Unique Choice was founded to solve a simple problem: sourcing from China shouldn't require a plane ticket or a leap of faith. We built a network of verified factories and suppliers across mainland China and Hong Kong, combined it with hands-on inspection, and wrapped it in a transparent, step-by-step process.",
+    "mission": "Our mission is to make international sourcing accessible, safe, and efficient for businesses of every size — from first-time buyers to established brands.",
+    "values": [
+      { "title": "Verification First", "desc": "Every supplier we work with is personally vetted. We don't list factories we haven't inspected." },
+      { "title": "Full Transparency", "desc": "Photos, reports, and updates at every stage. You always know what's happening with your order." },
+      { "title": "Secure Handling", "desc": "Structured payments and protected shipping so your money and products are always safe." }
+    ],
+    "regions": "We operate across mainland China and Hong Kong, connecting buyers to factories in Shenzhen, Guangzhou, Yiwu, and beyond.",
+    "cta": "Start Sourcing Today"
+  },
+  "contactPage": {
+    "badge": "Contact Us",
+    "title": "Let's Talk About Your Next Order",
+    "subtitle": "Whether you're sourcing your first product or your hundredth, we're here to help. Reach out and we'll respond within hours.",
+    "channels": [
+      { "label": "WhatsApp", "value": "+91 98967 39100", "desc": "Fastest way to reach us. Most replies within a few hours." },
+      { "label": "Email", "value": "hello@theuniquechoice.com", "desc": "For detailed inquiries and documentation." },
+      { "label": "Phone", "value": "+91 98967 39100", "desc": "Available Monday–Saturday, 9 AM – 6 PM IST." }
+    ],
+    "hours": "Our team is available Monday through Saturday, 9:00 AM to 6:00 PM Indian Standard Time. Messages received outside business hours are answered first thing the next working day.",
+    "regions": "We serve clients in Hong Kong, India, and South Africa — with more regions coming soon.",
+    "whatsappCta": "Chat on WhatsApp"
   },
   "footer": {
     "tagline": "Your trusted sourcing partner between China, Hong Kong, and the world.",

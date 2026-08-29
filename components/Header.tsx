@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, MessageCircle } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -16,6 +16,18 @@ export default function Header({
   locale: Locale;
 }) {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
 
   const links = [
     { href: "#services", label: dict.nav.services },
@@ -73,7 +85,7 @@ export default function Header({
       </div>
 
       {open && (
-        <div className="glass mx-3 mt-2 flex flex-col gap-1 rounded-2xl p-4 lg:hidden">
+        <div ref={menuRef} className="glass mx-3 mt-2 flex flex-col gap-1 rounded-2xl p-4 lg:hidden">
           {links.map((l) => (
             <a
               key={l.href}

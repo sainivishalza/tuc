@@ -38,7 +38,7 @@ export default function TiltCard({
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformPerspective: 800 }}
+      style={{ rotateX, rotateY, transformPerspective: 800, willChange: "transform" }}
       className={`relative ${className ?? ""}`}
     >
       {children}

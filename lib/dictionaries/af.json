@@ -8,7 +8,9 @@
     "howItWorks": "Hoe Dit Werk",
     "whyUs": "Waarom Ons Vertrou",
     "faq": "Vrae",
+    "about": "Oor Ons",
     "contact": "Kontak",
+    "contactPage": "Kontak Ons",
     "chatWhatsapp": "Gesels op WhatsApp"
   },
   "hero": {
@@ -90,6 +92,33 @@
     "whatsappCta": "Gesels op WhatsApp",
     "whatsappNumberLabel": "Of kontak ons direk by",
     "whatsappMessage": "Hallo! Ek wil graag vra oor die verskaffing van 'n produk vanaf China/Hongkong."
+  },
+  "about": {
+    "badge": "Oor Ons",
+    "title": "Verbind Jou met China se Beste Fabrieke",
+    "subtitle": "Ons bou die brug tussen internasionale kopers en geverifieerde Chinese vervaardigers — met deursigtigheid, inspeksie en vertroue by elke stap.",
+    "story": "The Unique Choice is gestig om 'n eenvoudige probleem op te los: verskaffing vanaf China hoef nie 'n vliegtuigkaartjie of 'n sprong van geloof te vereis nie. Ons het 'n netwerk van geverifieerde fabrieke en verskaffers regoor mainland China en Hongkong gebou, dit gekombineer met hand-on inspeksie, en toegedraai in 'n deursigtige, stap-vir-stap proses.",
+    "mission": "Ons missie is om internasionale verskaffing toeganklik, veilig en doeltreffend te maak vir besighede van elke grootte — van eerste-keer kopers tot gevestigde handelsmerke.",
+    "values": [
+      { "title": "Verifikasie Eerstens", "desc": "Elke verskaffer waarmee ons werk, word persoonlik ondersoek. Ons lys nie fabrieke wat ons nie geïnspekteer het nie." },
+      { "title": "Volle Deursigtigheid", "desc": "Foto's, verslae en opdaterings by elke stap. Jy weet altyd wat met jou bestelling gebeur." },
+      { "title": "Veilige Hantering", "desc": "Gestruktureerde betalings en beskermde verskeping sodat jou geld en produkte altyd veilig is." }
+    ],
+    "regions": "Ons bedryf regoor mainland China en Hongkong, en skakel kopers aan fabrieke in Shenzhen, Guangzhou, Yiwu en verder.",
+    "cta": "Begin Nou met Verskaffing"
+  },
+  "contactPage": {
+    "badge": "Kontak Ons",
+    "title": "Praat Met Ons Oor Jou Volgende Bestelling",
+    "subtitle": "Of jy nou jou eerste produk verskaf of jou honderdste, ons is hier om te help. Reik uit en ons sal binne ure reageer.",
+    "channels": [
+      { "label": "WhatsApp", "value": "+91 98967 39100", "desc": "Vinnigste manier om ons te bereik. Meeste antwoorde binne 'n paar uur." },
+      { "label": "E-pos", "value": "hello@theuniquechoice.com", "desc": "Vir gedetailleerde navrae en dokumentasie." },
+      { "label": "Telefoon", "value": "+91 98967 39100", "desc": "Beskikbaar Maandag–Saterdag, 9:00 – 18:00 IST." }
+    ],
+    "hours": "Ons span is beskikbaar Maandag tot Saterdag, 9:00 tot 18:00 Indiese Standaardtyd. Boodskappe buite sakeure ontvang word die volgende werkdag die eerste beantwoord.",
+    "regions": "Ons bedien kliënte in Hongkong, Indië en Suid-Afrika — met meer streke wat binnekort bygevoeg word.",
+    "whatsappCta": "Gesels op WhatsApp"
   },
   "footer": {
     "tagline": "Jou betroubare verskaffingsvennoot tussen China, Hongkong en die wêreld.",

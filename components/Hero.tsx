@@ -29,7 +29,7 @@ export default function Hero({ dict }: { dict: Dictionary }) {
               href={whatsappLink(dict.contact.whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="brand-gradient flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/15 transition hover:opacity-90 sm:w-auto"
+              className="brand-gradient-animated flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 sm:w-auto"
             >
               <MessageCircle size={18} />
               {dict.hero.ctaWhatsapp}
@@ -43,7 +43,7 @@ export default function Hero({ dict }: { dict: Dictionary }) {
             </a>
           </div>
 
-          <div className="glass mx-auto mt-12 grid max-w-lg grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl lg:mx-0">
+          <div className="glass stat-bar mx-auto mt-12 grid max-w-lg grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl lg:mx-0">
             <Stat icon={<PackageCheck size={18} />} value="10" label={dict.hero.stat1Label} />
             <Stat icon={<Globe2 size={18} />} value="3" label={dict.hero.stat2Label} />
             <Stat icon={<ShieldCheck size={18} />} value="< 24h" label={dict.hero.stat3Label} />
@@ -68,10 +68,14 @@ function Stat({
   label: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 px-3 py-5">
+    <div className="flex flex-col items-center gap-1.5 px-3 py-6">
       <span className="text-accent">{icon}</span>
-      <span className="font-display text-xl font-semibold sm:text-2xl">{value}</span>
-      <span className="text-center text-[11px] text-muted sm:text-xs">{label}</span>
+      <span className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+        {value}
+      </span>
+      <span className="text-center text-[11px] font-medium text-muted sm:text-xs">
+        {label}
+      </span>
     </div>
   );
 }

@@ -23,6 +23,7 @@ export default function Reveal({
       whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "0px 0px -10% 0px" }}
       transition={{ duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] }}
+      style={{ willChange: "transform" }}
       className={className}
     >
       {children}

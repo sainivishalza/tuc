@@ -8,7 +8,9 @@
     "howItWorks": "Indlela Esisebenza Ngayo",
     "whyUs": "Kungani Usithembe",
     "faq": "Imibuzo",
+    "about": "Ngathi",
     "contact": "Xhumana Nathi",
+    "contactPage": "Xhumana Nathi",
     "chatWhatsapp": "Xoxa nathi ku-WhatsApp"
   },
   "hero": {
@@ -90,6 +92,33 @@
     "whatsappCta": "Xoxa nathi ku-WhatsApp",
     "whatsappNumberLabel": "Noma usithinte ngqo ku",
     "whatsappMessage": "Sawubona! Ngingathanda ukubuza mayelana nokuthola umkhiqizo e-China/e-Hong Kong."
+  },
+  "about": {
+    "badge": "Ngathi",
+    "title": "Sihlanganisa Nawe Namafektri Ainhle eChina",
+    "subtitle": "Sakha ibhuloho phakathi kwabathengi basezingxenyeni zomhlaba nabahlinzeki abaqinisekisiwe beChina — ngokucacile, ukuhlola nokwethenjwa kuwo wonke umzuzwana.",
+    "story": "The Unique Choice idalwe ukuxazulula inkinga elula: ukuthola izimpahla eChina akufanele kudinge i-bhuleki noma uthembe. Sakha inethiwekhi yabahlinzeki abaqinisekisiwe emazweni amakhulu eChina ne-Hong Kong, sihlanganise nokuhlola, futhi sisigqokele inqubo ecacile.",
+    "mission": "Umsebenzi wethu ukwenza ukuthola izimpahla zomhlaba kube lula, kuphephile futhi kusebenze kalula kunoma yiluphi uhlobo lwebhizinisi — kusukela kubathengi abasha kuya kumabhrendi aqinile.",
+    "values": [
+      { "title": "Ukuqinisekisa Kuqala", "desc": "Wonke umhlinzeki esisebenza naye uhloliwe ngokwethu. Asibhalanga amafektri esingawahlolanga." },
+      { "title": "Ukucaca Okugcwele", "desc": "Izithombe, imibiko nokubuyekezwa kuwo wonke umzuzwana. Uhlala ukwazi ukuthi kwenzekani ne-oda yakho." },
+      { "title": "Ukuphatha Okuphephile", "desc": "Izinkokhelo ezihlelekile nokuthunyelwa okuvikelwe ukuze imali nezimpahla zakho zihlala ziphephile." }
+    ],
+    "regions": "Sisebenza emazweni amakhulu eChina ne-Hong Kong, sihlanganisa abathengi namafektri eShenzhen, eGuangzhou, eYiwu nangaphezulu.",
+    "cta": "Qala Manje"
+  },
+  "contactPage": {
+    "badge": "Xhumana Nathi",
+    "title": "Sikhulume Nge-Oda Yakho Elandelayo",
+    "subtitle": "Noma usanda kuthola umkhiqizo wakho wokuqala noma wekulu, silapha ukusiza. Sikhulise futhi sizophendula phakathi kwamahora.",
+    "channels": [
+      { "label": "WhatsApp", "value": "+91 98967 39100", "desc": "Indlela elisheshayo yokusithinta. Iningi lezimpendulo lingaphakathi kwamahora ambalwa." },
+      { "label": "I-imeyili", "value": "hello@theuniquechoice.com", "desc": "Ukubuza okuningiliziwe nodokhumenti." },
+      { "label": "Ifone", "value": "+91 98967 39100", "desc": "Itholakala Msombuluko–Mgqibelo, 9:00 – 18:00 IST." }
+    ],
+    "hours": "Iqembu litholakala Msombuluko kuya KuMgqibelo, kusukela 9:00 kuya ku-18:00 Indian Standard Time. Imilayezo etholiwe ngaphandle kwesikhathi sebhizinisi iphendulwa ngokushesha ngolandelayo lwezokusebenza.",
+    "regions": "Sihlinzeka amakhasimende e-Hong Kong, e-India naseningxenye yeSouth Africa — nezifunda ezingeziwe zizongezwa maduze.",
+    "whatsappCta": "Xoxa nathi ku-WhatsApp"
   },
   "footer": {
     "tagline": "Umlingani wakho othenjwayo wokuthola izimpahla phakathi kwe-China, i-Hong Kong, nomhlaba wonke.",

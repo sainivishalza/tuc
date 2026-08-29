@@ -45,9 +45,11 @@ export default async function OGImage({ params }: { params: Promise<{ locale: Lo
               color: "white",
             }}
           >
-            TU
+            U
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800 }}>The Unique Choice</div>
+          <div style={{ fontSize: 32, fontWeight: 800 }}>
+            The Unique Choice
+          </div>
         </div>
         <div style={{ display: "flex", fontSize: 54, fontWeight: 800, lineHeight: 1.15, maxWidth: 980 }}>
           {dict.hero.title} {dict.hero.titleHighlight}

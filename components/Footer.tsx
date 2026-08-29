@@ -34,23 +34,23 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
             </h4>
             <ul className="mt-3 flex flex-col gap-2 text-sm text-foreground/80">
               <li>
+                <Link href={`/${locale}/about`} className="hover:text-foreground">
+                  {dict.nav.about}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/contact`} className="hover:text-foreground">
+                  {dict.nav.contactPage}
+                </Link>
+              </li>
+              <li>
                 <a href="#services" className="hover:text-foreground">
                   {dict.nav.services}
                 </a>
               </li>
               <li>
-                <a href="#why-us" className="hover:text-foreground">
-                  {dict.nav.whyUs}
-                </a>
-              </li>
-              <li>
                 <a href="#faq" className="hover:text-foreground">
                   {dict.nav.faq}
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className="hover:text-foreground">
-                  {dict.nav.contact}
                 </a>
               </li>
             </ul>

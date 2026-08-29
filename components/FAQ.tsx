@@ -20,10 +20,10 @@ export default function FAQ({ dict }: { dict: Dictionary }) {
             const isOpen = openIndex === i;
             return (
               <Reveal key={item.q} delay={i * 0.04}>
-                <div className="glass-strong overflow-hidden rounded-2xl">
+                <div className={`glass-strong overflow-hidden rounded-2xl transition-all duration-300 ${isOpen ? "ring-1 ring-accent/20" : ""}`}>
                   <button
                     onClick={() => setOpenIndex(isOpen ? null : i)}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                    className={`flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors duration-200 ${isOpen ? "bg-accent/[0.03]" : ""}`}
                     aria-expanded={isOpen}
                   >
                     <span className="font-display text-base font-medium sm:text-lg">{item.q}</span>
