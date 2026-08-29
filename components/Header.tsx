@@ -31,10 +31,11 @@ export default function Header({
 
   const links = [
     { href: "#services", label: dict.nav.services },
+    { href: "#pricing", label: dict.nav.pricing },
     { href: "#how-it-works", label: dict.nav.howItWorks },
     { href: "#why-us", label: dict.nav.whyUs },
     { href: "#faq", label: dict.nav.faq },
-    { href: "#contact", label: dict.nav.contact },
+    { href: `/${locale}/blog`, label: dict.nav.blog },
   ];
 
   return (

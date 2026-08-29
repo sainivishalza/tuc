@@ -9,6 +9,8 @@
     "whyUs": "Kungani Usithembe",
     "faq": "Imibuzo",
     "about": "Ngathi",
+    "pricing": "Intengo",
+    "blog": "Ibhlogi",
     "contact": "Xhumana Nathi",
     "contactPage": "Xhumana Nathi",
     "chatWhatsapp": "Xoxa nathi ku-WhatsApp"
@@ -119,6 +121,88 @@
     "hours": "Iqembu litholakala Msombuluko kuya KuMgqibelo, kusukela 9:00 kuya ku-18:00 Indian Standard Time. Imilayezo etholiwe ngaphandle kwesikhathi sebhizinisi iphendulwa ngokushesha ngolandelayo lwezokusebenza.",
     "regions": "Sihlinzeka amakhasimende e-Hong Kong, e-India naseningxenye yeSouth Africa — nezifunda ezingeziwe zizongezwa maduze.",
     "whatsappCta": "Xoxa nathi ku-WhatsApp"
+  },
+  "pricing": {
+    "badge": "Intengo",
+    "title": "Intengo Elula Futhi ICacile",
+    "subtitle": "Akukho maliyo efihlekileyo. Akukho mangiblezwa. Khokha kuphela ngaphandle kokuthi usebenzise layo.",
+    "plans": [
+      {
+        "name": "Ukuqala",
+        "commission": "3%",
+        "desc": "Kubathengi abanesikhwama sabahlinzeki eChina",
+        "features": ["Ukuqinisekisa abahlinzeki", "Usizo lokukhokha", "Ukuhlola ikhwalithi", "Ukulungiselela ukuthunyelwa", "Ukugcina isilawuli samahhala (izinsuku ezingu-30)"]
+      },
+      {
+        "name": "Ochwepheshe",
+        "commission": "5-9%",
+        "desc": "Inkonzo ephelele yokuqala ukuthola izimpahla",
+        "features": ["Konke ku- Ukuqala", "Ukuthola abakhiqizi", "Izixazululo zegama elizimele", "Uku development komkhiqizo", "Ukulandela ukukhiqizwa", "Umfoto wezikhwama mahhala", "Ukuhlola ifektri endaweni"]
+      },
+      {
+        "name": "Inkampani",
+        "commission": "Ngezifiso",
+        "desc": "Izixazululo ezihlanganiswe ngokwesikhwama semisebenzi emikhulu",
+        "features": ["Konke ku- Ochwepheshe", "Iqembu elizizinikelayo (kuya kubantu abangu-20)", "Imigomo yokukhokha ngokukholwa", "Ukuhlanganisa abahlinzeki abaningi", "Ukulungisa okuphambili", "Izixazululo zokuthunyelwa ezihlanganiswe ngokwesifiso"]
+      }
+    ],
+    "cta": "Thola Inani Mahhala"
+  },
+  "consultation": {
+    "badge": "Inani Mahhala",
+    "title": "Thola Inani Lokuthola Izimpahla Mahhala",
+    "subtitle": "Sitshele ofunayo, futhi sizophendula ngaphakathi kwamahora angu-24 ngephrojekthi eningiliziwe.",
+    "form": {
+      "name": "Igama Lakho",
+      "email": "Ikheli Le-imeyili",
+      "whatsapp": "Inombolo ye-WhatsApp",
+      "product": "Uhlobo Lomkhiqizo",
+        "quantity": "Inani Elinganiselwayo",
+      "timeline": "Isikhathi",
+      "message": "Olunye ulwazi",
+      "submit": "Thola Inani Mahhala",
+      "success": "Siyabonga! Sizophendula ngaphakathi kwamahora angu-24."
+    },
+    "guarantee": "100% Mahhala · Akukho Mibophezelo · Uphendula Ngaphakathi Kwamahora Angu-24"
+  },
+  "categories": {
+    "badge": "Izinhlobo Zemikhiqizo",
+    "title": "Esikutholayo",
+    "subtitle": "Kusukela kuma-elekthroniksi kuya ezintfeni, sithola izinto eziningi ezimaketheini.",
+    "items": [
+      { "name": "Amadivaysi Okuhloma", "desc": "Amadivaysi okuhloma, amadivaysi ahlakaniphile, izingxenye ezengeziwe" },
+      { "name": "Indlu & Ekhitshini", "desc": "Ifenisha, amadivaysi, izingxenye zokupheka, izinhlelo" },
+      { "name": "Imfashini & Amatextile", "desc": "Impahla, izingubo, izingxenye ezingeziwe, amabhuloho" },
+      { "name": "Izinto Zokwakha", "desc": "Amathayili, amaphayipi, ukukhanya, i-hardware" },
+      { "name": "Iphakethe & Ukushicilelwa", "desc": "Amabhokisi akhethekile, amalebula, amaphaphethi" },
+      { "name": "Izingxenye Zemoto & Ama-tools", "desc": "Izingxenye zemoto, amathuluzi ezimboni, amadivaysi" }
+    ]
+  },
+  "blog": {
+    "badge": "Isikhungo Solwazi",
+    "title": "Izinkombandlela & Amathiphu",
+    "subtitle": "Funda ukuthi ungathola kanjani izimpahla eChina ngokuzethemba. Izeluleko zochwepheshe team yethu.",
+    "readMore": "Funda Kabanzi",
+    "posts": [
+      {
+        "title": "Ungathola Kanjani Abahlinzeki Abathembekile eChina",
+        "excerpt": "Inkombandlela yesinyathelo ngesinyathelo yokuhlola amafektri nokugwema ukukhwabanisa.",
+        "date": "2026-08-15",
+        "readTime": "Imizuzu engu-8 ukufunda"
+      },
+      {
+        "title": "Ukuqonda i-MOQ Nokuthi Ungathola Kanjani Imigomo Engcono",
+        "excerpt": "I-MOQ (Inani Elincane Lokuhlela) kusho ukuthini nokuthi ungathola kanjani imigomo engcono njengomthengi omncane.",
+        "date": "2026-08-10",
+        "readTime": "Imizuzu engu-6 ukufunda"
+      },
+      {
+        "title": "Ukuthumela Kusuka eChina: Ulwandle vs Umoya vs I-Express",
+        "excerpt": "Qhathanisa indlela yokuthumela, izinkomo, nesikhathi ukukhetha inketho efaneleko.",
+        "date": "2026-08-05",
+        "readTime": "Imizuzu engu-10 ukufunda"
+      }
+    ]
   },
   "footer": {
     "tagline": "Umlingani wakho othenjwayo wokuthola izimpahla phakathi kwe-China, i-Hong Kong, nomhlaba wonke.",

@@ -9,6 +9,8 @@
     "whyUs": "Why Trust Us",
     "faq": "FAQ",
     "about": "About",
+    "pricing": "Pricing",
+    "blog": "Blog",
     "contact": "Contact",
     "contactPage": "Contact Us",
     "chatWhatsapp": "Chat on WhatsApp"
@@ -119,6 +121,88 @@
     "hours": "Our team is available Monday through Saturday, 9:00 AM to 6:00 PM Indian Standard Time. Messages received outside business hours are answered first thing the next working day.",
     "regions": "We serve clients in Hong Kong, India, and South Africa — with more regions coming soon.",
     "whatsappCta": "Chat on WhatsApp"
+  },
+  "pricing": {
+    "badge": "Pricing",
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "No hidden fees. No surprises. Pay only for the service you need.",
+    "plans": [
+      {
+        "name": "Starter",
+        "commission": "3%",
+        "desc": "For buyers who already have suppliers in China",
+        "features": ["Supplier verification", "Payment assistance", "Quality inspection", "Shipping arrangement", "Free warehouse storage (30 days)"]
+      },
+      {
+        "name": "Professional",
+        "commission": "5-9%",
+        "desc": "Full sourcing service for first-time buyers",
+        "features": ["Everything in Starter", "Manufacturer sourcing", "Private label solutions", "Custom product development", "Production follow-up", "Free product photography", "Factory on-site audits"]
+      },
+      {
+        "name": "Enterprise",
+        "commission": "Custom",
+        "desc": "Tailored solutions for large-scale operations",
+        "features": ["Everything in Professional", "Dedicated team (up to 20 people)", "Credit payment terms", "Multi-supplier coordination", "Priority resolution", "Custom logistics solutions"]
+      }
+    ],
+    "cta": "Get a Free Quote"
+  },
+  "consultation": {
+    "badge": "Free Quote",
+    "title": "Get a Free Sourcing Quote",
+    "subtitle": "Tell us what you need and we'll respond within 24 hours with a detailed proposal.",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "whatsapp": "WhatsApp Number",
+      "product": "Product Category",
+      "quantity": "Estimated Quantity",
+      "timeline": "Timeline",
+      "message": "Additional Details",
+      "submit": "Get Free Quote",
+      "success": "Thank you! We'll respond within 24 hours."
+    },
+    "guarantee": "100% Free · No Obligation · Response Within 24 Hours"
+  },
+  "categories": {
+    "badge": "Product Categories",
+    "title": "What We Source",
+    "subtitle": "From electronics to home goods, we source across a wide range of industries.",
+    "items": [
+      { "name": "Electronics & Gadgets", "desc": "Consumer electronics, smart devices, accessories" },
+      { "name": "Home & Kitchen", "desc": "Furniture, appliances, cookware, decor" },
+      { "name": "Fashion & Textiles", "desc": "Clothing, fabrics, accessories, footwear" },
+      { "name": "Building Materials", "desc": "Tiles, fixtures, lighting, hardware" },
+      { "name": "Packaging & Printing", "desc": "Custom boxes, labels, promotional materials" },
+      { "name": "Auto Parts & Tools", "desc": "Vehicle accessories, industrial tools, equipment" }
+    ]
+  },
+  "blog": {
+    "badge": "Knowledge Center",
+    "title": "Sourcing Guides & Tips",
+    "subtitle": "Learn how to source from China with confidence. Expert advice from our team.",
+    "readMore": "Read More",
+    "posts": [
+      {
+        "title": "How to Find Reliable Suppliers in China",
+        "excerpt": "A step-by-step guide to verifying factories and avoiding scams when sourcing from China.",
+        "date": "2026-08-15",
+        "readTime": "8 min read"
+      },
+      {
+        "title": "Understanding MOQs and How to Negotiate",
+        "excerpt": "What minimum order quantities mean and how to get better terms as a small buyer.",
+        "date": "2026-08-10",
+        "readTime": "6 min read"
+      },
+      {
+        "title": "Shipping from China: Sea vs Air vs Express",
+        "excerpt": "Compare shipping methods, costs, and timelines to choose the best option for your order.",
+        "date": "2026-08-05",
+        "readTime": "10 min read"
+      }
+    ]
   },
   "footer": {
     "tagline": "Your trusted sourcing partner between China, Hong Kong, and the world.",

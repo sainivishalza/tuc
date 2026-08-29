@@ -3,9 +3,12 @@ import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
+import ProductCategories from "@/components/ProductCategories";
 import HowItWorks from "@/components/HowItWorks";
+import Pricing from "@/components/Pricing";
 import WhyUs from "@/components/WhyUs";
 import LazyTestimonials from "@/components/LazyTestimonials";
+import LazyConsultationForm from "@/components/LazyConsultationForm";
 import LazyFAQ from "@/components/LazyFAQ";
 import LazyContactCTA from "@/components/LazyContactCTA";
 import Footer from "@/components/Footer";
@@ -69,9 +72,12 @@ export default async function LocalePage({
       <main>
         <Hero dict={dict} />
         <Services dict={dict} />
+        <ProductCategories dict={dict} />
         <HowItWorks dict={dict} />
+        <Pricing dict={dict} />
         <WhyUs dict={dict} />
         <LazyTestimonials dict={dict} />
+        <LazyConsultationForm dict={dict} />
         <LazyFAQ dict={dict} />
         <LazyContactCTA dict={dict} />
       </main>

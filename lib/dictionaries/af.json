@@ -9,6 +9,8 @@
     "whyUs": "Waarom Ons Vertrou",
     "faq": "Vrae",
     "about": "Oor Ons",
+    "pricing": "Pryse",
+    "blog": "Blog",
     "contact": "Kontak",
     "contactPage": "Kontak Ons",
     "chatWhatsapp": "Gesels op WhatsApp"
@@ -119,6 +121,88 @@
     "hours": "Ons span is beskikbaar Maandag tot Saterdag, 9:00 tot 18:00 Indiese Standaardtyd. Boodskappe buite sakeure ontvang word die volgende werkdag die eerste beantwoord.",
     "regions": "Ons bedien kliënte in Hongkong, Indië en Suid-Afrika — met meer streke wat binnekort bygevoeg word.",
     "whatsappCta": "Gesels op WhatsApp"
+  },
+  "pricing": {
+    "badge": "Pryse",
+    "title": "Eenvoudige, Deursigtige Pryse",
+    "subtitle": "Geen verskuilde fooie nie. Geen verrassings nie. Betaal net vir die diens wat jy nodig het.",
+    "plans": [
+      {
+        "name": "Starter",
+        "commission": "3%",
+        "desc": "Vir kopers wat reeds verskaffers in China het",
+        "features": ["Verskaffer-verifikasie", "Betalinghulp", "Kwaliteitsinspeksie", "Verskeping reeling", "Gratis pakhuisberging (30 dae)"]
+      },
+      {
+        "name": "Professioneel",
+        "commission": "5-9%",
+        "desc": "Volledige verskaffingsdiens vir eerste-keer kopers",
+        "features": ["Alles in Starter", "Vervaardigingverskaffing", "Privaatetiket-oplossings", "Aangepaste produkontwikkeling", "Produksie-opvolg", "Gratis produkfotografie", "Fabriek-persoonlike oudits"]
+      },
+      {
+        "name": "Onderneming",
+        "commission": "Pasgemaak",
+        "desc": "Pasgemaakte oplossings vir grootskaalbedrywighede",
+        "features": ["Alles in Professioneel", "Toegewyde span (tot 20 mense)", "Kredietbetalingsvoorwaardes", "Veelvoudige verskaffer-koordinering", "Prioriteitsoplossing", "Pasgemaakte logistieke oplossings"]
+      }
+    ],
+    "cta": "Kry Gratis Aanbod"
+  },
+  "consultation": {
+    "badge": "Gratis Aanbod",
+    "title": "Kry Gratis Verskaffings Aanbod",
+    "subtitle": "Vertel ons wat jy nodig het en ons sal binne 24 uur reageer met 'n gedetailleerde voorstel.",
+    "form": {
+      "name": "Jou Naam",
+      "email": "E-pos Adres",
+      "whatsapp": "WhatsApp Nommer",
+      "product": "Produkkategorie",
+      "quantity": "Geskatte Hoeveelheid",
+      "timeline": "Tydlyn",
+      "message": "Bykomende Besonderhede",
+      "submit": "Kry Gratis Aanbod",
+      "success": "Dankie! Ons sal binne 24 uur reageer."
+    },
+    "guarantee": "100% Gratis · Geen Verpligtinge · Reageer Binne 24 Ure"
+  },
+  "categories": {
+    "badge": "Produkkategoriee",
+    "title": "Wat Ons Verskaf",
+    "subtitle": "Van elektronika tot huisgoedere, ons verskaf oor 'n wye reeks nywerhede.",
+    "items": [
+      { "name": "Elektronika & Gadgete", "desc": "Verbruikerselektronika, slim toestelle, bykomstighede" },
+      { "name": "Huis & Kombuis", "desc": "Meubels, toestelle, kookgerei, dekor" },
+      { "name": "Mode & Textiele", "desc": "Klere, stoff, bykomstighede, skoene" },
+      { "name": "Boumateriale", "desc": "Tëls, armature, beligting, hardeware" },
+      { "name": "Verpakking & Drukwerk", "desc": "Pasgemaakte bokse, etikette, promosiemateriaal" },
+      { "name": "Motoronderdele & Gereedskap", "desc": "Voertuigbykomstighede, industriele gereedskap, toerusting" }
+    ]
+  },
+  "blog": {
+    "badge": "Kennis Sentrum",
+    "title": "Verskaffingsgidse & Wenke",
+    "subtitle": "Leer hoe om met selfvertroue vanaf China te verskaf. Deskundige advies van ons span.",
+    "readMore": "Lees Meer",
+    "posts": [
+      {
+        "title": "Hoe om Betroubare Verskaffers in China te Vind",
+        "excerpt": "'n Stap-vir-stap gids om fabrieke te verifieer en bedrog te vermy wanneer jy vanaf China verskaf.",
+        "date": "2026-08-15",
+        "readTime": "8 min leestyd"
+      },
+      {
+        "title": "MOQs Verstaan en Hoe om te Onderhandel",
+        "excerpt": "Wat minimum bestelhoeveelhede beteken en hoe om beter terme te kry as 'n klein koper.",
+        "date": "2026-08-10",
+        "readTime": "6 min leestyd"
+      },
+      {
+        "title": "Verskeping vanaf China: See vs Lug vs Ekspress",
+        "excerpt": "Vergelyk verskepingmetodes, kostes en tydlyne om die beste opsie vir jou bestelling te kies.",
+        "date": "2026-08-05",
+        "readTime": "10 min leestyd"
+      }
+    ]
   },
   "footer": {
     "tagline": "Jou betroubare verskaffingsvennoot tussen China, Hongkong en die wêreld.",
