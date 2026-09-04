@@ -7,14 +7,14 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      <div className="border-b border-gray-800 px-4 py-8 sm:px-6">
+    <footer className="bg-surface-2 text-foreground/80">
+      <div className="border-b border-border px-4 py-8 sm:px-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <div>
-            <h3 className="font-display text-base font-semibold text-white">
+            <h3 className="font-display text-base font-semibold text-foreground">
               {dict.footer.tagline}
             </h3>
-            <p className="mt-1 text-sm text-gray-400">{dict.nav.chatWhatsapp}</p>
+            <p className="mt-1 text-sm text-muted">{dict.nav.chatWhatsapp}</p>
           </div>
           <a
             href={whatsappLink(dict.contact.whatsappMessage)}
@@ -35,18 +35,18 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
               <span className="gradient-brand flex h-8 w-8 items-center justify-center rounded-lg font-display text-sm font-semibold text-white">
                 U
               </span>
-              <span className="font-display text-base font-semibold text-white">
-                <span className="text-emerald-400">The Unique</span> Choice
+              <span className="font-display text-base font-semibold text-foreground">
+                <span className="text-emerald-600">The Unique</span> Choice
               </span>
             </Link>
-            <p className="mt-3 text-sm text-gray-400">{dict.footer.tagline}</p>
+            <p className="mt-3 text-sm text-muted">{dict.footer.tagline}</p>
           </div>
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted">
               {dict.footer.servicesLabel}
             </h4>
-            <ul className="mt-3 flex flex-col gap-2 text-sm text-gray-300">
+            <ul className="mt-3 flex flex-col gap-2 text-sm text-foreground/80">
               {dict.services.items.slice(0, 5).map((s) => (
                 <li key={s.title}>{s.title}</li>
               ))}
@@ -54,27 +54,27 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
           </div>
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted">
               {dict.footer.companyLabel}
             </h4>
-            <ul className="mt-3 flex flex-col gap-2 text-sm text-gray-300">
+            <ul className="mt-3 flex flex-col gap-2 text-sm text-foreground/80">
               <li>
-                <Link href={`/${locale}/about`} className="hover:text-white">
+                <Link href={`/${locale}/about`} className="hover:text-foreground">
                   {dict.nav.about}
                 </Link>
               </li>
               <li>
-                <Link href={`/${locale}/contact`} className="hover:text-white">
+                <Link href={`/${locale}/contact`} className="hover:text-foreground">
                   {dict.nav.contactPage}
                 </Link>
               </li>
               <li>
-                <a href="#services" className="hover:text-white">
+                <a href="#services" className="hover:text-foreground">
                   {dict.nav.services}
                 </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-white">
+                <a href="#faq" className="hover:text-foreground">
                   {dict.nav.faq}
                 </a>
               </li>
@@ -83,8 +83,8 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
         </div>
       </div>
 
-      <div className="border-t border-gray-800 px-4 py-6 sm:px-6">
-        <div className="mx-auto max-w-6xl text-xs text-gray-500">
+      <div className="border-t border-border px-4 py-6 sm:px-6">
+        <div className="mx-auto max-w-6xl text-xs text-muted">
           © {year} The Unique Choice. {dict.footer.rights}
         </div>
       </div>
