@@ -29,7 +29,7 @@ export default function Hero({ dict }: { dict: Dictionary }) {
               href={whatsappLink(dict.contact.whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="brand-gradient-animated flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 sm:w-auto"
+              className="brand-gradient-animated flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:scale-105 sm:w-auto"
             >
               <MessageCircle size={18} />
               {dict.hero.ctaWhatsapp}

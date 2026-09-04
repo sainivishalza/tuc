@@ -15,7 +15,7 @@ function CenterBlob() {
       <mesh ref={ref}>
         <icosahedronGeometry args={[1.35, 6]} />
         <MeshDistortMaterial
-          color="#1d4ed8"
+          color="#059669"
           roughness={0.2}
           metalness={0.3}
           distort={0.45}
@@ -53,16 +53,16 @@ export default function Hero3D() {
       dpr={[1, 1.75]}
     >
       <ambientLight intensity={0.5} />
-      <hemisphereLight args={["#5b9dff", "#0b2545", 0.6]} />
+      <hemisphereLight args={["#34d399", "#064e3b", 0.6]} />
       <directionalLight position={[4, 4, 4]} intensity={1.6} />
-      <directionalLight position={[-4, -2, -3]} intensity={0.5} color="#5b9dff" />
-      <directionalLight position={[0, -3, 2]} intensity={0.3} color="#eef2f7" />
+      <directionalLight position={[-4, -2, -3]} intensity={0.5} color="#34d399" />
+      <directionalLight position={[0, -3, 2]} intensity={0.3} color="#eef7f2" />
 
       <Suspense fallback={null}>
         <CenterBlob />
-        <OrbitNode position={[-1.9, 1.05, -0.5]} scale={0.26} color="#0b2545" />
-        <OrbitNode position={[1.95, -0.55, 0.3]} scale={0.18} color="#5b9dff" />
-        <OrbitNode position={[1.4, 1.25, -1]} scale={0.14} color="#eef2f7" />
+        <OrbitNode position={[-1.9, 1.05, -0.5]} scale={0.26} color="#064e3b" />
+        <OrbitNode position={[1.95, -0.55, 0.3]} scale={0.18} color="#34d399" />
+        <OrbitNode position={[1.4, 1.25, -1]} scale={0.14} color="#eef7f2" />
       </Suspense>
     </Canvas>
   );

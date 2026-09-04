@@ -1,21 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
+import { Inter } from "next/font/google";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-inter",
   display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  display: "swap",
-  axes: ["opsz", "SOFT", "WONK"],
-  style: ["normal", "italic"],
 });
 
 export const viewport: Viewport = {
@@ -36,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${fraunces.variable}`}>
+    <html lang="en" className={inter.variable}>
       <body className="antialiased">
         <AnalyticsProvider />
         {children}

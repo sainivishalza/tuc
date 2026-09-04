@@ -46,7 +46,7 @@ export default function Header({
             U
           </span>
           <span className="font-display text-base font-semibold tracking-tight sm:text-lg">
-            The Unique Choice
+            <span className="text-emerald-600">The Unique</span> Choice
           </span>
         </Link>
 
@@ -69,7 +69,7 @@ export default function Header({
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="brand-gradient flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+            className="brand-gradient flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/25 transition hover:scale-105"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}
