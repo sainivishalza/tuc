@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://theuniquechoice.example.com"),
+  metadataBase: new URL("https://theuniquechoice.com"),
   title: "The Unique Choice",
   description:
     "Sourcing, inspection, and door-to-door shipping from China & Hong Kong.",
@@ -34,12 +34,11 @@ export default function RootLayout({
         {children}
         {/*
           Plausible Analytics — GDPR-friendly, no cookies, no personal data.
-          Replace "theuniquechoice.example.com" with your real domain.
           https://plausible.io
         */}
         <Script
           defer
-          data-domain="theuniquechoice.example.com"
+          data-domain="theuniquechoice.com"
           src="https://plausible.io/js/script.js"
         />
       </body>
