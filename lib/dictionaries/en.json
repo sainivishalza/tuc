@@ -185,22 +185,107 @@
     "readMore": "Read More",
     "posts": [
       {
+        "slug": "how-to-find-reliable-suppliers-in-china",
         "title": "How to Find Reliable Suppliers in China",
         "excerpt": "A step-by-step guide to verifying factories and avoiding scams when sourcing from China.",
         "date": "2026-08-15",
-        "readTime": "8 min read"
+        "readTime": "8 min read",
+        "summary": "Verify a supplier's business license, confirm they're a real factory rather than just a trading company, order samples before committing to bulk, and use a third-party inspection before shipment. Never pay 100% of an order upfront by wire transfer.",
+        "author": {
+          "name": "Vishal Saini",
+          "title": "Founder, The Unique Choice",
+          "bio": "Vishal Saini is the founder of The Unique Choice, where he works directly with factories and suppliers across mainland China and Hong Kong to help international buyers source, inspect, and ship products with confidence."
+        },
+        "body": [
+          { "type": "paragraph", "text": "Sourcing from China opens the door to lower costs and manufacturing capabilities most small businesses can't access locally — but it also comes with real risk. Fake factories, trading companies posing as manufacturers, and payment scams are common enough that skipping verification can cost you your entire order. Here's how to actually confirm a supplier is legitimate before you send a single payment." },
+          { "type": "heading", "text": "1. Verify the business license" },
+          { "type": "paragraph", "text": "Every legitimate Chinese company has a business registration number that can be checked against China's National Enterprise Credit Information Publicity System. Ask the supplier for their business license and registered company name, then cross-check that the name, registration number, and business scope match what they've told you. A supplier who hesitates to share this is a red flag on its own." },
+          { "type": "heading", "text": "2. Confirm you're dealing with an actual factory" },
+          { "type": "paragraph", "text": "Many \"suppliers\" on marketplaces are trading companies reselling factory output at a markup — which isn't inherently bad, but you should know which one you're working with. Ask directly: what's your production capacity? Can we do a video call walkthrough of the production floor? A real factory will usually agree to a live video tour; a trading company posing as one often finds excuses not to." },
+          { "type": "heading", "text": "3. Don't rely on marketplace badges alone" },
+          { "type": "paragraph", "text": "\"Verified Supplier\" or \"Gold Supplier\" badges on platforms like Alibaba are often paid certifications, not proof of quality or ethics. Treat them as a starting filter, not a guarantee — they tell you a company paid a fee and submitted some documents, not that their product quality or business practices are sound." },
+          { "type": "heading", "text": "4. Order samples before committing to bulk" },
+          { "type": "paragraph", "text": "Always pay for and receive a physical sample before placing a bulk order, even if it adds a few days to your timeline. A sample lets you check materials, construction quality, and whether the product matches the listing — problems that photos alone won't reveal." },
+          { "type": "heading", "text": "5. Use a third-party inspection before shipment" },
+          { "type": "paragraph", "text": "Independent inspection services (such as SGS, Bureau Veritas, or a local inspection agency) can check your goods at the factory before they ship, confirming quantity, quality, and packaging match your order. This is one of the most effective ways to catch problems while they're still cheap and easy to fix — before the goods have left China." },
+          { "type": "heading", "text": "6. Protect how you pay" },
+          { "type": "paragraph", "text": "Never wire 100% of an order upfront to a new supplier. A common, safer structure is a partial deposit to start production and the remaining balance after inspection and before shipment. Where possible, use payment methods that offer some protection — trade assurance programs, escrow services, or letters of credit for larger orders — rather than a direct bank transfer with no recourse." },
+          { "type": "heading", "text": "Red flags to watch for" },
+          { "type": "list", "items": [
+            "Prices dramatically below every other supplier for the same product",
+            "Refusal to do a video call or share factory photos",
+            "No verifiable business address or company registration",
+            "Pressure to pay quickly, in full, before you've asked basic questions",
+            "Communication only through personal chat apps, never a business email or platform"
+          ] },
+          { "type": "paragraph", "text": "None of these steps guarantee a perfect order every time, but together they eliminate almost all of the common scams. If you'd rather not manage supplier verification yourself, this is exactly the kind of legwork a sourcing agent handles on your behalf — including factory visits and inspections most buyers can't do from abroad." }
+        ]
       },
       {
+        "slug": "understanding-moqs-and-how-to-negotiate",
         "title": "Understanding MOQs and How to Negotiate",
         "excerpt": "What minimum order quantities mean and how to get better terms as a small buyer.",
         "date": "2026-08-10",
-        "readTime": "6 min read"
+        "readTime": "6 min read",
+        "summary": "MOQ (Minimum Order Quantity) is the smallest amount a supplier will manufacture per order. Small buyers can often lower it by paying a higher per-unit price, combining multiple SKUs, working with a trading company, or using a sourcing agent who pools orders across clients.",
+        "author": {
+          "name": "Vishal Saini",
+          "title": "Founder, The Unique Choice",
+          "bio": "Vishal Saini is the founder of The Unique Choice, where he works directly with factories and suppliers across mainland China and Hong Kong to help international buyers source, inspect, and ship products with confidence."
+        },
+        "body": [
+          { "type": "paragraph", "text": "If you're sourcing from China for the first time, MOQ is one of the first walls you'll hit. A factory quotes you a great price — then tells you the minimum order is 5,000 units, far more than you need or can afford. Understanding why MOQs exist, and how they're actually negotiated, can save you from either overpaying for unnecessary excess stock or walking away from a supplier who would have worked with you." },
+          { "type": "heading", "text": "What MOQ actually means" },
+          { "type": "paragraph", "text": "MOQ is the smallest quantity a factory is willing to produce in a single production run. It exists because manufacturing has fixed costs regardless of order size — tooling, machine setup, raw material minimums, and labor scheduling all cost roughly the same whether you order 100 units or 10,000. Below a certain volume, the order simply isn't profitable for the factory to run." },
+          { "type": "heading", "text": "Typical MOQ ranges" },
+          { "type": "paragraph", "text": "MOQs vary enormously by product complexity and customization level. Simple, off-the-shelf products (like standard packaging or basic accessories) may have MOQs as low as 50-100 units. Products requiring custom molds, printing, or fabric cutting often start at 500-2,000 units. Highly specialized electronics or heavy machinery can run into the tens of thousands." },
+          { "type": "heading", "text": "Ways to negotiate a lower MOQ" },
+          { "type": "list", "items": [
+            "Offer a higher unit price — factories will often flex on quantity if the margin improves",
+            "Combine multiple product variants (colors, sizes) into one order to hit the volume threshold together",
+            "Ask for a trial or sample-run order with a commitment to a larger repeat order once quality is confirmed",
+            "Work with a trading company instead of the factory directly — they often pool smaller orders from multiple buyers to meet factory minimums",
+            "Use a sourcing agent who can combine your order with other clients sourcing similar products",
+            "Choose a less-customized version of the product — removing custom branding or packaging often unlocks a much lower MOQ"
+          ] },
+          { "type": "heading", "text": "When it's worth just meeting the MOQ" },
+          { "type": "paragraph", "text": "Sometimes negotiating isn't worth the effort. If the price difference between the MOQ and your ideal quantity is small, or the product has a long shelf life and low storage cost, it can be cheaper overall to just meet the MOQ and treat the surplus as early inventory for growth. Do the math on landed cost per unit at both quantities before deciding which route makes sense." },
+          { "type": "heading", "text": "What to avoid" },
+          { "type": "paragraph", "text": "Be cautious of suppliers who drop their MOQ dramatically the moment you push back — a supplier who quotes 5,000 units, then instantly agrees to 200 with no real change to price or terms, may not have been quoting an honest MOQ in the first place. A legitimate MOQ is usually backed by a real cost reason the supplier can explain." },
+          { "type": "paragraph", "text": "MOQ negotiation is rarely about one clever question — it's about understanding what's actually driving the number and offering the factory a trade-off that works for both sides. If you're ordering as a small or first-time buyer, working through a sourcing agent who already has relationships with multiple factories can often get you a workable MOQ faster than negotiating cold." }
+        ]
       },
       {
+        "slug": "shipping-from-china-sea-vs-air-vs-express",
         "title": "Shipping from China: Sea vs Air vs Express",
         "excerpt": "Compare shipping methods, costs, and timelines to choose the best option for your order.",
         "date": "2026-08-05",
-        "readTime": "10 min read"
+        "readTime": "10 min read",
+        "summary": "Sea freight is the cheapest option for large or heavy shipments but takes 20-45 days. Air freight costs more but arrives in 5-10 days, making it a good middle ground. Express couriers like DHL or FedEx are fastest at 3-7 days and simplest for small parcels, but the most expensive per kilogram.",
+        "author": {
+          "name": "Vishal Saini",
+          "title": "Founder, The Unique Choice",
+          "bio": "Vishal Saini is the founder of The Unique Choice, where he works directly with factories and suppliers across mainland China and Hong Kong to help international buyers source, inspect, and ship products with confidence."
+        },
+        "body": [
+          { "type": "paragraph", "text": "Choosing how to ship from China isn't just about speed or cost in isolation — it's about matching the method to your shipment's size, urgency, and budget. Here's how the three main options actually compare, and how to decide which one fits your order." },
+          { "type": "heading", "text": "Sea freight: cheapest for volume, slowest overall" },
+          { "type": "paragraph", "text": "Sea freight is by far the most cost-effective way to move large or heavy shipments, and it's the standard choice for bulk orders. It splits into two types: FCL (Full Container Load), where you rent an entire container for your goods, and LCL (Less than Container Load), where your shipment shares a container with other buyers' cargo. FCL is more cost-efficient once your order is large enough to fill or nearly fill a container; LCL works better for medium-sized orders that don't justify a full container. Typical transit times run 20-45 days depending on the destination port and whether it's a direct or transshipment route." },
+          { "type": "heading", "text": "Air freight: a faster, pricier middle ground" },
+          { "type": "paragraph", "text": "Air freight typically takes 5-10 days door-to-door, making it a practical option when you need stock faster than sea allows but don't want to pay express-courier rates. Air freight is priced by \"chargeable weight\" — whichever is higher between actual weight and volumetric (dimensional) weight — so it favors dense, compact shipments over bulky, lightweight ones. It's a common choice for restocking inventory during a busy season or covering a gap while a larger sea shipment is in transit." },
+          { "type": "heading", "text": "Express courier: fastest and simplest, most expensive per kilogram" },
+          { "type": "paragraph", "text": "Services like DHL, FedEx, and UPS offer door-to-door delivery in as little as 3-7 days, with customs clearance typically handled as part of the service. This makes them the easiest option to manage — but also the most expensive per kilogram by a significant margin. Express couriers are the right call for samples, small D2C orders, or urgent restocks, but rarely make financial sense for full bulk orders." },
+          { "type": "heading", "text": "How to decide" },
+          { "type": "list", "items": [
+            "Total weight and volume — small parcels favor express, bulk orders favor sea",
+            "Urgency — how soon do you actually need the stock in hand?",
+            "Budget — per-unit shipping cost can significantly affect your margins at scale",
+            "Product value — high-value goods can often absorb air freight costs better than low-margin bulky items"
+          ] },
+          { "type": "heading", "text": "Hidden costs to watch for" },
+          { "type": "paragraph", "text": "Whichever method you choose, the freight cost itself is rarely the full picture. Import duties and taxes at the destination, destination port or airport handling fees, and storage fees if your goods aren't cleared and collected promptly can all add up. Always ask your freight forwarder or sourcing agent for an all-in landed cost estimate, not just the shipping quote, before comparing options." },
+          { "type": "paragraph", "text": "Most established buyers end up using more than one shipping method depending on the order — sea for regular bulk restocking, and air or express for urgent gaps or new product samples. If you're unsure which fits your specific shipment, that calculation is exactly what a sourcing agent factors in when arranging your shipping." }
+        ]
       }
     ]
   },
