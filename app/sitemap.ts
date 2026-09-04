@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n";
 
-// TODO: replace with the real domain once this site is deployed.
-const BASE_URL = "https://theuniquechoice.example.com";
+const BASE_URL = "https://theuniquechoice.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return locales.map((locale) => ({
