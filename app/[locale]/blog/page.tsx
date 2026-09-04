@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -53,12 +54,13 @@ export default async function BlogPage({
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto max-w-3xl">
             <div className="grid grid-cols-1 gap-6">
-              {dict.blog.posts.map((post, i) => (
-                <article
-                  key={post.title}
+              {dict.blog.posts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/${locale}/blog/${post.slug}`}
                   className="glass-strong group flex flex-col gap-4 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg sm:flex-row sm:items-start"
                 >
-                  <div className="flex-1">
+                  <article className="flex-1">
                     <div className="flex items-center gap-3 text-xs text-muted">
                       <time>{post.date}</time>
                       <span className="flex items-center gap-1">
@@ -76,8 +78,8 @@ export default async function BlogPage({
                       {dict.blog.readMore}
                       <ArrowRight size={14} />
                     </span>
-                  </div>
-                </article>
+                  </article>
+                </Link>
               ))}
             </div>
           </div>

@@ -185,18 +185,21 @@
     "readMore": "阅读更多",
     "posts": [
       {
+        "slug": "how-to-find-reliable-suppliers-in-china",
         "title": "如何在中国找到可靠的供应商",
         "excerpt": "验证工厂和避免欺诈的分步指南。",
         "date": "2026-08-15",
         "readTime": "8分钟阅读"
       },
       {
+        "slug": "understanding-moqs-and-how-to-negotiate",
         "title": "理解MOQ及如何谈判",
         "excerpt": "什么是最低起订量以及小买家如何获得更好的条件。",
         "date": "2026-08-10",
         "readTime": "6分钟阅读"
       },
       {
+        "slug": "shipping-from-china-sea-vs-air-vs-express",
         "title": "从中国发货:海运vs空运vs快递",
         "excerpt": "比较运输方式、成本和时间,选择最适合的方案。",
         "date": "2026-08-05",

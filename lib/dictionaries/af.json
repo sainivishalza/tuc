@@ -185,18 +185,21 @@
     "readMore": "Lees Meer",
     "posts": [
       {
+        "slug": "how-to-find-reliable-suppliers-in-china",
         "title": "Hoe om Betroubare Verskaffers in China te Vind",
         "excerpt": "'n Stap-vir-stap gids om fabrieke te verifieer en bedrog te vermy wanneer jy vanaf China verskaf.",
         "date": "2026-08-15",
         "readTime": "8 min leestyd"
       },
       {
+        "slug": "understanding-moqs-and-how-to-negotiate",
         "title": "MOQs Verstaan en Hoe om te Onderhandel",
         "excerpt": "Wat minimum bestelhoeveelhede beteken en hoe om beter terme te kry as 'n klein koper.",
         "date": "2026-08-10",
         "readTime": "6 min leestyd"
       },
       {
+        "slug": "shipping-from-china-sea-vs-air-vs-express",
         "title": "Verskeping vanaf China: See vs Lug vs Ekspress",
         "excerpt": "Vergelyk verskepingmetodes, kostes en tydlyne om die beste opsie vir jou bestelling te kies.",
         "date": "2026-08-05",
