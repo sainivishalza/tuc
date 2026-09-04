@@ -37,13 +37,6 @@ export const testimonials: Testimonial[] = [
     locale: "en",
   },
   {
-    name: "Johan Pretorius",
-    company: "AfrikaHandel CC",
-    quote: "Baie professioneel. Hulle het ons gehelp om 'n betroubare fabriek in Shenzhen te kwalifisere en die monsters was van uitstekende gehalte. Kommunikasie was uitstekend.",
-    rating: 4,
-    locale: "af",
-  },
-  {
     name: "Sarah Nkosi",
     company: "Durban Goods Co.",
     quote: "What impressed me most was the factory inspection report — detailed photos and notes so I could make an informed decision without flying to China myself. The payment structure was also very safe.",

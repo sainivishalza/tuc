@@ -21,7 +21,7 @@ export const adminFeatures: AdminFeature[] = [
   {
     title: "Languages",
     description:
-      "5 locales live: English, Chinese, Russian, Afrikaans, isiZulu — each on its own URL (/en, /zh, /ru, /af, /zu). Edit lib/dictionaries/*.json to update copy.",
+      "3 locales live: English, Chinese, Russian — each on its own URL (/en, /zh, /ru). Edit lib/dictionaries/*.json to update copy.",
     href: "/en",
     status: "live",
   },

@@ -1,20 +1,16 @@
-export const locales = ["en", "zh", "af", "zu", "ru"] as const;
+export const locales = ["en", "zh", "ru"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "en";
 
 export const localeNames: Record<Locale, string> = {
   en: "English",
   zh: "中文",
-  af: "Afrikaans",
-  zu: "isiZulu",
   ru: "Русский",
 };
 
 const dictionaries = {
   en: () => import("./dictionaries/en.json").then((m) => m.default),
   zh: () => import("./dictionaries/zh.json").then((m) => m.default),
-  af: () => import("./dictionaries/af.json").then((m) => m.default),
-  zu: () => import("./dictionaries/zu.json").then((m) => m.default),
   ru: () => import("./dictionaries/ru.json").then((m) => m.default),
 };
 
