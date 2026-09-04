@@ -204,6 +204,24 @@
       }
     ]
   },
+  "stats": {
+    "items": [
+      { "label": "Happy Clients" },
+      { "label": "Countries Served" },
+      { "label": "Years Experience" },
+      { "label": "Orders Completed" }
+    ]
+  },
+  "trustBadges": {
+    "items": [
+      { "title": "Verified Agent", "desc": "Every supplier personally vetted" },
+      { "title": "Secure Payments", "desc": "Protected transaction handling" },
+      { "title": "Quality Guaranteed", "desc": "Inspection before every shipment" },
+      { "title": "Insured Shipping", "desc": "Full coverage door-to-door" },
+      { "title": "100% Satisfaction", "desc": "Your success is our priority" },
+      { "title": "24/7 Support", "desc": "Always here when you need us" }
+    ]
+  },
   "footer": {
     "tagline": "Your trusted sourcing partner between China, Hong Kong, and the world.",
     "rights": "All rights reserved.",

@@ -2,53 +2,24 @@
 
 import { Shield, CheckCircle, Truck, Lock, Award, Headphones } from "lucide-react";
 import Reveal from "./Reveal";
+import type { Dictionary } from "@/lib/i18n";
 
-const badges = [
-  {
-    icon: Shield,
-    title: "Verified Agent",
-    desc: "Every supplier personally vetted",
-    color: "text-blue-400",
-    bg: "from-blue-500/15 to-blue-600/5",
-  },
-  {
-    icon: Lock,
-    title: "Secure Payments",
-    desc: "Protected transaction handling",
-    color: "text-emerald-400",
-    bg: "from-emerald-500/15 to-emerald-600/5",
-  },
-  {
-    icon: CheckCircle,
-    title: "Quality Guaranteed",
-    desc: "Inspection before every shipment",
-    color: "text-amber-400",
-    bg: "from-amber-500/15 to-amber-600/5",
-  },
-  {
-    icon: Truck,
-    title: "Insured Shipping",
-    desc: "Full coverage door-to-door",
-    color: "text-purple-400",
-    bg: "from-purple-500/15 to-purple-600/5",
-  },
-  {
-    icon: Award,
-    title: "100% Satisfaction",
-    desc: "Your success is our priority",
-    color: "text-pink-400",
-    bg: "from-pink-500/15 to-pink-600/5",
-  },
-  {
-    icon: Headphones,
-    title: "24/7 Support",
-    desc: "Always here when you need us",
-    color: "text-cyan-400",
-    bg: "from-cyan-500/15 to-cyan-600/5",
-  },
+const badgeMeta = [
+  { icon: Shield, color: "text-blue-400", bg: "from-blue-500/15 to-blue-600/5" },
+  { icon: Lock, color: "text-emerald-400", bg: "from-emerald-500/15 to-emerald-600/5" },
+  { icon: CheckCircle, color: "text-amber-400", bg: "from-amber-500/15 to-amber-600/5" },
+  { icon: Truck, color: "text-purple-400", bg: "from-purple-500/15 to-purple-600/5" },
+  { icon: Award, color: "text-pink-400", bg: "from-pink-500/15 to-pink-600/5" },
+  { icon: Headphones, color: "text-cyan-400", bg: "from-cyan-500/15 to-cyan-600/5" },
 ];
 
-export default function TrustBadges() {
+export default function TrustBadges({ dict }: { dict: Dictionary }) {
+  const badges = badgeMeta.map((meta, i) => ({
+    ...meta,
+    title: dict.trustBadges.items[i].title,
+    desc: dict.trustBadges.items[i].desc,
+  }));
+
   return (
     <section className="relative px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-5xl">

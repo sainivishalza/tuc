@@ -204,6 +204,24 @@
       }
     ]
   },
+  "stats": {
+    "items": [
+      { "label": "Tevrede Kliënte" },
+      { "label": "Lande Bedien" },
+      { "label": "Jare Ervaring" },
+      { "label": "Bestellings Voltooi" }
+    ]
+  },
+  "trustBadges": {
+    "items": [
+      { "title": "Geverifieerde Agent", "desc": "Elke verskaffer word persoonlik ondersoek" },
+      { "title": "Veilige Betalings", "desc": "Beskermde transaksiehantering" },
+      { "title": "Kwaliteit Gewaarborg", "desc": "Inspeksie voor elke verskeping" },
+      { "title": "Verseker Verskeping", "desc": "Volle dekking deur-tot-deur" },
+      { "title": "100% Tevredenheid", "desc": "Jou sukses is ons prioriteit" },
+      { "title": "24/7 Ondersteuning", "desc": "Altyd hier wanneer jy ons nodig het" }
+    ]
+  },
   "footer": {
     "tagline": "Jou betroubare verskaffingsvennoot tussen China, Hongkong en die wêreld.",
     "rights": "Alle regte voorbehou.",

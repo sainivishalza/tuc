@@ -73,8 +73,8 @@ export default async function LocalePage({
       <Header dict={dict} locale={locale} />
       <main>
         <Hero dict={dict} />
-        <AnimatedStats />
-        <TrustBadges />
+        <AnimatedStats dict={dict} />
+        <TrustBadges dict={dict} />
         <Services dict={dict} />
         <ProductCategories dict={dict} />
         <HowItWorks dict={dict} />

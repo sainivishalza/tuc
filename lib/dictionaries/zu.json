@@ -204,6 +204,24 @@
       }
     ]
   },
+  "stats": {
+    "items": [
+      { "label": "Amakhasimende Ajabulile" },
+      { "label": "Amazwe Esikhonza Kuwo" },
+      { "label": "Iminyaka Yolwazi" },
+      { "label": "Ama-oda Aqediwe" }
+    ]
+  },
+  "trustBadges": {
+    "items": [
+      { "title": "Umenzeli Oqinisekisiwe", "desc": "Wonke umhlinzeki uyahlolwa ngokwakhe" },
+      { "title": "Izinkokhelo Eziphephile", "desc": "Ukuphathwa kokuthengiselana okuvikelekile" },
+      { "title": "Ikhwalithi Iqinisekisiwe", "desc": "Ukuhlolwa ngaphambi kokuthunyelwa konke" },
+      { "title": "Ukuthunyelwa Okuqinisekisiwe", "desc": "Ukumbozwa okugcwele kusuka emnyango kuya emnyango" },
+      { "title": "100% Ukwaneliseka", "desc": "Impumelelo yakho iyisiqalo sethu" },
+      { "title": "Usizo Lwamahora angu-24/7", "desc": "Sihlala sikhona lapho usidinga" }
+    ]
+  },
   "footer": {
     "tagline": "Umlingani wakho othenjwayo wokuthola izimpahla phakathi kwe-China, i-Hong Kong, nomhlaba wonke.",
     "rights": "Wonke amalungelo agodliwe.",

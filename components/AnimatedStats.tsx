@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import { Users, Globe, Clock, Package } from "lucide-react";
+import type { Dictionary } from "@/lib/i18n";
 
 function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -36,38 +37,19 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
   );
 }
 
-const stats = [
-  {
-    icon: Users,
-    value: 500,
-    suffix: "+",
-    label: "Happy Clients",
-    color: "text-blue-400",
-  },
-  {
-    icon: Globe,
-    value: 15,
-    suffix: "+",
-    label: "Countries Served",
-    color: "text-emerald-400",
-  },
-  {
-    icon: Clock,
-    value: 10,
-    suffix: "+",
-    label: "Years Experience",
-    color: "text-amber-400",
-  },
-  {
-    icon: Package,
-    value: 2000,
-    suffix: "+",
-    label: "Orders Completed",
-    color: "text-purple-400",
-  },
+const statMeta = [
+  { icon: Users, value: 500, suffix: "+", color: "text-blue-400" },
+  { icon: Globe, value: 15, suffix: "+", color: "text-emerald-400" },
+  { icon: Clock, value: 10, suffix: "+", color: "text-amber-400" },
+  { icon: Package, value: 2000, suffix: "+", color: "text-purple-400" },
 ];
 
-export default function AnimatedStats() {
+export default function AnimatedStats({ dict }: { dict: Dictionary }) {
+  const stats = statMeta.map((meta, i) => ({
+    ...meta,
+    label: dict.stats.items[i].label,
+  }));
+
   return (
     <section className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-5xl">
