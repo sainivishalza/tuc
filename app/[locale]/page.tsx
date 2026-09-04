@@ -60,8 +60,19 @@ export default async function LocalePage({
     "@type": "LocalBusiness",
     name: "The Unique Choice",
     description: dict.meta.description,
+    url: "https://theuniquechoice.com",
+    email: "hello@theuniquechoice.com",
+    telephone: "+91 98967 39100",
     areaServed: ["Hong Kong", "India", "South Africa"],
-    sameAs: [] as string[],
+    sameAs: [
+      "https://www.facebook.com/choicetheunique",
+      "https://www.instagram.com/choicetheunique",
+    ],
+    founder: {
+      "@type": "Person",
+      name: "Vishal Saini",
+      jobTitle: "Founder",
+    },
   };
 
   const faqJsonLd = {
