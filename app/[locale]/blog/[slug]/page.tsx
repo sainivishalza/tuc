@@ -15,12 +15,6 @@ export function generateStaticParams() {
   );
 }
 
-function getPosts(locale: Locale, slug: string) {
-  const enPost = enDict.blog.posts.find((p) => p.slug === slug);
-  if (!enPost) return null;
-  return { enPost, locale };
-}
-
 export async function generateMetadata({
   params,
 }: {
@@ -49,10 +43,8 @@ export default async function BlogPostPage({
   const { locale, slug } = await params;
   const dict = await getDictionary(locale);
   const localPost = dict.blog.posts.find((p) => p.slug === slug);
-  const found = getPosts(locale, slug);
 
-  if (!localPost || !found) notFound();
-  const { enPost } = found;
+  if (!localPost) notFound();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -62,8 +54,8 @@ export default async function BlogPostPage({
     datePublished: localPost.date,
     author: {
       "@type": "Person",
-      name: enPost.author.name,
-      jobTitle: enPost.author.title,
+      name: localPost.author.name,
+      jobTitle: localPost.author.title,
     },
     publisher: {
       "@type": "Organization",
@@ -101,7 +93,7 @@ export default async function BlogPostPage({
               </span>
               <span className="flex items-center gap-1">
                 <User size={14} />
-                {enPost.author.name}
+                {localPost.author.name}
               </span>
             </div>
           </div>
@@ -114,7 +106,7 @@ export default async function BlogPostPage({
                 TL;DR
               </p>
               <p className="mt-2 text-sm leading-relaxed sm:text-base">
-                {enPost.summary}
+                {localPost.summary}
               </p>
             </div>
           </div>
@@ -122,7 +114,7 @@ export default async function BlogPostPage({
 
         <section className="px-4 py-6 sm:px-6">
           <article className="mx-auto max-w-3xl">
-            {enPost.body.map((block, i) => {
+            {localPost.body.map((block, i) => {
               if (block.type === "heading") {
                 return (
                   <h2
@@ -168,13 +160,13 @@ export default async function BlogPostPage({
               </div>
               <div>
                 <p className="font-display text-sm font-semibold sm:text-base">
-                  {enPost.author.name}
+                  {localPost.author.name}
                 </p>
                 <p className="text-xs font-medium text-accent sm:text-sm">
-                  {enPost.author.title}
+                  {localPost.author.title}
                 </p>
                 <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
-                  {enPost.author.bio}
+                  {localPost.author.bio}
                 </p>
               </div>
             </div>
