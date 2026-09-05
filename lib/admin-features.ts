@@ -46,4 +46,11 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/blog",
     status: "live",
   },
+  {
+    title: "Category Pages",
+    description:
+      "Templated \"Sourcing [Category] from China\" landing pages targeting category-specific search intent, stored in the database — create, edit, and publish per locale without a code deploy.",
+    href: "/admin/categories",
+    status: "live",
+  },
 ];

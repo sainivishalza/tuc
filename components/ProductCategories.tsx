@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Cpu,
   Home,
@@ -8,11 +9,22 @@ import {
   Package,
   Wrench,
 } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 
 const icons = [Cpu, Home, Shirt, Building2, Package, Wrench];
+
+// Same order as dict.categories.items in every locale — pairs each card
+// with its /sourcing/[slug] landing page slug.
+const slugs = [
+  "electronics-gadgets",
+  "home-kitchen",
+  "fashion-textiles",
+  "building-materials",
+  "packaging-printing",
+  "auto-parts-tools",
+];
 
 const colors = [
   "from-blue-500/15 to-blue-600/5",
@@ -32,7 +44,13 @@ const iconColors = [
   "text-red-400",
 ];
 
-export default function ProductCategories({ dict }: { dict: Dictionary }) {
+export default function ProductCategories({
+  dict,
+  locale,
+}: {
+  dict: Dictionary;
+  locale: Locale;
+}) {
   return (
     <section className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-5xl">
@@ -50,7 +68,8 @@ export default function ProductCategories({ dict }: { dict: Dictionary }) {
 
             return (
               <Reveal key={cat.name} delay={i * 0.06}>
-                <div
+                <Link
+                  href={`/${locale}/sourcing/${slugs[i % slugs.length]}`}
                   className={`glass-strong group flex flex-col items-center gap-3 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
                 >
                   <div
@@ -62,7 +81,7 @@ export default function ProductCategories({ dict }: { dict: Dictionary }) {
                     {cat.name}
                   </h3>
                   <p className="text-xs text-muted sm:text-sm">{cat.desc}</p>
-                </div>
+                </Link>
               </Reveal>
             );
           })}

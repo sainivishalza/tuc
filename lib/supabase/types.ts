@@ -52,6 +52,21 @@ export interface BlogPost {
   updated_at: string;
 }
 
+export interface CategoryPage {
+  id: string;
+  slug: string;
+  locale: string;
+  name: string;
+  tagline: string;
+  intro: string;
+  highlights: string[];
+  faq: BlogFaqItem[];
+  status: "draft" | "published";
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AnalyticsEvent {
   id: number;
   event_type: "pageview" | "cta_click";

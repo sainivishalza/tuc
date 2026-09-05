@@ -93,7 +93,7 @@ export default async function LocalePage({
         <AnimatedStats dict={dict} />
         <TrustBadges dict={dict} />
         <Services dict={dict} />
-        <ProductCategories dict={dict} />
+        <ProductCategories dict={dict} locale={locale} />
         <HowItWorks dict={dict} />
         <Pricing dict={dict} />
         <WhyUs dict={dict} />

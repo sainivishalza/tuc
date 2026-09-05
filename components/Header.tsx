@@ -35,6 +35,7 @@ export default function Header({
     { href: "#how-it-works", label: dict.nav.howItWorks },
     { href: "#why-us", label: dict.nav.whyUs },
     { href: "#faq", label: dict.nav.faq },
+    { href: `/${locale}/sourcing`, label: dict.categories.title },
     { href: `/${locale}/blog`, label: dict.nav.blog },
   ];
 
