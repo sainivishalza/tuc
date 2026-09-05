@@ -1,17 +1,24 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n";
-import enDict from "@/lib/dictionaries/en.json";
+import { getAllPublishedSlugs } from "@/lib/actions/blogPosts";
 
 const BASE_URL = "https://theuniquechoice.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = ["", "/about", "/contact", "/blog"];
-  const blogPostPaths = enDict.blog.posts.map((post) => `/blog/${post.slug}`);
+  const publishedSlugs = await getAllPublishedSlugs();
 
-  return locales.flatMap((locale) =>
-    [...staticPaths, ...blogPostPaths].map((path) => ({
+  const staticEntries = locales.flatMap((locale) =>
+    staticPaths.map((path) => ({
       url: `${BASE_URL}/${locale}${path}`,
       lastModified: new Date(),
     }))
   );
+
+  const blogEntries = publishedSlugs.map(({ locale, slug }) => ({
+    url: `${BASE_URL}/${locale}/blog/${slug}`,
+    lastModified: new Date(),
+  }));
+
+  return [...staticEntries, ...blogEntries];
 }

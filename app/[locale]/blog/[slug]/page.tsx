@@ -2,18 +2,21 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, User } from "lucide-react";
-import { locales, getDictionary, type Locale } from "@/lib/i18n";
-import enDict from "@/lib/dictionaries/en.json";
+import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import LazyContactCTA from "@/components/LazyContactCTA";
+import { getPublishedPost, getAllPublishedSlugs } from "@/lib/actions/blogPosts";
 
-export function generateStaticParams() {
-  return locales.flatMap((locale) =>
-    enDict.blog.posts.map((post) => ({ locale, slug: post.slug }))
-  );
+export async function generateStaticParams() {
+  const slugs = await getAllPublishedSlugs();
+  return slugs.map(({ locale, slug }) => ({ locale, slug }));
 }
+
+// Fallback safety net — admin publish/edit actions trigger on-demand
+// revalidation immediately, this just guards against a missed call.
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -21,15 +24,14 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const dict = await getDictionary(locale);
-  const localPost = dict.blog.posts.find((p) => p.slug === slug);
-  if (!localPost) return {};
+  const post = await getPublishedPost(locale, slug);
+  if (!post) return {};
   return {
-    title: `${localPost.title} — The Unique Choice`,
-    description: localPost.excerpt,
+    title: `${post.title} — The Unique Choice`,
+    description: post.excerpt,
     openGraph: {
-      title: localPost.title,
-      description: localPost.excerpt,
+      title: post.title,
+      description: post.excerpt,
       type: "article",
     },
   };
@@ -42,20 +44,20 @@ export default async function BlogPostPage({
 }) {
   const { locale, slug } = await params;
   const dict = await getDictionary(locale);
-  const localPost = dict.blog.posts.find((p) => p.slug === slug);
+  const post = await getPublishedPost(locale, slug);
 
-  if (!localPost) notFound();
+  if (!post) notFound();
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: localPost.title,
-    description: localPost.excerpt,
-    datePublished: localPost.date,
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.published_at,
     author: {
       "@type": "Person",
-      name: localPost.author.name,
-      jobTitle: localPost.author.title,
+      name: post.author_name,
+      jobTitle: post.author_title,
     },
     publisher: {
       "@type": "Organization",
@@ -82,18 +84,20 @@ export default async function BlogPostPage({
             </Link>
 
             <h1 className="mt-6 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              {localPost.title}
+              {post.title}
             </h1>
 
             <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted">
-              <time>{localPost.date}</time>
-              <span className="flex items-center gap-1">
-                <Clock size={14} />
-                {localPost.readTime}
-              </span>
+              <time>{post.published_at}</time>
+              {post.read_time && (
+                <span className="flex items-center gap-1">
+                  <Clock size={14} />
+                  {post.read_time}
+                </span>
+              )}
               <span className="flex items-center gap-1">
                 <User size={14} />
-                {localPost.author.name}
+                {post.author_name}
               </span>
             </div>
           </div>
@@ -106,7 +110,7 @@ export default async function BlogPostPage({
                 TL;DR
               </p>
               <p className="mt-2 text-sm leading-relaxed sm:text-base">
-                {localPost.summary}
+                {post.summary}
               </p>
             </div>
           </div>
@@ -114,7 +118,7 @@ export default async function BlogPostPage({
 
         <section className="px-4 py-6 sm:px-6">
           <article className="mx-auto max-w-3xl">
-            {localPost.body.map((block, i) => {
+            {post.body.map((block, i) => {
               if (block.type === "heading") {
                 return (
                   <h2
@@ -160,13 +164,13 @@ export default async function BlogPostPage({
               </div>
               <div>
                 <p className="font-display text-sm font-semibold sm:text-base">
-                  {localPost.author.name}
+                  {post.author_name}
                 </p>
                 <p className="text-xs font-medium text-accent sm:text-sm">
-                  {localPost.author.title}
+                  {post.author_title}
                 </p>
                 <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
-                  {localPost.author.bio}
+                  {post.author_bio}
                 </p>
               </div>
             </div>
