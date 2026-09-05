@@ -16,6 +16,10 @@ const BODY_PLACEHOLDER = `[
   ] }
 ]`;
 
+const FAQ_PLACEHOLDER = `[
+  { "q": "A question a reader would actually search for?", "a": "A direct, concise answer." }
+]`;
+
 export default function BlogPostForm({
   postId,
   initial,
@@ -31,6 +35,9 @@ export default function BlogPostForm({
   const [summary, setSummary] = useState(initial?.summary ?? "");
   const [bodyText, setBodyText] = useState(
     initial ? JSON.stringify(initial.body, null, 2) : BODY_PLACEHOLDER
+  );
+  const [faqText, setFaqText] = useState(
+    initial ? JSON.stringify(initial.faq, null, 2) : FAQ_PLACEHOLDER
   );
   const [authorName, setAuthorName] = useState(initial?.author_name ?? "Vishal Saini");
   const [authorTitle, setAuthorTitle] = useState(initial?.author_title ?? "Founder, The Unique Choice");
@@ -54,6 +61,15 @@ export default function BlogPostForm({
       return;
     }
 
+    let faq;
+    try {
+      faq = JSON.parse(faqText);
+      if (!Array.isArray(faq)) throw new Error("FAQ must be a JSON array of {q, a} items.");
+    } catch (err) {
+      setError(`FAQ is not valid JSON: ${err instanceof Error ? err.message : String(err)}`);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const input = {
@@ -63,6 +79,7 @@ export default function BlogPostForm({
         excerpt,
         summary,
         body,
+        faq,
         author_name: authorName,
         author_title: authorTitle,
         author_bio: authorBio,
@@ -157,6 +174,21 @@ export default function BlogPostForm({
         <p className="mt-1 text-[11px] text-gray-400">
           Each block: {"{ type: \"paragraph\"|\"heading\", text }"}, {"{ type: \"list\", items: [...] }"}, or
           {" "}{"{ type: \"related\", heading, items: [{ title, href }] }"} for internal links to other articles.
+        </p>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-gray-700">
+          FAQ (JSON array of question/answer pairs)
+        </label>
+        <textarea
+          value={faqText}
+          onChange={(e) => setFaqText(e.target.value)}
+          rows={6}
+          className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 font-mono text-xs"
+        />
+        <p className="mt-1 text-[11px] text-gray-400">
+          Renders as an FAQ section on the article and adds FAQPage schema. Leave as {"[]"} to skip.
         </p>
       </div>
 
