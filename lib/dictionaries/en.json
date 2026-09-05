@@ -107,7 +107,11 @@
       { "title": "Secure Handling", "desc": "Structured payments and protected shipping so your money and products are always safe." }
     ],
     "regions": "We operate across mainland China and Hong Kong, connecting buyers to factories in Shenzhen, Guangzhou, Yiwu, and beyond.",
-    "cta": "Start Sourcing Today"
+    "cta": "Start Sourcing Today",
+    "founderLabel": "Meet the Founder",
+    "founderName": "Vishal Saini",
+    "founderTitle": "Founder, The Unique Choice",
+    "founderBio": "Vishal Saini founded The Unique Choice after years of firsthand experience navigating factories, trade shows, and shipping routes across mainland China and Hong Kong. He works directly with every client to make sure sourcing feels less like a gamble and more like a partnership."
   },
   "contactPage": {
     "badge": "Contact Us",

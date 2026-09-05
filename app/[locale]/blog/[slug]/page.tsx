@@ -144,6 +144,30 @@ export default async function BlogPostPage({
                   </ul>
                 );
               }
+              if (block.type === "related") {
+                return (
+                  <div
+                    key={i}
+                    className="glass-strong mt-6 rounded-2xl p-5"
+                  >
+                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                      {block.heading}
+                    </p>
+                    <ul className="mt-3 flex flex-col gap-2">
+                      {block.items.map((item) => (
+                        <li key={item.href}>
+                          <Link
+                            href={item.href}
+                            className="text-sm font-medium text-foreground underline decoration-accent/40 underline-offset-4 transition hover:text-accent"
+                          >
+                            {item.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              }
               return (
                 <p
                   key={i}

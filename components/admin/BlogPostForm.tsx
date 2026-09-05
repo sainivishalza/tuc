@@ -10,7 +10,10 @@ const BODY_PLACEHOLDER = `[
   { "type": "paragraph", "text": "Opening paragraph..." },
   { "type": "heading", "text": "A section heading" },
   { "type": "paragraph", "text": "More detail..." },
-  { "type": "list", "items": ["Point one", "Point two"] }
+  { "type": "list", "items": ["Point one", "Point two"] },
+  { "type": "related", "heading": "Related guide", "items": [
+    { "title": "Article title to link to", "href": "/en/blog/some-other-slug" }
+  ] }
 ]`;
 
 export default function BlogPostForm({
@@ -152,7 +155,8 @@ export default function BlogPostForm({
           className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 font-mono text-xs"
         />
         <p className="mt-1 text-[11px] text-gray-400">
-          Each block: {"{ type: \"paragraph\"|\"heading\", text }"} or {"{ type: \"list\", items: [...] }"}
+          Each block: {"{ type: \"paragraph\"|\"heading\", text }"}, {"{ type: \"list\", items: [...] }"}, or
+          {" "}{"{ type: \"related\", heading, items: [{ title, href }] }"} for internal links to other articles.
         </p>
       </div>
 
