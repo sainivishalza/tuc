@@ -14,8 +14,8 @@ export const adminFeatures: AdminFeature[] = [
   {
     title: "Site Analytics",
     description:
-      "Pageviews and CTA clicks. Currently stored per-browser (localStorage) — opens the copy held in this browser, not a shared cross-visitor view.",
-    href: "/en/analytics",
+      "Real pageviews and CTA clicks from all visitors, stored in the database — a genuine cross-visitor view, not just this browser.",
+    href: "/admin/analytics",
     status: "live",
   },
   {
