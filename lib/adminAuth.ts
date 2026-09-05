@@ -1,4 +1,6 @@
 import { createHmac, timingSafeEqual } from "crypto";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const ADMIN_COOKIE_NAME = "admin_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours
@@ -32,4 +34,20 @@ export function verifySessionToken(token: string | undefined, secret: string | u
   if (!Number.isFinite(expiry) || Date.now() > expiry) return false;
 
   return true;
+}
+
+/** Call at the top of an admin page (server component). Redirects to login if not authenticated. */
+export async function requireAdminPage(): Promise<void> {
+  const token = (await cookies()).get(ADMIN_COOKIE_NAME)?.value;
+  if (!verifySessionToken(token, process.env.ADMIN_SESSION_SECRET)) {
+    redirect("/admin/login");
+  }
+}
+
+/** Call at the top of an admin server action. Throws if not authenticated, since actions can't redirect the caller's page state. */
+export async function requireAdminAction(): Promise<void> {
+  const token = (await cookies()).get(ADMIN_COOKIE_NAME)?.value;
+  if (!verifySessionToken(token, process.env.ADMIN_SESSION_SECRET)) {
+    throw new Error("Not authenticated");
+  }
 }
