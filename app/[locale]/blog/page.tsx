@@ -4,11 +4,16 @@ import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import { getPublishedPosts } from "@/lib/actions/blogPosts";
 import { Clock, ArrowRight } from "lucide-react";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
+
+// Fallback safety net — admin publish/edit actions trigger on-demand
+// revalidation immediately, this just guards against a missed call.
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -30,6 +35,7 @@ export default async function BlogPage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
+  const posts = await getPublishedPosts(locale);
 
   return (
     <>
@@ -53,8 +59,13 @@ export default async function BlogPage({
         {/* Blog Posts */}
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto max-w-3xl">
+            {posts.length === 0 && (
+              <div className="glass-strong rounded-2xl p-8 text-center text-sm text-muted">
+                New guides are on the way — check back soon.
+              </div>
+            )}
             <div className="grid grid-cols-1 gap-6">
-              {dict.blog.posts.map((post) => (
+              {posts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/${locale}/blog/${post.slug}`}
@@ -62,10 +73,10 @@ export default async function BlogPage({
                 >
                   <article className="flex-1">
                     <div className="flex items-center gap-3 text-xs text-muted">
-                      <time>{post.date}</time>
+                      <time>{post.published_at}</time>
                       <span className="flex items-center gap-1">
                         <Clock size={12} />
-                        {post.readTime}
+                        {post.read_time}
                       </span>
                     </div>
                     <h2 className="mt-3 font-display text-lg font-semibold sm:text-xl">

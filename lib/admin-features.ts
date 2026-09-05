@@ -41,8 +41,9 @@ export const adminFeatures: AdminFeature[] = [
   },
   {
     title: "Blog Posts",
-    description: "Currently hardcoded in lib/dictionaries/*.json. Move to a database to manage from here.",
-    href: "#",
-    status: "planned",
+    description:
+      "Real blog articles, stored in the database — create, edit, and publish per locale without a code deploy.",
+    href: "/admin/blog",
+    status: "live",
   },
 ];
