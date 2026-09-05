@@ -2,10 +2,10 @@
 
 import { Sparkles, MessageCircle, Quote, Star } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
+import type { Testimonial } from "@/lib/supabase/types";
 import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { whatsappLink } from "@/lib/whatsapp";
-import { testimonials } from "@/lib/testimonials";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -40,7 +40,13 @@ function AvatarInitials({ name }: { name: string }) {
   );
 }
 
-export default function Testimonials({ dict }: { dict: Dictionary }) {
+export default function Testimonials({
+  dict,
+  testimonials,
+}: {
+  dict: Dictionary;
+  testimonials: Testimonial[];
+}) {
   return (
     <section className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-4xl">
@@ -53,7 +59,7 @@ export default function Testimonials({ dict }: { dict: Dictionary }) {
         {testimonials.length > 0 ? (
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={i * 0.08}>
+              <Reveal key={t.id} delay={i * 0.08}>
                 <div className="glass-strong flex h-full flex-col gap-3 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/5">
                   <div className="flex items-start justify-between">
                     <Quote size={18} className="shrink-0 text-accent/30" />

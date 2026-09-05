@@ -33,17 +33,11 @@ export const adminFeatures: AdminFeature[] = [
     status: "live",
   },
   {
-    title: "Consultation Requests",
-    description:
-      "Same as Quote Requests — the consultation form doesn't persist submissions yet. Needs a database before this can show real data.",
-    href: "#",
-    status: "planned",
-  },
-  {
     title: "Testimonials",
-    description: "Currently hardcoded in components/Testimonials.tsx. Move to a database to manage from here.",
-    href: "#",
-    status: "planned",
+    description:
+      "Real client reviews, stored in the database. Add new ones and moderate status — only approved testimonials show on the public site.",
+    href: "/admin/testimonials",
+    status: "live",
   },
   {
     title: "Blog Posts",
