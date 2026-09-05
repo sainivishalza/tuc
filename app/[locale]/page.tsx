@@ -15,10 +15,15 @@ import LazyFAQ from "@/components/LazyFAQ";
 import LazyContactCTA from "@/components/LazyContactCTA";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import { getApprovedTestimonials } from "@/lib/actions/testimonials";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
+
+// Fallback safety net — admin testimonial changes trigger on-demand
+// revalidation immediately, this just guards against a missed call.
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -54,6 +59,7 @@ export default async function LocalePage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
+  const testimonials = await getApprovedTestimonials();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -108,7 +114,7 @@ export default async function LocalePage({
         <HowItWorks dict={dict} />
         <Pricing dict={dict} />
         <WhyUs dict={dict} />
-        <LazyTestimonials dict={dict} />
+        <LazyTestimonials dict={dict} testimonials={testimonials} />
         <LazyQuoteWizard dict={dict} />
         <LazyFAQ dict={dict} />
         <LazyContactCTA dict={dict} />
