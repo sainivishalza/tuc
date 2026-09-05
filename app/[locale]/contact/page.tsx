@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { whatsappLink } from "@/lib/whatsapp";
+import { getOrganizationJsonLd } from "@/lib/organizationSchema";
 import { MessageCircle, Mail, Phone, Clock, MapPin } from "lucide-react";
 
 export function generateStaticParams() {
@@ -32,9 +33,14 @@ export default async function ContactPage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
+  const jsonLd = getOrganizationJsonLd(dict.contactPage.subtitle);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header dict={dict} locale={locale} />
       <main>
         {/* Hero */}

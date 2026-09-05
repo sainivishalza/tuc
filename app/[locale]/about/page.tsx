@@ -4,7 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import LazyContactCTA from "@/components/LazyContactCTA";
-import { CheckCircle, Globe, Shield } from "lucide-react";
+import { getOrganizationJsonLd } from "@/lib/organizationSchema";
+import { CheckCircle, Globe, Shield, User } from "lucide-react";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -32,9 +33,14 @@ export default async function AboutPage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
+  const jsonLd = getOrganizationJsonLd(dict.about.subtitle);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header dict={dict} locale={locale} />
       <main>
         {/* Hero */}
@@ -62,6 +68,31 @@ export default async function AboutPage({
               <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
                 {dict.about.mission}
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Founder */}
+        <section className="px-4 pb-16 sm:px-6">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">
+              {dict.about.founderLabel}
+            </h2>
+            <div className="glass-strong mt-8 flex flex-col items-start gap-4 rounded-2xl p-6 sm:flex-row sm:p-8">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                <User size={26} />
+              </div>
+              <div>
+                <p className="font-display text-base font-semibold sm:text-lg">
+                  {dict.about.founderName}
+                </p>
+                <p className="text-xs font-medium text-accent sm:text-sm">
+                  {dict.about.founderTitle}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
+                  {dict.about.founderBio}
+                </p>
+              </div>
             </div>
           </div>
         </section>

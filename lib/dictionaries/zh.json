@@ -107,7 +107,11 @@
       { "title": "安全保障", "desc": "分阶段付款和受保护的物流,确保您的资金和产品安全。" }
     ],
     "regions": "我们在中国大陆和香港运营,连接买家与深圳、广州、义乌等地的工厂。",
-    "cta": "立即开始采购"
+    "cta": "立即开始采购",
+    "founderLabel": "创始人简介",
+    "founderName": "Vishal Saini",
+    "founderTitle": "创始人,The Unique Choice",
+    "founderBio": "Vishal Saini 在中国大陆和香港的工厂、展会与物流一线积累了多年实战经验后,创立了 The Unique Choice。他亲自参与每一位客户的采购过程,让海外采购不再是一场赌博,而是一次真正的合作。"
   },
   "contactPage": {
     "badge": "联系我们",

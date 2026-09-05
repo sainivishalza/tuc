@@ -16,6 +16,7 @@ import LazyContactCTA from "@/components/LazyContactCTA";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getApprovedTestimonials } from "@/lib/actions/testimonials";
+import { getOrganizationJsonLd } from "@/lib/organizationSchema";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -61,25 +62,7 @@ export default async function LocalePage({
   const dict = await getDictionary(locale);
   const testimonials = await getApprovedTestimonials();
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "The Unique Choice",
-    description: dict.meta.description,
-    url: "https://theuniquechoice.com",
-    email: "hello@theuniquechoice.com",
-    telephone: "+91 98967 39100",
-    areaServed: ["Hong Kong", "India", "South Africa"],
-    sameAs: [
-      "https://www.facebook.com/choicetheunique",
-      "https://www.instagram.com/choicetheunique",
-    ],
-    founder: {
-      "@type": "Person",
-      name: "Vishal Saini",
-      jobTitle: "Founder",
-    },
-  };
+  const jsonLd = getOrganizationJsonLd(dict.meta.description);
 
   const faqJsonLd = {
     "@context": "https://schema.org",
