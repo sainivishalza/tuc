@@ -63,7 +63,27 @@ export default async function BlogPostPage({
       "@type": "Organization",
       name: "The Unique Choice",
     },
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: [".article-tldr", "h1"],
+    },
   };
+
+  const faqJsonLd =
+    post.faq.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: post.faq.map((item) => ({
+            "@type": "Question",
+            name: item.q,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: item.a,
+            },
+          })),
+        }
+      : null;
 
   return (
     <>
@@ -71,6 +91,12 @@ export default async function BlogPostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <Header dict={dict} locale={locale} />
       <main>
         <section className="relative px-4 pt-28 pb-10 sm:px-6">
@@ -109,7 +135,7 @@ export default async function BlogPostPage({
               <p className="text-xs font-bold uppercase tracking-wider text-accent">
                 TL;DR
               </p>
-              <p className="mt-2 text-sm leading-relaxed sm:text-base">
+              <p className="article-tldr mt-2 text-sm leading-relaxed sm:text-base">
                 {post.summary}
               </p>
             </div>
@@ -179,6 +205,28 @@ export default async function BlogPostPage({
             })}
           </article>
         </section>
+
+        {post.faq.length > 0 && (
+          <section className="px-4 py-6 sm:px-6">
+            <div className="mx-auto max-w-3xl">
+              <h2 className="font-display text-xl font-semibold sm:text-2xl">
+                FAQ
+              </h2>
+              <div className="mt-4 flex flex-col gap-4">
+                {post.faq.map((item) => (
+                  <div key={item.q}>
+                    <p className="font-display text-sm font-semibold sm:text-base">
+                      {item.q}
+                    </p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted sm:text-base">
+                      {item.a}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="px-4 py-10 sm:px-6">
           <div className="mx-auto max-w-3xl">

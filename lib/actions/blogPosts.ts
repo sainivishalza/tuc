@@ -80,6 +80,7 @@ export interface BlogPostInput {
   excerpt: string;
   summary: string;
   body: BlogBodyBlock[];
+  faq: { q: string; a: string }[];
   author_name: string;
   author_title: string;
   author_bio: string;
@@ -108,6 +109,7 @@ export async function createBlogPost(input: BlogPostInput): Promise<void> {
     excerpt: input.excerpt.trim(),
     summary: input.summary.trim(),
     body: input.body,
+    faq: input.faq,
     author_name: input.author_name.trim(),
     author_title: input.author_title.trim(),
     author_bio: input.author_bio.trim(),
@@ -135,6 +137,7 @@ export async function updateBlogPost(id: string, input: BlogPostInput): Promise<
       excerpt: input.excerpt.trim(),
       summary: input.summary.trim(),
       body: input.body,
+      faq: input.faq,
       author_name: input.author_name.trim(),
       author_title: input.author_title.trim(),
       author_bio: input.author_bio.trim(),

@@ -28,6 +28,11 @@ export type BlogBodyBlock =
   | { type: "list"; items: string[] }
   | { type: "related"; heading: string; items: { title: string; href: string }[] };
 
+export interface BlogFaqItem {
+  q: string;
+  a: string;
+}
+
 export interface BlogPost {
   id: string;
   slug: string;
@@ -36,6 +41,7 @@ export interface BlogPost {
   excerpt: string;
   summary: string;
   body: BlogBodyBlock[];
+  faq: BlogFaqItem[];
   author_name: string;
   author_title: string;
   author_bio: string;
