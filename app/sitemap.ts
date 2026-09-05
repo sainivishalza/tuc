@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n";
 import { getAllPublishedSlugs } from "@/lib/actions/blogPosts";
+import { getAllPublishedCategorySlugs } from "@/lib/actions/categoryPages";
 
 const BASE_URL = "https://theuniquechoice.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ["", "/about", "/contact", "/blog"];
+  const staticPaths = ["", "/about", "/contact", "/blog", "/sourcing"];
   const publishedSlugs = await getAllPublishedSlugs();
+  const publishedCategorySlugs = await getAllPublishedCategorySlugs();
 
   const staticEntries = locales.flatMap((locale) =>
     staticPaths.map((path) => ({
@@ -20,5 +22,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }));
 
-  return [...staticEntries, ...blogEntries];
+  const categoryEntries = publishedCategorySlugs.map(({ locale, slug }) => ({
+    url: `${BASE_URL}/${locale}/sourcing/${slug}`,
+    lastModified: new Date(),
+  }));
+
+  return [...staticEntries, ...blogEntries, ...categoryEntries];
 }
