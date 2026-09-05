@@ -53,4 +53,11 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/categories",
     status: "live",
   },
+  {
+    title: "Glossary",
+    description:
+      "Sourcing & shipping term definitions (MOQ, FOB, Incoterms, etc.), stored in the database — a citable reference page with DefinedTermSet schema, built for backlinks and AI/answer-engine citations.",
+    href: "/admin/glossary",
+    status: "live",
+  },
 ];

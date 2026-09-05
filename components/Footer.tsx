@@ -29,7 +29,7 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="grid gap-10 sm:grid-cols-[1.3fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-[1.1fr_1fr_1fr_1fr]">
           <div className="max-w-sm">
             <Link href={`/${locale}`} className="flex items-center gap-2.5">
               <span className="gradient-brand flex h-8 w-8 items-center justify-center rounded-lg font-display text-sm font-semibold text-white">
@@ -77,6 +77,29 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
                 <a href="#faq" className="hover:text-foreground">
                   {dict.nav.faq}
                 </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted">
+              {dict.footer.resourcesLabel}
+            </h4>
+            <ul className="mt-3 flex flex-col gap-2 text-sm text-foreground/80">
+              <li>
+                <Link href={`/${locale}/blog`} className="hover:text-foreground">
+                  {dict.nav.blog}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/sourcing`} className="hover:text-foreground">
+                  {dict.categories.title}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/glossary`} className="hover:text-foreground">
+                  {dict.glossary.title}
+                </Link>
               </li>
             </ul>
           </div>

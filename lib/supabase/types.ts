@@ -67,6 +67,17 @@ export interface CategoryPage {
   updated_at: string;
 }
 
+export interface GlossaryTerm {
+  id: string;
+  term: string;
+  slug: string;
+  locale: string;
+  definition: string;
+  status: "draft" | "published";
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AnalyticsEvent {
   id: number;
   event_type: "pageview" | "cta_click";
