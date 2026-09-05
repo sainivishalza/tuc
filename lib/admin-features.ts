@@ -28,9 +28,9 @@ export const adminFeatures: AdminFeature[] = [
   {
     title: "Quote Requests",
     description:
-      "Submissions from the Quote Wizard aren't stored anywhere yet — they only open a WhatsApp chat. Needs a database before this can show real submissions.",
-    href: "#",
-    status: "planned",
+      "Real submissions from the Quote Wizard, stored in the database. Update status as you follow up with each lead.",
+    href: "/admin/quote-requests",
+    status: "live",
   },
   {
     title: "Consultation Requests",

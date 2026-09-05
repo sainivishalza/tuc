@@ -15,6 +15,7 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { whatsappLink } from "@/lib/whatsapp";
 import { trackCtaClick } from "@/lib/analytics";
+import { submitQuoteRequest } from "@/lib/actions/quoteRequests";
 import { usePathname } from "next/navigation";
 
 const productCategories = [
@@ -38,13 +39,40 @@ const timelines = [
 export default function QuoteWizard({ dict }: { dict: Dictionary }) {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTimeline, setSelectedTimeline] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const pathname = usePathname() ?? "/";
 
   const totalSteps = 3;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!name.trim() || !email.trim()) {
+      setError("Please enter your name and email.");
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    const result = await submitQuoteRequest({
+      name,
+      email,
+      whatsapp,
+      product: selectedCategory,
+      quantity,
+      timeline: selectedTimeline,
+      message,
+    });
+    setSubmitting(false);
+    if (!result.success) {
+      setError(result.error ?? "Something went wrong. Please try again.");
+      return;
+    }
     trackCtaClick("Quote Wizard Submit", pathname);
     setSubmitted(true);
   };
@@ -166,6 +194,8 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                       </label>
                       <input
                         type="text"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
                         placeholder="e.g., 500 units, 1000 pieces"
                         className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                       />
@@ -195,6 +225,8 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                         Additional Details
                       </label>
                       <textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
                         placeholder="Any specific requirements, certifications, or notes..."
                         rows={3}
                         className="w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
@@ -220,6 +252,8 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                       </label>
                       <input
                         type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         placeholder="John Smith"
                         required
                         className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
@@ -231,6 +265,8 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                       </label>
                       <input
                         type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="john@company.com"
                         required
                         className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
@@ -242,6 +278,8 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                       </label>
                       <input
                         type="tel"
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
                         placeholder="+1 234 567 8900"
                         className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                       />
@@ -276,13 +314,18 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    className="brand-gradient-animated flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
+                    disabled={submitting}
+                    className="brand-gradient-animated flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <Send size={16} />
-                    {dict.consultation.form.submit}
+                    {submitting ? "Sending..." : dict.consultation.form.submit}
                   </button>
                 )}
               </div>
+
+              {error && (
+                <p className="mt-4 text-center text-sm text-red-500">{error}</p>
+              )}
 
               <p className="mt-4 text-center text-xs text-muted">
                 {dict.consultation.guarantee}

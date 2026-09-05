@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { ADMIN_COOKIE_NAME, verifySessionToken } from "@/lib/adminAuth";
+import { requireAdminPage } from "@/lib/adminAuth";
 import { adminFeatures, type AdminFeature } from "@/lib/admin-features";
 import { logout } from "./logout/actions";
 
@@ -11,10 +9,7 @@ export const metadata = {
 };
 
 export default async function AdminPage() {
-  const token = (await cookies()).get(ADMIN_COOKIE_NAME)?.value;
-  if (!verifySessionToken(token, process.env.ADMIN_SESSION_SECRET)) {
-    redirect("/admin/login");
-  }
+  await requireAdminPage();
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-8">
