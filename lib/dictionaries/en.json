@@ -188,6 +188,11 @@
     "subtitle": "Learn how to source from China with confidence. Expert advice from our team.",
     "readMore": "Read More"
   },
+  "glossary": {
+    "badge": "Reference",
+    "title": "Sourcing & Shipping Glossary",
+    "subtitle": "Plain-language definitions for the terms you'll hear from suppliers, freight forwarders, and customs brokers."
+  },
   "stats": {
     "items": [
       { "label": "Happy Clients" },
@@ -210,6 +215,7 @@
     "tagline": "Your trusted sourcing partner between China, Hong Kong, and the world.",
     "rights": "All rights reserved.",
     "servicesLabel": "Services",
-    "companyLabel": "Company"
+    "companyLabel": "Company",
+    "resourcesLabel": "Resources"
   }
 }

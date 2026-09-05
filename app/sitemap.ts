@@ -6,7 +6,7 @@ import { getAllPublishedCategorySlugs } from "@/lib/actions/categoryPages";
 const BASE_URL = "https://theuniquechoice.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ["", "/about", "/contact", "/blog", "/sourcing"];
+  const staticPaths = ["", "/about", "/contact", "/blog", "/sourcing", "/glossary"];
   const publishedSlugs = await getAllPublishedSlugs();
   const publishedCategorySlugs = await getAllPublishedCategorySlugs();
 

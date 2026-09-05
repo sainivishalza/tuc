@@ -182,6 +182,11 @@
       { "name": "汽配工具", "desc": "汽车配件、工业工具、设备" }
     ]
   },
+  "glossary": {
+    "badge": "参考资料",
+    "title": "采购与物流术语表",
+    "subtitle": "用通俗易懂的语言解释您在与供应商、货运代理和海关经纪人沟通时会遇到的术语。"
+  },
   "blog": {
     "badge": "知识中心",
     "title": "采购指南与技巧",
@@ -210,6 +215,7 @@
     "tagline": "连接中国、香港与世界的值得信赖的采购伙伴。",
     "rights": "版权所有。",
     "servicesLabel": "服务项目",
-    "companyLabel": "公司"
+    "companyLabel": "公司",
+    "resourcesLabel": "资源"
   }
 }
