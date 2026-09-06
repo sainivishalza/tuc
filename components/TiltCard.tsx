@@ -1,9 +1,15 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
 import type { ReactNode, MouseEvent } from "react";
 
+/**
+ * Mouse-hover tilt effect, plain CSS transform + transition instead of
+ * framer-motion's spring physics — it's a desktop-only hover flourish
+ * (mobile has no mousemove), so a full animation library on the
+ * critical path bought nothing for the touch visitors who make up
+ * most of this site's traffic.
+ */
 export default function TiltCard({
   children,
   className,
@@ -12,43 +18,44 @@ export default function TiltCard({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0.5);
-  const y = useMotionValue(0.5);
-
-  const springConfig = { stiffness: 200, damping: 20, mass: 0.5 };
-  const rotateX = useSpring(useTransform(y, [0, 1], [8, -8]), springConfig);
-  const rotateY = useSpring(useTransform(x, [0, 1], [-8, 8]), springConfig);
-  const glareX = useTransform(x, [0, 1], ["0%", "100%"]);
-  const glareY = useTransform(y, [0, 1], ["0%", "100%"]);
+  const [tilt, setTilt] = useState({ x: 0.5, y: 0.5 });
 
   function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
-    x.set((e.clientX - rect.left) / rect.width);
-    y.set((e.clientY - rect.top) / rect.height);
+    setTilt({
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height,
+    });
   }
 
   function handleMouseLeave() {
-    x.set(0.5);
-    y.set(0.5);
+    setTilt({ x: 0.5, y: 0.5 });
   }
 
+  const rotateX = (0.5 - tilt.y) * 16;
+  const rotateY = (tilt.x - 0.5) * 16;
+
   return (
-    <motion.div
+    <div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformPerspective: 800, willChange: "transform" }}
+      style={{
+        transform: `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transition: "transform 0.2s ease-out",
+        willChange: "transform",
+      }}
       className={`relative ${className ?? ""}`}
     >
       {children}
-      <motion.div
+      <div
         aria-hidden
         style={{
-          background: `radial-gradient(220px circle at ${glareX} ${glareY}, rgba(255,255,255,0.35), transparent 60%)`,
+          background: `radial-gradient(220px circle at ${tilt.x * 100}% ${tilt.y * 100}%, rgba(255,255,255,0.35), transparent 60%)`,
         }}
         className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
-    </motion.div>
+    </div>
   );
 }

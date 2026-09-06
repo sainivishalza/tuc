@@ -1,33 +1,56 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useInView } from "framer-motion";
 import { Users, Globe, Clock, Package } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
+
+function useInView(ref: React.RefObject<Element | null>) {
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-50px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref]);
+
+  return isInView;
+}
 
 function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref);
 
   useEffect(() => {
     if (!isInView) return;
 
-    let start = 0;
+    // requestAnimationFrame rather than a fixed setInterval(16ms): rAF
+    // ties updates to the browser's actual paint cycle, so a slow
+    // device naturally renders fewer, larger steps instead of piling
+    // up ~125 individual React re-renders regardless of how much time
+    // each one actually takes.
     const duration = 2000;
-    const increment = target / (duration / 16);
+    const start = performance.now();
+    let rafId: number;
 
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
+    function tick(now: number) {
+      const progress = Math.min((now - start) / duration, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
 
-    return () => clearInterval(timer);
+    return () => cancelAnimationFrame(rafId);
   }, [isInView, target]);
 
   return (
