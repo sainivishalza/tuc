@@ -17,6 +17,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getApprovedTestimonials } from "@/lib/actions/testimonials";
 import { getOrganizationJsonLd } from "@/lib/organizationSchema";
+import { localeAlternates } from "@/lib/hreflang";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -36,9 +37,7 @@ export async function generateMetadata({
   return {
     title: dict.meta.title,
     description: dict.meta.description,
-    alternates: {
-      languages: Object.fromEntries(locales.map((l) => [l, `/${l}`])),
-    },
+    alternates: localeAlternates(locale),
     openGraph: {
       title: dict.meta.title,
       description: dict.meta.description,

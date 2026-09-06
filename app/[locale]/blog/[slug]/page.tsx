@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import LazyContactCTA from "@/components/LazyContactCTA";
 import { getPublishedPost, getAllPublishedSlugs } from "@/lib/actions/blogPosts";
+import { localeAlternates } from "@/lib/hreflang";
 
 export async function generateStaticParams() {
   const slugs = await getAllPublishedSlugs();
@@ -29,6 +30,7 @@ export async function generateMetadata({
   return {
     title: `${post.title} — The Unique Choice`,
     description: post.excerpt,
+    alternates: localeAlternates(locale, `/blog/${slug}`),
     openGraph: {
       title: post.title,
       description: post.excerpt,

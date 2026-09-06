@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { whatsappLink } from "@/lib/whatsapp";
 import { getOrganizationJsonLd } from "@/lib/organizationSchema";
+import { localeAlternates } from "@/lib/hreflang";
 import { MessageCircle, Mail, Phone, Clock, MapPin } from "lucide-react";
 
 export function generateStaticParams() {
@@ -21,6 +22,7 @@ export async function generateMetadata({
   return {
     title: `${dict.contactPage.badge} — The Unique Choice`,
     description: dict.contactPage.subtitle,
+    alternates: localeAlternates(locale, "/contact"),
   };
 }
 
