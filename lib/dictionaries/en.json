@@ -200,6 +200,7 @@
     "subtitle": "Enter the tracking number we gave you to see live status and download your packing list.",
     "inputPlaceholder": "Enter tracking number",
     "button": "Track",
+    "multiHint": "Tracking more than one parcel? Separate tracking numbers with a comma or a new line.",
     "notFound": "We couldn't find a shipment with that tracking number. Please double-check it, or message us on WhatsApp for help.",
     "destinationLabel": "Destination",
     "piecesLabel": "Total pieces",
