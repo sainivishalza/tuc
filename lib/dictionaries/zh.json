@@ -199,7 +199,17 @@
     "piecesLabel": "总件数",
     "locationLabel": "当前所在地",
     "carrierLabel": "承运商",
-    "updatedLabel": "最近更新",
+    "milestones": {
+      "title": "运输进度",
+      "received": "已入仓",
+      "shipped": "已出仓",
+      "departed": "已发出",
+      "arrived": "已到达目的地",
+      "outForDelivery": "派送中",
+      "delivered": "已签收"
+    },
+    "updatesTitle": "货物动态",
+    "noUpdates": "暂无动态,请稍后查看。",
     "packingListTitle": "装箱单",
     "packingListSubtitle": "下载装箱单,查看每个箱子里装的是什么。",
     "downloadExcel": "下载Excel格式",

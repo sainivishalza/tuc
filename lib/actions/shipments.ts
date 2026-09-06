@@ -6,7 +6,7 @@ import PDFDocument from "pdfkit";
 import { getSupabasePublicClient } from "@/lib/supabase/publicClient";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
-import type { Shipment, PublicShipment, ShipmentStatus } from "@/lib/supabase/types";
+import type { Shipment, PublicShipment, ShipmentStatus, ShipmentEvent } from "@/lib/supabase/types";
 
 const BUCKET = "packing-lists";
 
@@ -25,6 +25,21 @@ export async function trackShipment(trackingNumber: string): Promise<PublicShipm
 
   if (error || !data) return null;
   return data as PublicShipment;
+}
+
+/** Chronological event log for a shipment — public because the row is only
+ * reachable via a tracking-number lookup that already scopes to visible
+ * shipments (see the shipment_events RLS policy). */
+export async function getPublicShipmentEvents(shipmentId: string): Promise<ShipmentEvent[]> {
+  const supabase = getSupabasePublicClient();
+  const { data, error } = await supabase
+    .from("shipment_events")
+    .select("*")
+    .eq("shipment_id", shipmentId)
+    .order("event_at", { ascending: false });
+
+  if (error || !data) return [];
+  return data as ShipmentEvent[];
 }
 
 /**
@@ -92,12 +107,18 @@ export interface ShipmentInput {
   carrier_id: string | null;
   customer_name: string | null;
   customer_reference: string | null;
+  carrier_reference_no: string | null;
+  recipient_postal_code: string | null;
   destination_country: string | null;
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
-  latest_update: string | null;
-  latest_update_at: string | null;
+  milestone_received_at: string | null;
+  milestone_shipped_at: string | null;
+  milestone_departed_at: string | null;
+  milestone_arrived_at: string | null;
+  milestone_out_for_delivery_at: string | null;
+  milestone_delivered_at: string | null;
   visible: boolean;
 }
 
@@ -116,12 +137,18 @@ export async function createShipment(input: ShipmentInput): Promise<string> {
       carrier_id: input.carrier_id,
       customer_name: input.customer_name?.trim() || null,
       customer_reference: input.customer_reference?.trim() || null,
+      carrier_reference_no: input.carrier_reference_no?.trim() || null,
+      recipient_postal_code: input.recipient_postal_code?.trim() || null,
       destination_country: input.destination_country?.trim() || null,
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
-      latest_update: input.latest_update?.trim() || null,
-      latest_update_at: input.latest_update_at || null,
+      milestone_received_at: input.milestone_received_at || null,
+      milestone_shipped_at: input.milestone_shipped_at || null,
+      milestone_departed_at: input.milestone_departed_at || null,
+      milestone_arrived_at: input.milestone_arrived_at || null,
+      milestone_out_for_delivery_at: input.milestone_out_for_delivery_at || null,
+      milestone_delivered_at: input.milestone_delivered_at || null,
       visible: input.visible,
     })
     .select("id")
@@ -143,12 +170,18 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
       carrier_id: input.carrier_id,
       customer_name: input.customer_name?.trim() || null,
       customer_reference: input.customer_reference?.trim() || null,
+      carrier_reference_no: input.carrier_reference_no?.trim() || null,
+      recipient_postal_code: input.recipient_postal_code?.trim() || null,
       destination_country: input.destination_country?.trim() || null,
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
-      latest_update: input.latest_update?.trim() || null,
-      latest_update_at: input.latest_update_at || null,
+      milestone_received_at: input.milestone_received_at || null,
+      milestone_shipped_at: input.milestone_shipped_at || null,
+      milestone_departed_at: input.milestone_departed_at || null,
+      milestone_arrived_at: input.milestone_arrived_at || null,
+      milestone_out_for_delivery_at: input.milestone_out_for_delivery_at || null,
+      milestone_delivered_at: input.milestone_delivered_at || null,
       visible: input.visible,
       updated_at: new Date().toISOString(),
     })
@@ -176,6 +209,48 @@ export async function deleteShipment(id: string): Promise<void> {
   }
 
   const { error } = await supabase.from("shipments").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidateShipmentPaths();
+}
+
+// ---------- Admin: shipment event log ----------
+
+export async function getShipmentEvents(shipmentId: string): Promise<ShipmentEvent[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("shipment_events")
+    .select("*")
+    .eq("shipment_id", shipmentId)
+    .order("event_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data as ShipmentEvent[];
+}
+
+export async function addShipmentEvent(
+  shipmentId: string,
+  eventAt: string,
+  description: string
+): Promise<void> {
+  await requireAdminAction();
+  if (!description.trim()) throw new Error("Description is required.");
+  if (!eventAt) throw new Error("Event date/time is required.");
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("shipment_events").insert({
+    shipment_id: shipmentId,
+    event_at: eventAt,
+    description: description.trim(),
+  });
+
+  if (error) throw new Error(error.message);
+  revalidateShipmentPaths();
+}
+
+export async function deleteShipmentEvent(eventId: string): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("shipment_events").delete().eq("id", eventId);
   if (error) throw new Error(error.message);
   revalidateShipmentPaths();
 }
