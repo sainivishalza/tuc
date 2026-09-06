@@ -1,9 +1,10 @@
-import { MessageCircle, ArrowRight, ShieldCheck, PackageCheck, Globe2 } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import Link from "next/link";
+import { MessageCircle, ArrowRight, ShieldCheck, PackageCheck, Globe2, Truck } from "lucide-react";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import { whatsappLink } from "@/lib/whatsapp";
 import Hero3DLoader from "./Hero3DLoader";
 
-export default function Hero({ dict }: { dict: Dictionary }) {
+export default function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
     <section className="relative overflow-hidden px-4 pb-16 pt-16 sm:px-6 sm:pt-20">
       <div className="blob -top-24 -left-24 h-80 w-80 bg-brand-navy/20" />
@@ -41,6 +42,13 @@ export default function Hero({ dict }: { dict: Dictionary }) {
               {dict.hero.ctaServices}
               <ArrowRight size={16} />
             </a>
+            <Link
+              href={`/${locale}/track`}
+              className="glass-strong flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-foreground transition hover:opacity-80 sm:w-auto"
+            >
+              <Truck size={16} />
+              {dict.nav.trackShipment}
+            </Link>
           </div>
 
           <div className="glass stat-bar mx-auto mt-12 grid max-w-lg grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl lg:mx-0">
