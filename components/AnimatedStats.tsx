@@ -4,14 +4,29 @@ import { useEffect, useRef, useState } from "react";
 import { Users, Globe, Clock, Package } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 
+/**
+ * Distinguishes "already visible when the page loaded" from "scrolled
+ * into view later". IntersectionObserver's first callback always fires
+ * with the current state, so the very first call tells us which case
+ * this is — the two need different treatment for Speed Index: content
+ * visible at load animating for a full 2s directly counts against it
+ * (Lighthouse measures visual progress in the initial viewport), while
+ * a later scroll-triggered reveal doesn't affect that metric at all.
+ */
 function useInView(ref: React.RefObject<Element | null>) {
   const [isInView, setIsInView] = useState(false);
+  const [visibleOnMount, setVisibleOnMount] = useState<boolean | null>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    let first = true;
     const observer = new IntersectionObserver(
       ([entry]) => {
+        if (first) {
+          first = false;
+          setVisibleOnMount(entry.isIntersecting);
+        }
         if (entry.isIntersecting) {
           setIsInView(true);
           observer.disconnect();
@@ -23,16 +38,19 @@ function useInView(ref: React.RefObject<Element | null>) {
     return () => observer.disconnect();
   }, [ref]);
 
-  return isInView;
+  return { isInView, visibleOnMount };
 }
 
 function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref);
+  const { isInView, visibleOnMount } = useInView(ref);
 
   useEffect(() => {
-    if (!isInView) return;
+    // Already on screen at load: skip the effect entirely and render
+    // the final value directly below, instead of ticking up for 2s in
+    // front of the page-speed test.
+    if (!isInView || visibleOnMount) return;
 
     // requestAnimationFrame rather than a fixed setInterval(16ms): rAF
     // ties updates to the browser's actual paint cycle, so a slow
@@ -51,11 +69,13 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
     rafId = requestAnimationFrame(tick);
 
     return () => cancelAnimationFrame(rafId);
-  }, [isInView, target]);
+  }, [isInView, visibleOnMount, target]);
+
+  const displayCount = visibleOnMount && isInView ? target : count;
 
   return (
     <span ref={ref} className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
-      {count.toLocaleString()}{suffix}
+      {displayCount.toLocaleString()}{suffix}
     </span>
   );
 }
