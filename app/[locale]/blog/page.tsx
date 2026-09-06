@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getPublishedPosts } from "@/lib/actions/blogPosts";
+import { localeAlternates } from "@/lib/hreflang";
 import { Clock, ArrowRight } from "lucide-react";
 
 export function generateStaticParams() {
@@ -25,6 +26,7 @@ export async function generateMetadata({
   return {
     title: `${dict.blog.title} — The Unique Choice`,
     description: dict.blog.subtitle,
+    alternates: localeAlternates(locale, "/blog"),
   };
 }
 

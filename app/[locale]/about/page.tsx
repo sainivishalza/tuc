@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import LazyContactCTA from "@/components/LazyContactCTA";
 import { getOrganizationJsonLd } from "@/lib/organizationSchema";
+import { localeAlternates } from "@/lib/hreflang";
 import { CheckCircle, Globe, Shield, User } from "lucide-react";
 
 export function generateStaticParams() {
@@ -21,6 +22,7 @@ export async function generateMetadata({
   return {
     title: `${dict.about.title} — The Unique Choice`,
     description: dict.about.subtitle,
+    alternates: localeAlternates(locale, "/about"),
   };
 }
 

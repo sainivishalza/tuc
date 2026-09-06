@@ -30,11 +30,11 @@ export default function Header({
   }, [open]);
 
   const links = [
-    { href: "#services", label: dict.nav.services },
-    { href: "#pricing", label: dict.nav.pricing },
-    { href: "#how-it-works", label: dict.nav.howItWorks },
-    { href: "#why-us", label: dict.nav.whyUs },
-    { href: "#faq", label: dict.nav.faq },
+    { href: `/${locale}#services`, label: dict.nav.services },
+    { href: `/${locale}#pricing`, label: dict.nav.pricing },
+    { href: `/${locale}#how-it-works`, label: dict.nav.howItWorks },
+    { href: `/${locale}#why-us`, label: dict.nav.whyUs },
+    { href: `/${locale}#faq`, label: dict.nav.faq },
     { href: `/${locale}/sourcing`, label: dict.categories.title },
     { href: `/${locale}/blog`, label: dict.nav.blog },
   ];

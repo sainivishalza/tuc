@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getPublishedGlossaryTerms } from "@/lib/actions/glossaryTerms";
+import { localeAlternates } from "@/lib/hreflang";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -23,6 +24,7 @@ export async function generateMetadata({
   return {
     title: `${dict.glossary.title} — The Unique Choice`,
     description: dict.glossary.subtitle,
+    alternates: localeAlternates(locale, "/glossary"),
   };
 }
 

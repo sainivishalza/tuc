@@ -69,12 +69,12 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
                 </Link>
               </li>
               <li>
-                <a href="#services" className="hover:text-foreground">
+                <a href={`/${locale}#services`} className="hover:text-foreground">
                   {dict.nav.services}
                 </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-foreground">
+                <a href={`/${locale}#faq`} className="hover:text-foreground">
                   {dict.nav.faq}
                 </a>
               </li>

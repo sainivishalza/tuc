@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getPublishedCategories } from "@/lib/actions/categoryPages";
+import { localeAlternates } from "@/lib/hreflang";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -25,6 +26,7 @@ export async function generateMetadata({
   return {
     title: `${dict.categories.title} — The Unique Choice`,
     description: dict.categories.subtitle,
+    alternates: localeAlternates(locale, "/sourcing"),
   };
 }
 

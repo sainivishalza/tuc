@@ -9,6 +9,7 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import LazyContactCTA from "@/components/LazyContactCTA";
 import { getPublishedCategory, getAllPublishedCategorySlugs } from "@/lib/actions/categoryPages";
 import { getOrganizationJsonLd } from "@/lib/organizationSchema";
+import { localeAlternates } from "@/lib/hreflang";
 
 export async function generateStaticParams() {
   const slugs = await getAllPublishedCategorySlugs();
@@ -30,6 +31,7 @@ export async function generateMetadata({
   return {
     title: `${category.name} — The Unique Choice`,
     description: category.tagline,
+    alternates: localeAlternates(locale, `/sourcing/${slug}`),
     openGraph: {
       title: category.name,
       description: category.tagline,
