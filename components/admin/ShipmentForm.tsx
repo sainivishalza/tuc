@@ -7,6 +7,8 @@ import {
   updateShipment,
   uploadPackingList,
   removePackingList,
+  uploadProofOfDelivery,
+  removeProofOfDelivery,
   addShipmentEvent,
   deleteShipmentEvent,
 } from "@/lib/actions/shipments";
@@ -105,6 +107,11 @@ export default function ShipmentForm({
   const [uploadingPackingList, setUploadingPackingList] = useState(false);
   const [packingListError, setPackingListError] = useState("");
 
+  const [hasPod, setHasPod] = useState(!!initial?.pod_file_path);
+  const [podFile, setPodFile] = useState<File | null>(null);
+  const [uploadingPod, setUploadingPod] = useState(false);
+  const [podError, setPodError] = useState("");
+
   const [events, setEvents] = useState<ShipmentEvent[]>(initialEvents ?? []);
   const [newEventAt, setNewEventAt] = useState("");
   const [newEventDesc, setNewEventDesc] = useState("");
@@ -160,6 +167,20 @@ export default function ShipmentForm({
         setUploadingPackingList(false);
       }
 
+      if (podFile && id) {
+        setUploadingPod(true);
+        setPodError("");
+        try {
+          await uploadProofOfDelivery(id, podFile);
+        } catch (err) {
+          setPodError(err instanceof Error ? err.message : "Proof of delivery upload failed.");
+          setUploadingPod(false);
+          setSubmitting(false);
+          return;
+        }
+        setUploadingPod(false);
+      }
+
       if (wasCreate && id) {
         router.push(`/admin/shipments/${id}`);
       } else {
@@ -181,6 +202,17 @@ export default function ShipmentForm({
       setHasPdf(false);
     } catch (err) {
       setPackingListError(err instanceof Error ? err.message : "Failed to remove packing list.");
+    }
+  }
+
+  async function handleRemoveProofOfDelivery() {
+    if (!shipmentId) return;
+    setPodError("");
+    try {
+      await removeProofOfDelivery(shipmentId);
+      setHasPod(false);
+    } catch (err) {
+      setPodError(err instanceof Error ? err.message : "Failed to remove proof of delivery.");
     }
   }
 
@@ -405,6 +437,38 @@ export default function ShipmentForm({
         </p>
         {uploadingPackingList && <p className="mt-2 text-xs text-gray-500">Uploading and converting…</p>}
         {packingListError && <p className="mt-2 text-xs text-red-500">{packingListError}</p>}
+      </div>
+
+      <div className="rounded-xl border border-gray-200 p-4">
+        <label className="mb-1 block text-xs font-semibold text-gray-700">
+          Proof of delivery (photo or scanned signed receipt)
+        </label>
+        {hasPod && !podFile && (
+          <div className="mb-3 flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
+            <span>A proof of delivery is uploaded and available to the customer.</span>
+            {shipmentId && (
+              <button
+                type="button"
+                onClick={handleRemoveProofOfDelivery}
+                className="font-semibold text-emerald-900 underline"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        )}
+        <input
+          type="file"
+          accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
+          onChange={(e) => setPodFile(e.target.files?.[0] ?? null)}
+          className="w-full text-sm"
+        />
+        <p className="mt-1 text-[11px] text-gray-400">
+          Upload once the parcel is signed for — a photo of the signed waybill or delivery note
+          works well. The customer will be able to view or download it from the tracking page.
+        </p>
+        {uploadingPod && <p className="mt-2 text-xs text-gray-500">Uploading…</p>}
+        {podError && <p className="mt-2 text-xs text-red-500">{podError}</p>}
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}

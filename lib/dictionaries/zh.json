@@ -215,6 +215,8 @@
     "downloadExcel": "下载Excel格式",
     "downloadPdf": "下载PDF格式",
     "noPackingList": "装箱单尚未上传——如需要请联系我们。",
+    "podTitle": "签收证明",
+    "downloadPod": "下载签收证明",
     "status": {
       "not_found": "暂无信息",
       "not_shipped": "尚未发货",

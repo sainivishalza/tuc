@@ -221,6 +221,8 @@
     "downloadExcel": "Download as Excel",
     "downloadPdf": "Download as PDF",
     "noPackingList": "Packing list not uploaded yet — contact us if you need it now.",
+    "podTitle": "Proof of Delivery",
+    "downloadPod": "Download proof of delivery",
     "status": {
       "not_found": "Not Found Yet",
       "not_shipped": "Not Yet Shipped",

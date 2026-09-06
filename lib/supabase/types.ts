@@ -117,6 +117,8 @@ export interface Shipment {
   milestone_delivered_at: string | null;
   packing_list_excel_path: string | null;
   packing_list_pdf_path: string | null;
+  /** Signed proof-of-delivery (photo or scanned receipt), uploaded once the parcel is signed for. */
+  pod_file_path: string | null;
   visible: boolean;
   created_at: string;
   updated_at: string;
@@ -139,6 +141,7 @@ export interface PublicShipment {
   milestone_delivered_at: string | null;
   has_excel: boolean;
   has_pdf: boolean;
+  has_pod: boolean;
 }
 
 export interface ShipmentEvent {

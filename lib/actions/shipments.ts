@@ -75,6 +75,28 @@ export async function getPackingListUrl(
   return signed.signedUrl;
 }
 
+/** Same authorization model as getPackingListUrl — the tracking number itself is the key. */
+export async function getProofOfDeliveryUrl(trackingNumber: string): Promise<string | null> {
+  const cleaned = trackingNumber.trim();
+  if (!cleaned) return null;
+
+  const supabase = getSupabaseAdminClient();
+  const { data: shipment, error } = await supabase
+    .from("shipments")
+    .select("pod_file_path, visible")
+    .eq("tracking_number", cleaned)
+    .maybeSingle();
+
+  if (error || !shipment || !shipment.visible || !shipment.pod_file_path) return null;
+
+  const { data: signed, error: signError } = await supabase.storage
+    .from(BUCKET)
+    .createSignedUrl(shipment.pod_file_path, 300);
+
+  if (signError || !signed) return null;
+  return signed.signedUrl;
+}
+
 // ---------- Admin CRUD ----------
 
 export async function getAllShipments(): Promise<Shipment[]> {
@@ -197,13 +219,15 @@ export async function deleteShipment(id: string): Promise<void> {
 
   const { data: shipment } = await supabase
     .from("shipments")
-    .select("packing_list_excel_path, packing_list_pdf_path")
+    .select("packing_list_excel_path, packing_list_pdf_path, pod_file_path")
     .eq("id", id)
     .maybeSingle();
 
-  const paths = [shipment?.packing_list_excel_path, shipment?.packing_list_pdf_path].filter(
-    (p): p is string => !!p
-  );
+  const paths = [
+    shipment?.packing_list_excel_path,
+    shipment?.packing_list_pdf_path,
+    shipment?.pod_file_path,
+  ].filter((p): p is string => !!p);
   if (paths.length > 0) {
     await supabase.storage.from(BUCKET).remove(paths);
   }
@@ -403,6 +427,76 @@ export async function removePackingList(shipmentId: string): Promise<void> {
       packing_list_pdf_path: null,
       updated_at: new Date().toISOString(),
     })
+    .eq("id", shipmentId);
+  if (error) throw new Error(error.message);
+  revalidateShipmentPaths();
+}
+
+// ---------- Proof of delivery ----------
+
+const POD_CONTENT_TYPES: Record<string, string> = {
+  "application/pdf": "pdf",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
+export async function uploadProofOfDelivery(shipmentId: string, file: File): Promise<void> {
+  await requireAdminAction();
+  if (!file || file.size === 0) throw new Error("No file provided.");
+
+  const ext = POD_CONTENT_TYPES[file.type];
+  if (!ext) {
+    throw new Error("Proof of delivery must be an image (JPG/PNG/WebP) or a PDF.");
+  }
+
+  const supabase = getSupabaseAdminClient();
+  const { data: shipment, error: fetchError } = await supabase
+    .from("shipments")
+    .select("pod_file_path")
+    .eq("id", shipmentId)
+    .maybeSingle();
+  if (fetchError || !shipment) throw new Error("Shipment not found.");
+
+  if (shipment.pod_file_path) {
+    await supabase.storage.from(BUCKET).remove([shipment.pod_file_path]);
+  }
+
+  const path = `${shipmentId}/proof-of-delivery.${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+
+  const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, arrayBuffer, {
+    contentType: file.type,
+    upsert: true,
+  });
+  if (uploadError) throw new Error(uploadError.message);
+
+  const { error: updateError } = await supabase
+    .from("shipments")
+    .update({ pod_file_path: path, updated_at: new Date().toISOString() })
+    .eq("id", shipmentId);
+  if (updateError) throw new Error(updateError.message);
+
+  revalidateShipmentPaths();
+}
+
+export async function removeProofOfDelivery(shipmentId: string): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+
+  const { data: shipment } = await supabase
+    .from("shipments")
+    .select("pod_file_path")
+    .eq("id", shipmentId)
+    .maybeSingle();
+
+  if (shipment?.pod_file_path) {
+    await supabase.storage.from(BUCKET).remove([shipment.pod_file_path]);
+  }
+
+  const { error } = await supabase
+    .from("shipments")
+    .update({ pod_file_path: null, updated_at: new Date().toISOString() })
     .eq("id", shipmentId);
   if (error) throw new Error(error.message);
   revalidateShipmentPaths();

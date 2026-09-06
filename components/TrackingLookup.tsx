@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { Search, Package, MapPin, Truck, Clock, FileSpreadsheet, FileText, Check } from "lucide-react";
-import { trackShipment, getPackingListUrl, getPublicShipmentEvents } from "@/lib/actions/shipments";
+import {
+  trackShipment,
+  getPackingListUrl,
+  getProofOfDeliveryUrl,
+  getPublicShipmentEvents,
+} from "@/lib/actions/shipments";
 import type { Dictionary } from "@/lib/i18n";
 import type { PublicShipment, ShipmentEvent, ShipmentStatus } from "@/lib/supabase/types";
 
@@ -49,7 +54,7 @@ function formatEventDate(iso: string): string {
 export default function TrackingLookup({ dict }: { dict: Dictionary }) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [downloading, setDownloading] = useState<"excel" | "pdf" | null>(null);
+  const [downloading, setDownloading] = useState<"excel" | "pdf" | "pod" | null>(null);
   const [result, setResult] = useState<PublicShipment | null>(null);
   const [events, setEvents] = useState<ShipmentEvent[]>([]);
   const [searched, setSearched] = useState(false);
@@ -65,10 +70,10 @@ export default function TrackingLookup({ dict }: { dict: Dictionary }) {
     setLoading(false);
   }
 
-  async function handleDownload(format: "excel" | "pdf") {
-    setDownloading(format);
+  async function handleDownload(kind: "excel" | "pdf" | "pod") {
+    setDownloading(kind);
     try {
-      const url = await getPackingListUrl(value, format);
+      const url = kind === "pod" ? await getProofOfDeliveryUrl(value) : await getPackingListUrl(value, kind);
       if (!url) return;
 
       // Fetch and save via a same-origin blob URL rather than
@@ -81,7 +86,12 @@ export default function TrackingLookup({ dict }: { dict: Dictionary }) {
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = objectUrl;
-      a.download = format === "excel" ? "packing-list.xlsx" : "packing-list.pdf";
+      a.download =
+        kind === "excel"
+          ? "packing-list.xlsx"
+          : kind === "pdf"
+            ? "packing-list.pdf"
+            : `proof-of-delivery.${blob.type.split("/")[1] || "pdf"}`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -200,6 +210,22 @@ export default function TrackingLookup({ dict }: { dict: Dictionary }) {
               <p className="mt-1 text-xs text-muted">{dict.tracking.noPackingList}</p>
             )}
           </div>
+
+          {result.has_pod && (
+            <div className="mt-6 border-t border-border pt-5">
+              <p className="font-display text-sm font-semibold">{dict.tracking.podTitle}</p>
+              <div className="mt-3">
+                <button
+                  onClick={() => handleDownload("pod")}
+                  disabled={downloading === "pod"}
+                  className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold transition hover:border-accent hover:text-accent disabled:opacity-60"
+                >
+                  <FileText size={14} />
+                  {dict.tracking.downloadPod}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
