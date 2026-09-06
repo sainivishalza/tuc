@@ -11,6 +11,7 @@
     "about": "关于我们",
     "pricing": "价格",
     "blog": "博客",
+    "trackShipment": "货物跟踪",
     "contact": "联系我们",
     "contactPage": "联系我们",
     "chatWhatsapp": "WhatsApp 咨询"
@@ -186,6 +187,32 @@
     "badge": "参考资料",
     "title": "采购与物流术语表",
     "subtitle": "用通俗易懂的语言解释您在与供应商、货运代理和海关经纪人沟通时会遇到的术语。"
+  },
+  "tracking": {
+    "badge": "货物跟踪",
+    "title": "查询您的货物",
+    "subtitle": "输入我们提供给您的运单号,查看实时状态并下载装箱单。",
+    "inputPlaceholder": "请输入运单号",
+    "button": "查询",
+    "notFound": "未找到该运单号对应的货物信息。请核对运单号,或通过WhatsApp联系我们获取帮助。",
+    "destinationLabel": "目的地",
+    "piecesLabel": "总件数",
+    "locationLabel": "当前所在地",
+    "carrierLabel": "承运商",
+    "updatedLabel": "最近更新",
+    "packingListTitle": "装箱单",
+    "packingListSubtitle": "下载装箱单,查看每个箱子里装的是什么。",
+    "downloadExcel": "下载Excel格式",
+    "downloadPdf": "下载PDF格式",
+    "noPackingList": "装箱单尚未上传——如需要请联系我们。",
+    "status": {
+      "not_found": "暂无信息",
+      "not_shipped": "尚未发货",
+      "in_transit": "运输途中",
+      "delayed": "运输延迟",
+      "delivered": "已签收",
+      "exception": "可能异常"
+    }
   },
   "blog": {
     "badge": "知识中心",

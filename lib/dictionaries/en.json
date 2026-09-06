@@ -11,6 +11,7 @@
     "about": "About",
     "pricing": "Pricing",
     "blog": "Blog",
+    "trackShipment": "Track Shipment",
     "contact": "Contact",
     "contactPage": "Contact Us",
     "chatWhatsapp": "Chat on WhatsApp"
@@ -192,6 +193,32 @@
     "badge": "Reference",
     "title": "Sourcing & Shipping Glossary",
     "subtitle": "Plain-language definitions for the terms you'll hear from suppliers, freight forwarders, and customs brokers."
+  },
+  "tracking": {
+    "badge": "Shipment Tracking",
+    "title": "Track Your Shipment",
+    "subtitle": "Enter the tracking number we gave you to see live status and download your packing list.",
+    "inputPlaceholder": "Enter tracking number",
+    "button": "Track",
+    "notFound": "We couldn't find a shipment with that tracking number. Please double-check it, or message us on WhatsApp for help.",
+    "destinationLabel": "Destination",
+    "piecesLabel": "Total pieces",
+    "locationLabel": "Current location",
+    "carrierLabel": "Carrier",
+    "updatedLabel": "Last updated",
+    "packingListTitle": "Packing List",
+    "packingListSubtitle": "Download the packing list to see what's inside each box.",
+    "downloadExcel": "Download as Excel",
+    "downloadPdf": "Download as PDF",
+    "noPackingList": "Packing list not uploaded yet — contact us if you need it now.",
+    "status": {
+      "not_found": "Not Found Yet",
+      "not_shipped": "Not Yet Shipped",
+      "in_transit": "In Transit",
+      "delayed": "Delayed",
+      "delivered": "Delivered",
+      "exception": "Possible Exception"
+    }
   },
   "stats": {
     "items": [
