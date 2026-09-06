@@ -30,9 +30,17 @@ export default function Hero3DLoader() {
   // immediately on mount competes with the critical rendering path
   // (LCP/TBT) for no visible benefit, since the CSS glow below already
   // fills the space in the meantime.
+  //
+  // Desktop only: on mobile, Hero's layout order puts this block above
+  // the text content, making it the very first thing on the page —
+  // its pop-in (however deferred) directly hurts Speed Index on
+  // exactly the low-end mobile devices PageSpeed audits test against.
+  // Skipping it there means the chunk is never even fetched.
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
+
     const schedule =
       "requestIdleCallback" in window
         ? (cb: () => void) => window.requestIdleCallback(cb, { timeout: 2000 })
