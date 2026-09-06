@@ -60,4 +60,18 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/glossary",
     status: "live",
   },
+  {
+    title: "Shipment Tracking",
+    description:
+      "Give each customer their own tracking number and status — they look it up on /track without ever seeing whose parcel is whose. Upload a packing list as Excel and a matching PDF is generated automatically for download in either format.",
+    href: "/admin/shipments",
+    status: "live",
+  },
+  {
+    title: "Carriers",
+    description:
+      "The logistics companies you ship through (ddu56, DHL, or anyone else) — each shipment picks one from this list. Add a new carrier here whenever you start working with a different company.",
+    href: "/admin/carriers",
+    status: "live",
+  },
 ];

@@ -78,6 +78,57 @@ export interface GlossaryTerm {
   updated_at: string;
 }
 
+export interface Carrier {
+  id: string;
+  name: string;
+  website_url: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ShipmentStatus =
+  | "not_found"
+  | "not_shipped"
+  | "in_transit"
+  | "delayed"
+  | "delivered"
+  | "exception";
+
+export interface Shipment {
+  id: string;
+  tracking_number: string;
+  carrier_id: string | null;
+  customer_name: string | null;
+  customer_reference: string | null;
+  destination_country: string | null;
+  total_pieces: number | null;
+  current_location: string | null;
+  status: ShipmentStatus;
+  latest_update: string | null;
+  latest_update_at: string | null;
+  packing_list_excel_path: string | null;
+  packing_list_pdf_path: string | null;
+  visible: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Public-safe projection — never carries customer_name/customer_reference. */
+export interface PublicShipment {
+  id: string;
+  tracking_number: string;
+  carrier_name: string | null;
+  destination_country: string | null;
+  total_pieces: number | null;
+  current_location: string | null;
+  status: ShipmentStatus;
+  latest_update: string | null;
+  latest_update_at: string | null;
+  has_excel: boolean;
+  has_pdf: boolean;
+}
+
 export interface AnalyticsEvent {
   id: number;
   event_type: "pageview" | "cta_click";

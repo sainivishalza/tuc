@@ -101,6 +101,11 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
                   {dict.glossary.title}
                 </Link>
               </li>
+              <li>
+                <Link href={`/${locale}/track`} className="hover:text-foreground">
+                  {dict.nav.trackShipment}
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
