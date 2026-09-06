@@ -6,7 +6,7 @@ import PDFDocument from "pdfkit";
 import { getSupabasePublicClient } from "@/lib/supabase/publicClient";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
-import type { Shipment, PublicShipment, ShipmentStatus } from "@/lib/supabase/types";
+import type { Shipment, PublicShipment, ShipmentStatus, ShipmentEvent } from "@/lib/supabase/types";
 
 const BUCKET = "packing-lists";
 
@@ -25,6 +25,21 @@ export async function trackShipment(trackingNumber: string): Promise<PublicShipm
 
   if (error || !data) return null;
   return data as PublicShipment;
+}
+
+/** Chronological event log for a shipment — public because the row is only
+ * reachable via a tracking-number lookup that already scopes to visible
+ * shipments (see the shipment_events RLS policy). */
+export async function getPublicShipmentEvents(shipmentId: string): Promise<ShipmentEvent[]> {
+  const supabase = getSupabasePublicClient();
+  const { data, error } = await supabase
+    .from("shipment_events")
+    .select("*")
+    .eq("shipment_id", shipmentId)
+    .order("event_at", { ascending: false });
+
+  if (error || !data) return [];
+  return data as ShipmentEvent[];
 }
 
 /**
@@ -55,6 +70,28 @@ export async function getPackingListUrl(
   const { data: signed, error: signError } = await supabase.storage
     .from(BUCKET)
     .createSignedUrl(path, 300);
+
+  if (signError || !signed) return null;
+  return signed.signedUrl;
+}
+
+/** Same authorization model as getPackingListUrl — the tracking number itself is the key. */
+export async function getProofOfDeliveryUrl(trackingNumber: string): Promise<string | null> {
+  const cleaned = trackingNumber.trim();
+  if (!cleaned) return null;
+
+  const supabase = getSupabaseAdminClient();
+  const { data: shipment, error } = await supabase
+    .from("shipments")
+    .select("pod_file_path, visible")
+    .eq("tracking_number", cleaned)
+    .maybeSingle();
+
+  if (error || !shipment || !shipment.visible || !shipment.pod_file_path) return null;
+
+  const { data: signed, error: signError } = await supabase.storage
+    .from(BUCKET)
+    .createSignedUrl(shipment.pod_file_path, 300);
 
   if (signError || !signed) return null;
   return signed.signedUrl;
@@ -92,12 +129,18 @@ export interface ShipmentInput {
   carrier_id: string | null;
   customer_name: string | null;
   customer_reference: string | null;
+  carrier_reference_no: string | null;
+  recipient_postal_code: string | null;
   destination_country: string | null;
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
-  latest_update: string | null;
-  latest_update_at: string | null;
+  milestone_received_at: string | null;
+  milestone_shipped_at: string | null;
+  milestone_departed_at: string | null;
+  milestone_arrived_at: string | null;
+  milestone_out_for_delivery_at: string | null;
+  milestone_delivered_at: string | null;
   visible: boolean;
 }
 
@@ -116,12 +159,18 @@ export async function createShipment(input: ShipmentInput): Promise<string> {
       carrier_id: input.carrier_id,
       customer_name: input.customer_name?.trim() || null,
       customer_reference: input.customer_reference?.trim() || null,
+      carrier_reference_no: input.carrier_reference_no?.trim() || null,
+      recipient_postal_code: input.recipient_postal_code?.trim() || null,
       destination_country: input.destination_country?.trim() || null,
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
-      latest_update: input.latest_update?.trim() || null,
-      latest_update_at: input.latest_update_at || null,
+      milestone_received_at: input.milestone_received_at || null,
+      milestone_shipped_at: input.milestone_shipped_at || null,
+      milestone_departed_at: input.milestone_departed_at || null,
+      milestone_arrived_at: input.milestone_arrived_at || null,
+      milestone_out_for_delivery_at: input.milestone_out_for_delivery_at || null,
+      milestone_delivered_at: input.milestone_delivered_at || null,
       visible: input.visible,
     })
     .select("id")
@@ -143,12 +192,18 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
       carrier_id: input.carrier_id,
       customer_name: input.customer_name?.trim() || null,
       customer_reference: input.customer_reference?.trim() || null,
+      carrier_reference_no: input.carrier_reference_no?.trim() || null,
+      recipient_postal_code: input.recipient_postal_code?.trim() || null,
       destination_country: input.destination_country?.trim() || null,
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
-      latest_update: input.latest_update?.trim() || null,
-      latest_update_at: input.latest_update_at || null,
+      milestone_received_at: input.milestone_received_at || null,
+      milestone_shipped_at: input.milestone_shipped_at || null,
+      milestone_departed_at: input.milestone_departed_at || null,
+      milestone_arrived_at: input.milestone_arrived_at || null,
+      milestone_out_for_delivery_at: input.milestone_out_for_delivery_at || null,
+      milestone_delivered_at: input.milestone_delivered_at || null,
       visible: input.visible,
       updated_at: new Date().toISOString(),
     })
@@ -164,18 +219,62 @@ export async function deleteShipment(id: string): Promise<void> {
 
   const { data: shipment } = await supabase
     .from("shipments")
-    .select("packing_list_excel_path, packing_list_pdf_path")
+    .select("packing_list_excel_path, packing_list_pdf_path, pod_file_path")
     .eq("id", id)
     .maybeSingle();
 
-  const paths = [shipment?.packing_list_excel_path, shipment?.packing_list_pdf_path].filter(
-    (p): p is string => !!p
-  );
+  const paths = [
+    shipment?.packing_list_excel_path,
+    shipment?.packing_list_pdf_path,
+    shipment?.pod_file_path,
+  ].filter((p): p is string => !!p);
   if (paths.length > 0) {
     await supabase.storage.from(BUCKET).remove(paths);
   }
 
   const { error } = await supabase.from("shipments").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidateShipmentPaths();
+}
+
+// ---------- Admin: shipment event log ----------
+
+export async function getShipmentEvents(shipmentId: string): Promise<ShipmentEvent[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("shipment_events")
+    .select("*")
+    .eq("shipment_id", shipmentId)
+    .order("event_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data as ShipmentEvent[];
+}
+
+export async function addShipmentEvent(
+  shipmentId: string,
+  eventAt: string,
+  description: string
+): Promise<void> {
+  await requireAdminAction();
+  if (!description.trim()) throw new Error("Description is required.");
+  if (!eventAt) throw new Error("Event date/time is required.");
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("shipment_events").insert({
+    shipment_id: shipmentId,
+    event_at: eventAt,
+    description: description.trim(),
+  });
+
+  if (error) throw new Error(error.message);
+  revalidateShipmentPaths();
+}
+
+export async function deleteShipmentEvent(eventId: string): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("shipment_events").delete().eq("id", eventId);
   if (error) throw new Error(error.message);
   revalidateShipmentPaths();
 }
@@ -328,6 +427,76 @@ export async function removePackingList(shipmentId: string): Promise<void> {
       packing_list_pdf_path: null,
       updated_at: new Date().toISOString(),
     })
+    .eq("id", shipmentId);
+  if (error) throw new Error(error.message);
+  revalidateShipmentPaths();
+}
+
+// ---------- Proof of delivery ----------
+
+const POD_CONTENT_TYPES: Record<string, string> = {
+  "application/pdf": "pdf",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
+export async function uploadProofOfDelivery(shipmentId: string, file: File): Promise<void> {
+  await requireAdminAction();
+  if (!file || file.size === 0) throw new Error("No file provided.");
+
+  const ext = POD_CONTENT_TYPES[file.type];
+  if (!ext) {
+    throw new Error("Proof of delivery must be an image (JPG/PNG/WebP) or a PDF.");
+  }
+
+  const supabase = getSupabaseAdminClient();
+  const { data: shipment, error: fetchError } = await supabase
+    .from("shipments")
+    .select("pod_file_path")
+    .eq("id", shipmentId)
+    .maybeSingle();
+  if (fetchError || !shipment) throw new Error("Shipment not found.");
+
+  if (shipment.pod_file_path) {
+    await supabase.storage.from(BUCKET).remove([shipment.pod_file_path]);
+  }
+
+  const path = `${shipmentId}/proof-of-delivery.${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+
+  const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, arrayBuffer, {
+    contentType: file.type,
+    upsert: true,
+  });
+  if (uploadError) throw new Error(uploadError.message);
+
+  const { error: updateError } = await supabase
+    .from("shipments")
+    .update({ pod_file_path: path, updated_at: new Date().toISOString() })
+    .eq("id", shipmentId);
+  if (updateError) throw new Error(updateError.message);
+
+  revalidateShipmentPaths();
+}
+
+export async function removeProofOfDelivery(shipmentId: string): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+
+  const { data: shipment } = await supabase
+    .from("shipments")
+    .select("pod_file_path")
+    .eq("id", shipmentId)
+    .maybeSingle();
+
+  if (shipment?.pod_file_path) {
+    await supabase.storage.from(BUCKET).remove([shipment.pod_file_path]);
+  }
+
+  const { error } = await supabase
+    .from("shipments")
+    .update({ pod_file_path: null, updated_at: new Date().toISOString() })
     .eq("id", shipmentId);
   if (error) throw new Error(error.message);
   revalidateShipmentPaths();

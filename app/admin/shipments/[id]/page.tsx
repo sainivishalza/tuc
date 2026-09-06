@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
-import { getShipmentById } from "@/lib/actions/shipments";
+import { getShipmentById, getShipmentEvents } from "@/lib/actions/shipments";
 import { getAllCarriers } from "@/lib/actions/carriers";
 import ShipmentForm from "@/components/admin/ShipmentForm";
 
@@ -21,6 +21,8 @@ export default async function EditShipmentPage({
 
   if (!shipment) notFound();
 
+  const events = await getShipmentEvents(id);
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-8">
       <div className="mx-auto max-w-3xl">
@@ -35,7 +37,12 @@ export default async function EditShipmentPage({
         <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">Edit shipment</h1>
 
         <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
-          <ShipmentForm shipmentId={shipment.id} initial={shipment} carriers={carriers} />
+          <ShipmentForm
+            shipmentId={shipment.id}
+            initial={shipment}
+            carriers={carriers}
+            initialEvents={events}
+          />
         </div>
       </div>
     </main>
