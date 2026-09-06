@@ -194,6 +194,7 @@
     "subtitle": "输入我们提供给您的运单号,查看实时状态并下载装箱单。",
     "inputPlaceholder": "请输入运单号",
     "button": "查询",
+    "multiHint": "需要同时查询多个包裹?请用逗号或换行分隔多个运单号。",
     "notFound": "未找到该运单号对应的货物信息。请核对运单号,或通过WhatsApp联系我们获取帮助。",
     "destinationLabel": "目的地",
     "piecesLabel": "总件数",

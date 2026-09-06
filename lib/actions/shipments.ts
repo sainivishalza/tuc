@@ -27,6 +27,69 @@ export async function trackShipment(trackingNumber: string): Promise<PublicShipm
   return data as PublicShipment;
 }
 
+export interface TrackedShipmentResult {
+  trackingNumber: string;
+  shipment: PublicShipment | null;
+  events: ShipmentEvent[];
+}
+
+const MAX_BATCH_TRACKING_NUMBERS = 20;
+
+/** Batch lookup for the "track multiple parcels at once" flow — accepts
+ * numbers separated by commas, spaces, or newlines. */
+export async function trackShipments(rawInput: string): Promise<TrackedShipmentResult[]> {
+  const seen = new Set<string>();
+  const trackingNumbers = rawInput
+    .split(/[\n,]+/)
+    .map((s) => s.trim())
+    .filter((s) => {
+      if (!s || seen.has(s)) return false;
+      seen.add(s);
+      return true;
+    })
+    .slice(0, MAX_BATCH_TRACKING_NUMBERS);
+
+  if (trackingNumbers.length === 0) return [];
+
+  const supabase = getSupabasePublicClient();
+  const { data: shipments, error } = await supabase
+    .from("shipments_public")
+    .select("*")
+    .in("tracking_number", trackingNumbers);
+
+  if (error) {
+    return trackingNumbers.map((trackingNumber) => ({ trackingNumber, shipment: null, events: [] }));
+  }
+
+  const byTrackingNumber = new Map((shipments as PublicShipment[]).map((s) => [s.tracking_number, s]));
+  const shipmentIds = (shipments as PublicShipment[]).map((s) => s.id);
+
+  let eventsByShipmentId = new Map<string, ShipmentEvent[]>();
+  if (shipmentIds.length > 0) {
+    const { data: events } = await supabase
+      .from("shipment_events")
+      .select("*")
+      .in("shipment_id", shipmentIds)
+      .order("event_at", { ascending: false });
+
+    eventsByShipmentId = (events as ShipmentEvent[] | null ?? []).reduce((map, ev) => {
+      const list = map.get(ev.shipment_id) ?? [];
+      list.push(ev);
+      map.set(ev.shipment_id, list);
+      return map;
+    }, new Map<string, ShipmentEvent[]>());
+  }
+
+  return trackingNumbers.map((trackingNumber) => {
+    const shipment = byTrackingNumber.get(trackingNumber) ?? null;
+    return {
+      trackingNumber,
+      shipment,
+      events: shipment ? eventsByShipmentId.get(shipment.id) ?? [] : [],
+    };
+  });
+}
+
 /** Chronological event log for a shipment — public because the row is only
  * reachable via a tracking-number lookup that already scopes to visible
  * shipments (see the shipment_events RLS policy). */

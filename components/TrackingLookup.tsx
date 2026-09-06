@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Search, Package, MapPin, Truck, Clock, FileSpreadsheet, FileText, Check } from "lucide-react";
 import {
-  trackShipment,
+  trackShipments,
   getPackingListUrl,
   getProofOfDeliveryUrl,
-  getPublicShipmentEvents,
+  type TrackedShipmentResult,
 } from "@/lib/actions/shipments";
 import type { Dictionary } from "@/lib/i18n";
 import type { PublicShipment, ShipmentEvent, ShipmentStatus } from "@/lib/supabase/types";
@@ -51,29 +51,32 @@ function formatEventDate(iso: string): string {
   });
 }
 
+type DownloadState = { trackingNumber: string; kind: "excel" | "pdf" | "pod" } | null;
+
 export default function TrackingLookup({ dict }: { dict: Dictionary }) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [downloading, setDownloading] = useState<"excel" | "pdf" | "pod" | null>(null);
-  const [result, setResult] = useState<PublicShipment | null>(null);
-  const [events, setEvents] = useState<ShipmentEvent[]>([]);
+  const [results, setResults] = useState<TrackedShipmentResult[]>([]);
   const [searched, setSearched] = useState(false);
+  const [downloading, setDownloading] = useState<DownloadState>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!value.trim()) return;
     setLoading(true);
     setSearched(true);
-    const shipment = await trackShipment(value);
-    setResult(shipment);
-    setEvents(shipment ? await getPublicShipmentEvents(shipment.id) : []);
+    const tracked = await trackShipments(value);
+    setResults(tracked);
     setLoading(false);
   }
 
-  async function handleDownload(kind: "excel" | "pdf" | "pod") {
-    setDownloading(kind);
+  async function handleDownload(trackingNumber: string, kind: "excel" | "pdf" | "pod") {
+    setDownloading({ trackingNumber, kind });
     try {
-      const url = kind === "pod" ? await getProofOfDeliveryUrl(value) : await getPackingListUrl(value, kind);
+      const url =
+        kind === "pod"
+          ? await getProofOfDeliveryUrl(trackingNumber)
+          : await getPackingListUrl(trackingNumber, kind);
       if (!url) return;
 
       // Fetch and save via a same-origin blob URL rather than
@@ -103,129 +106,167 @@ export default function TrackingLookup({ dict }: { dict: Dictionary }) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="mx-auto flex max-w-xl flex-col gap-3 sm:flex-row">
-        <input
+      <form onSubmit={handleSubmit} className="mx-auto flex max-w-xl flex-col gap-3 sm:flex-row sm:items-start">
+        <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={dict.tracking.inputPlaceholder}
           required
-          className="glass-strong flex-1 rounded-full px-5 py-3.5 text-sm outline-none focus:ring-2 focus:ring-accent/40"
+          rows={1}
+          className="glass-strong flex-1 resize-none rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-2 focus:ring-accent/40 sm:rounded-full"
         />
         <button
           type="submit"
           disabled={loading}
-          className="brand-gradient flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition hover:scale-105 disabled:opacity-60"
+          className="brand-gradient flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition hover:scale-105 disabled:opacity-60 sm:w-auto"
         >
           <Search size={16} />
           {dict.tracking.button}
         </button>
       </form>
+      <p className="mx-auto mt-2 max-w-xl text-center text-xs text-muted sm:text-left">
+        {dict.tracking.multiHint}
+      </p>
 
-      {searched && !loading && !result && (
+      {searched && !loading && results.length === 0 && (
         <div className="glass-strong mx-auto mt-8 max-w-xl rounded-2xl p-6 text-center text-sm text-muted">
           {dict.tracking.notFound}
         </div>
       )}
 
-      {result && (
-        <div className="glass-strong mx-auto mt-8 max-w-xl rounded-2xl p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="font-display text-lg font-semibold">{result.tracking_number}</p>
-            <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${statusColors[result.status]}`}>
-              {dict.tracking.status[result.status]}
-            </span>
-          </div>
+      <div className="mx-auto mt-8 flex max-w-xl flex-col gap-6">
+        {results.map((r) =>
+          r.shipment ? (
+            <ShipmentResultCard
+              key={r.trackingNumber}
+              dict={dict}
+              shipment={r.shipment}
+              events={r.events}
+              downloading={downloading?.trackingNumber === r.trackingNumber ? downloading.kind : null}
+              onDownload={(kind) => handleDownload(r.trackingNumber, kind)}
+            />
+          ) : (
+            <div key={r.trackingNumber} className="glass-strong rounded-2xl p-6 text-center">
+              <p className="font-display text-sm font-semibold">{r.trackingNumber}</p>
+              <p className="mt-2 text-sm text-muted">{dict.tracking.notFound}</p>
+            </div>
+          )
+        )}
+      </div>
+    </div>
+  );
+}
 
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {result.destination_country && (
-              <Detail icon={<MapPin size={15} />} label={dict.tracking.destinationLabel} value={result.destination_country} />
-            )}
-            {result.current_location && (
-              <Detail icon={<Truck size={15} />} label={dict.tracking.locationLabel} value={result.current_location} />
-            )}
-            {result.total_pieces != null && (
-              <Detail icon={<Package size={15} />} label={dict.tracking.piecesLabel} value={String(result.total_pieces)} />
-            )}
-            {result.carrier_name && (
-              <Detail icon={<Truck size={15} />} label={dict.tracking.carrierLabel} value={result.carrier_name} />
-            )}
-          </div>
+function ShipmentResultCard({
+  dict,
+  shipment,
+  events,
+  downloading,
+  onDownload,
+}: {
+  dict: Dictionary;
+  shipment: PublicShipment;
+  events: ShipmentEvent[];
+  downloading: "excel" | "pdf" | "pod" | null;
+  onDownload: (kind: "excel" | "pdf" | "pod") => void;
+}) {
+  return (
+    <div className="glass-strong rounded-2xl p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="font-display text-lg font-semibold">{shipment.tracking_number}</p>
+        <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${statusColors[shipment.status]}`}>
+          {dict.tracking.status[shipment.status]}
+        </span>
+      </div>
 
-          <div className="mt-6 border-t border-border pt-5">
-            <p className="font-display text-sm font-semibold">{dict.tracking.milestones.title}</p>
-            <MilestoneTracker dict={dict} shipment={result} />
-          </div>
+      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {shipment.destination_country && (
+          <Detail icon={<MapPin size={15} />} label={dict.tracking.destinationLabel} value={shipment.destination_country} />
+        )}
+        {shipment.current_location && (
+          <Detail icon={<Truck size={15} />} label={dict.tracking.locationLabel} value={shipment.current_location} />
+        )}
+        {shipment.total_pieces != null && (
+          <Detail icon={<Package size={15} />} label={dict.tracking.piecesLabel} value={String(shipment.total_pieces)} />
+        )}
+        {shipment.carrier_name && (
+          <Detail icon={<Truck size={15} />} label={dict.tracking.carrierLabel} value={shipment.carrier_name} />
+        )}
+      </div>
 
-          <div className="mt-6 border-t border-border pt-5">
-            <p className="font-display text-sm font-semibold">{dict.tracking.updatesTitle}</p>
-            {events.length > 0 ? (
-              <ul className="mt-3 flex flex-col gap-3">
-                {events.map((ev) => (
-                  <li key={ev.id} className="flex gap-3">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                    <div>
-                      <p className="flex items-center gap-1.5 text-xs font-medium text-muted">
-                        <Clock size={12} />
-                        {formatEventDate(ev.event_at)}
-                      </p>
-                      <p className="mt-0.5 text-sm">{ev.description}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-2 text-xs text-muted">{dict.tracking.noUpdates}</p>
-            )}
-          </div>
+      <div className="mt-6 border-t border-border pt-5">
+        <p className="font-display text-sm font-semibold">{dict.tracking.milestones.title}</p>
+        <MilestoneTracker dict={dict} shipment={shipment} />
+      </div>
 
-          <div className="mt-6 border-t border-border pt-5">
-            <p className="font-display text-sm font-semibold">{dict.tracking.packingListTitle}</p>
-            {result.has_excel || result.has_pdf ? (
-              <>
-                <p className="mt-1 text-xs text-muted">{dict.tracking.packingListSubtitle}</p>
-                <div className="mt-3 flex flex-wrap gap-3">
-                  {result.has_excel && (
-                    <button
-                      onClick={() => handleDownload("excel")}
-                      disabled={downloading === "excel"}
-                      className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold transition hover:border-accent hover:text-accent disabled:opacity-60"
-                    >
-                      <FileSpreadsheet size={14} />
-                      {dict.tracking.downloadExcel}
-                    </button>
-                  )}
-                  {result.has_pdf && (
-                    <button
-                      onClick={() => handleDownload("pdf")}
-                      disabled={downloading === "pdf"}
-                      className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold transition hover:border-accent hover:text-accent disabled:opacity-60"
-                    >
-                      <FileText size={14} />
-                      {dict.tracking.downloadPdf}
-                    </button>
-                  )}
+      <div className="mt-6 border-t border-border pt-5">
+        <p className="font-display text-sm font-semibold">{dict.tracking.updatesTitle}</p>
+        {events.length > 0 ? (
+          <ul className="mt-3 flex flex-col gap-3">
+            {events.map((ev) => (
+              <li key={ev.id} className="flex gap-3">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                <div>
+                  <p className="flex items-center gap-1.5 text-xs font-medium text-muted">
+                    <Clock size={12} />
+                    {formatEventDate(ev.event_at)}
+                  </p>
+                  <p className="mt-0.5 text-sm">{ev.description}</p>
                 </div>
-              </>
-            ) : (
-              <p className="mt-1 text-xs text-muted">{dict.tracking.noPackingList}</p>
-            )}
-          </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-2 text-xs text-muted">{dict.tracking.noUpdates}</p>
+        )}
+      </div>
 
-          {result.has_pod && (
-            <div className="mt-6 border-t border-border pt-5">
-              <p className="font-display text-sm font-semibold">{dict.tracking.podTitle}</p>
-              <div className="mt-3">
+      <div className="mt-6 border-t border-border pt-5">
+        <p className="font-display text-sm font-semibold">{dict.tracking.packingListTitle}</p>
+        {shipment.has_excel || shipment.has_pdf ? (
+          <>
+            <p className="mt-1 text-xs text-muted">{dict.tracking.packingListSubtitle}</p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {shipment.has_excel && (
                 <button
-                  onClick={() => handleDownload("pod")}
-                  disabled={downloading === "pod"}
+                  onClick={() => onDownload("excel")}
+                  disabled={downloading === "excel"}
+                  className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold transition hover:border-accent hover:text-accent disabled:opacity-60"
+                >
+                  <FileSpreadsheet size={14} />
+                  {dict.tracking.downloadExcel}
+                </button>
+              )}
+              {shipment.has_pdf && (
+                <button
+                  onClick={() => onDownload("pdf")}
+                  disabled={downloading === "pdf"}
                   className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold transition hover:border-accent hover:text-accent disabled:opacity-60"
                 >
                   <FileText size={14} />
-                  {dict.tracking.downloadPod}
+                  {dict.tracking.downloadPdf}
                 </button>
-              </div>
+              )}
             </div>
-          )}
+          </>
+        ) : (
+          <p className="mt-1 text-xs text-muted">{dict.tracking.noPackingList}</p>
+        )}
+      </div>
+
+      {shipment.has_pod && (
+        <div className="mt-6 border-t border-border pt-5">
+          <p className="font-display text-sm font-semibold">{dict.tracking.podTitle}</p>
+          <div className="mt-3">
+            <button
+              onClick={() => onDownload("pod")}
+              disabled={downloading === "pod"}
+              className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold transition hover:border-accent hover:text-accent disabled:opacity-60"
+            >
+              <FileText size={14} />
+              {dict.tracking.downloadPod}
+            </button>
+          </div>
         </div>
       )}
     </div>
