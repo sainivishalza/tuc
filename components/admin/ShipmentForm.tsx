@@ -12,6 +12,7 @@ import {
   addShipmentEvent,
   deleteShipmentEvent,
 } from "@/lib/actions/shipments";
+import { refreshShipmentFromApi } from "@/lib/actions/dhlSync";
 import type { Shipment, ShipmentStatus, Carrier, ShipmentEvent } from "@/lib/supabase/types";
 
 const STATUS_OPTIONS: { value: ShipmentStatus; label: string }[] = [
@@ -117,6 +118,34 @@ export default function ShipmentForm({
   const [newEventDesc, setNewEventDesc] = useState("");
   const [addingEvent, setAddingEvent] = useState(false);
   const [eventError, setEventError] = useState("");
+
+  const lastApiSyncAt = initial?.last_api_sync_at ?? null;
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState("");
+
+  const selectedCarrier = carriers.find((c) => c.id === carrierId);
+  const isApiLinked = selectedCarrier?.api_provider === "dhl";
+
+  async function handleRefreshFromApi() {
+    if (!shipmentId) return;
+    setSyncing(true);
+    setSyncMessage("");
+    try {
+      const result = await refreshShipmentFromApi(shipmentId);
+      if (result.ok) {
+        // A sync can touch status, location, milestones, and events all at
+        // once — reload rather than patching each field individually so
+        // every part of the form reflects what's now in the database.
+        window.location.reload();
+        return;
+      }
+      setSyncMessage(result.message);
+    } catch (err) {
+      setSyncMessage(err instanceof Error ? err.message : "Failed to sync from DHL.");
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -286,6 +315,32 @@ export default function ShipmentForm({
           </select>
         </div>
       </div>
+
+      {isApiLinked && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold text-emerald-900">Live tracking via DHL</p>
+              <p className="mt-0.5 text-[11px] text-emerald-800">
+                {lastApiSyncAt
+                  ? `Last synced ${formatEventAt(lastApiSyncAt)}. Status, location, milestones, and updates below are pulled from DHL automatically.`
+                  : "Not synced yet. Save the shipment first, then refresh to pull live status from DHL."}
+              </p>
+            </div>
+            {shipmentId && (
+              <button
+                type="button"
+                onClick={handleRefreshFromApi}
+                disabled={syncing}
+                className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              >
+                {syncing ? "Syncing..." : "Refresh from DHL"}
+              </button>
+            )}
+          </div>
+          {syncMessage && <p className="mt-2 text-xs text-emerald-900">{syncMessage}</p>}
+        </div>
+      )}
 
       <div className="rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
         The fields below are for you only — they never appear on the public tracking page,

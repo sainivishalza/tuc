@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Package, MapPin, Truck, Clock, FileSpreadsheet, FileText, Check } from "lucide-react";
+import { Search, Package, MapPin, Truck, Clock, FileSpreadsheet, FileText, Check, Radio } from "lucide-react";
 import {
   trackShipments,
   getPackingListUrl,
@@ -173,7 +173,15 @@ function ShipmentResultCard({
   return (
     <div className="glass-strong rounded-2xl p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="font-display text-lg font-semibold">{shipment.tracking_number}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-display text-lg font-semibold">{shipment.tracking_number}</p>
+          {shipment.carrier_api_provider === "dhl" && (
+            <span className="flex items-center gap-1 rounded-full bg-yellow-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-yellow-800">
+              <Radio size={10} />
+              {dict.tracking.liveTracking}
+            </span>
+          )}
+        </div>
         <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${statusColors[shipment.status]}`}>
           {dict.tracking.status[shipment.status]}
         </span>

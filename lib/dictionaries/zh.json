@@ -200,6 +200,7 @@
     "piecesLabel": "总件数",
     "locationLabel": "当前所在地",
     "carrierLabel": "承运商",
+    "liveTracking": "实时",
     "milestones": {
       "title": "运输进度",
       "received": "已入仓",

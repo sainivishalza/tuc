@@ -200,6 +200,7 @@
     "piecesLabel": "Всего мест",
     "locationLabel": "Текущее местоположение",
     "carrierLabel": "Перевозчик",
+    "liveTracking": "Онлайн",
     "milestones": {
       "title": "Ход доставки",
       "received": "Принято на склад",

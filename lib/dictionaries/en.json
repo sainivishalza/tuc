@@ -206,6 +206,7 @@
     "piecesLabel": "Total pieces",
     "locationLabel": "Current location",
     "carrierLabel": "Carrier",
+    "liveTracking": "Live",
     "milestones": {
       "title": "Shipment Progress",
       "received": "Received",

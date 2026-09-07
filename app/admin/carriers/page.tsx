@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
-import { getAllCarriers, createCarrier, deleteCarrier } from "@/lib/actions/carriers";
+import { getAllCarriers, createCarrier, updateCarrier, deleteCarrier } from "@/lib/actions/carriers";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -36,6 +36,7 @@ export default async function CarriersAdminPage() {
               name: String(formData.get("name") ?? ""),
               website_url: String(formData.get("website_url") ?? "") || null,
               notes: String(formData.get("notes") ?? "") || null,
+              api_provider: String(formData.get("api_provider") ?? "") || null,
             });
           }}
           className="mt-8 rounded-2xl border border-gray-200 bg-white p-5"
@@ -59,6 +60,17 @@ export default async function CarriersAdminPage() {
               rows={2}
               className="resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm sm:col-span-2"
             />
+            <div className="sm:col-span-2">
+              <label className="mb-1 block text-xs font-semibold text-gray-700">Tracking source</label>
+              <select
+                name="api_provider"
+                defaultValue=""
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              >
+                <option value="">Manual (you enter updates yourself)</option>
+                <option value="dhl">DHL API (live tracking pulled automatically)</option>
+              </select>
+            </div>
           </div>
           <button
             type="submit"
@@ -81,9 +93,20 @@ export default async function CarriersAdminPage() {
               className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-4"
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-sm font-semibold text-gray-900">
-                  {carrier.name}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate font-display text-sm font-semibold text-gray-900">
+                    {carrier.name}
+                  </p>
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                      carrier.api_provider === "dhl"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    {carrier.api_provider === "dhl" ? "DHL API" : "Manual"}
+                  </span>
+                </div>
                 {carrier.website_url && (
                   <a
                     href={carrier.website_url}
@@ -98,6 +121,33 @@ export default async function CarriersAdminPage() {
                   <p className="mt-1 truncate text-xs text-gray-400">{carrier.notes}</p>
                 )}
               </div>
+              <form
+                action={async (formData: FormData) => {
+                  "use server";
+                  await updateCarrier(carrier.id, {
+                    name: carrier.name,
+                    website_url: carrier.website_url,
+                    notes: carrier.notes,
+                    api_provider: String(formData.get("api_provider") ?? "") || null,
+                  });
+                }}
+                className="flex shrink-0 items-center gap-2"
+              >
+                <select
+                  name="api_provider"
+                  defaultValue={carrier.api_provider ?? ""}
+                  className="rounded-lg border border-gray-200 px-2 py-1.5 text-xs"
+                >
+                  <option value="">Manual</option>
+                  <option value="dhl">DHL API</option>
+                </select>
+                <button
+                  type="submit"
+                  className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-500 hover:border-gray-400 hover:text-gray-900"
+                >
+                  Save
+                </button>
+              </form>
               <form
                 action={async () => {
                   "use server";
