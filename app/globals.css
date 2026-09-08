@@ -25,13 +25,16 @@
   --muted: #475569;
   --border: #e2e8f0;
 
-  /* Global trade / enterprise palette — deep navy for structure and trust
-     (headers, footers, hero), amber reserved for conversion moments
-     (buttons, CTAs) so it keeps its "pop" instead of being diluted across
-     every accent-colored detail on the page. A deeper, burnt amber rather
-     than a bright/candy one — reads as premium rather than "on sale". */
+  /* Light-first palette: white/near-white pages throughout (header, hero,
+     footer all included) rather than solid dark blocks — a vivid blue
+     carries the "trust" signal as an accent (text, icons, links, logo,
+     the one deliberate dark CTA card) instead of as a background color,
+     and amber stays reserved for buttons so it keeps its "pop". Navy is
+     kept only for that one dark accent card and small text/icon touches —
+     never a large background — since stacking solid dark sections is what
+     read as heavy/dated in the first place. */
   --brand-navy: #0b192c;
-  --brand-blue: #1e3e62;
+  --brand-blue: #2563eb;
   --accent: #d97706;
   /* Derived from --accent rather than asked of the admin separately — one
      color picker, not two easily-mismatched ones. */
