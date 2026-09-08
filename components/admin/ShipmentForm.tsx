@@ -554,7 +554,7 @@ export default function ShipmentForm({
           type="file"
           accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
           onChange={(e) => setPackingFile(e.target.files?.[0] ?? null)}
-          className="w-full text-sm"
+          className="block w-full cursor-pointer text-sm text-gray-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-gray-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700"
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Upload the packing list as Excel (.xlsx). The customer will be able to download it as
@@ -586,7 +586,7 @@ export default function ShipmentForm({
           type="file"
           accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
           onChange={(e) => setPodFile(e.target.files?.[0] ?? null)}
-          className="w-full text-sm"
+          className="block w-full cursor-pointer text-sm text-gray-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-gray-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700"
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Upload once the parcel is signed for — a photo of the signed waybill or delivery note
