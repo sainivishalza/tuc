@@ -10,6 +10,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Pricing from "@/components/Pricing";
 import WhyUs from "@/components/WhyUs";
 import LazyTestimonials from "@/components/LazyTestimonials";
+import LazyProductMatcher from "@/components/LazyProductMatcher";
 import LazyQuoteWizard from "@/components/LazyQuoteWizard";
 import LazyFAQ from "@/components/LazyFAQ";
 import LazyContactCTA from "@/components/LazyContactCTA";
@@ -97,6 +98,7 @@ export default async function LocalePage({
         <Pricing dict={dict} />
         <WhyUs dict={dict} />
         <LazyTestimonials dict={dict} testimonials={testimonials} />
+        <LazyProductMatcher />
         <LazyQuoteWizard dict={dict} />
         <LazyFAQ dict={dict} />
         <LazyContactCTA dict={dict} />

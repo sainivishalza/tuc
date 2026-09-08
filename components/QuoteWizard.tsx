@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Send,
   CheckCircle,
@@ -49,6 +49,21 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const pathname = usePathname() ?? "/";
+
+  // Lets the free Smart Sourcing Match section above hand off its detected
+  // category + description without prop-drilling through the whole page —
+  // both sections mount independently and only need to talk to each other
+  // when the customer clicks "Get a Quote" on a match result.
+  useEffect(() => {
+    function handlePrefill(e: Event) {
+      const detail = (e as CustomEvent<{ category: string; message: string }>).detail;
+      if (!detail) return;
+      setSelectedCategory(detail.category);
+      setMessage(detail.message);
+    }
+    window.addEventListener("tuc:quote-prefill", handlePrefill);
+    return () => window.removeEventListener("tuc:quote-prefill", handlePrefill);
+  }, []);
 
   const totalSteps = 3;
 
