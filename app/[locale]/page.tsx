@@ -15,6 +15,7 @@ import LazyProductMatcher from "@/components/LazyProductMatcher";
 import LazySupplierRedFlags from "@/components/LazySupplierRedFlags";
 import LazyCbmCalculator from "@/components/LazyCbmCalculator";
 import LazyLandedCostCalculator from "@/components/LazyLandedCostCalculator";
+import LazySellingPriceCalculator from "@/components/LazySellingPriceCalculator";
 import LazyReadinessQuiz from "@/components/LazyReadinessQuiz";
 import LazyQuoteWizard from "@/components/LazyQuoteWizard";
 import LazyFAQ from "@/components/LazyFAQ";
@@ -108,6 +109,7 @@ export default async function LocalePage({
         <LazySupplierRedFlags />
         <LazyCbmCalculator />
         <LazyLandedCostCalculator />
+        <LazySellingPriceCalculator />
         <LazyReadinessQuiz />
         <LazyQuoteWizard dict={dict} />
         <LazyFAQ dict={dict} />

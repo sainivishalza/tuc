@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calculator, ArrowRight } from "lucide-react";
+import { Calculator, ArrowRight, Tag } from "lucide-react";
 import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
@@ -57,6 +57,14 @@ export default function LandedCostCalculator() {
       })
     );
     document.getElementById("consultation")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleEstimateSellingPrice = () => {
+    if (!result) return;
+    trackCtaClick("Landed Cost Estimate Selling Price", pathname);
+    const costPerUnit = (result.total.low + result.total.high) / 2 / qty;
+    window.dispatchEvent(new CustomEvent("tuc:landed-cost-computed", { detail: { costPerUnit, quantity: qty } }));
+    document.getElementById("selling-price")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -198,13 +206,22 @@ export default function LandedCostCalculator() {
                     HS code. Request a quote for binding numbers confirmed by our customs broker.
                   </p>
 
-                  <button
-                    onClick={handleGetQuote}
-                    className="brand-gradient-animated mt-5 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
-                  >
-                    Get an Exact Quote
-                    <ArrowRight size={16} />
-                  </button>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <button
+                      onClick={handleEstimateSellingPrice}
+                      className="glass-strong flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-foreground transition hover:opacity-80"
+                    >
+                      <Tag size={16} />
+                      Estimate Selling Price
+                    </button>
+                    <button
+                      onClick={handleGetQuote}
+                      className="brand-gradient-animated flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
+                    >
+                      Get an Exact Quote
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
                 </div>
               </Reveal>
             )}
