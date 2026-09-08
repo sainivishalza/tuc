@@ -19,24 +19,16 @@ export async function trackShipment(trackingNumber: string): Promise<PublicShipm
   if (!cleaned) return null;
 
   const supabase = getSupabasePublicClient();
-  const { data, error } = await supabase
-    .from("shipments_public")
-    .select("*")
-    .eq("tracking_number", cleaned)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("get_public_shipment", { p_tracking_number: cleaned });
 
-  if (error || !data) return null;
-  let shipment = data as PublicShipment;
+  if (error || !data || data.length === 0) return null;
+  let shipment = data[0] as PublicShipment;
 
   if (shipment.carrier_api_provider === "dhl") {
     const synced = await autoSyncIfStale(shipment.id);
     if (synced) {
-      const { data: refreshed } = await supabase
-        .from("shipments_public")
-        .select("*")
-        .eq("id", shipment.id)
-        .maybeSingle();
-      if (refreshed) shipment = refreshed as PublicShipment;
+      const { data: refreshed } = await supabase.rpc("get_public_shipment", { p_tracking_number: cleaned });
+      if (refreshed && refreshed.length > 0) shipment = refreshed[0] as PublicShipment;
     }
   }
 
@@ -69,11 +61,11 @@ export async function trackShipments(rawInput: string): Promise<TrackedShipmentR
 
   const supabase = getSupabasePublicClient();
   const fetchShipments = () =>
-    supabase.from("shipments_public").select("*").in("tracking_number", trackingNumbers);
+    supabase.rpc("get_public_shipments", { p_tracking_numbers: trackingNumbers });
 
   const first = await fetchShipments();
   let shipments = first.data;
-  if (first.error) {
+  if (first.error || !shipments) {
     return trackingNumbers.map((trackingNumber) => ({ trackingNumber, shipment: null, events: [] }));
   }
 
@@ -93,11 +85,9 @@ export async function trackShipments(rawInput: string): Promise<TrackedShipmentR
 
   let eventsByShipmentId = new Map<string, ShipmentEvent[]>();
   if (shipmentIds.length > 0) {
-    const { data: events } = await supabase
-      .from("shipment_events")
-      .select("*")
-      .in("shipment_id", shipmentIds)
-      .order("event_at", { ascending: false });
+    const { data: events } = await supabase.rpc("get_public_shipment_events", {
+      p_shipment_ids: shipmentIds,
+    });
 
     eventsByShipmentId = (events as ShipmentEvent[] | null ?? []).reduce((map, ev) => {
       const list = map.get(ev.shipment_id) ?? [];
@@ -122,11 +112,9 @@ export async function trackShipments(rawInput: string): Promise<TrackedShipmentR
  * shipments (see the shipment_events RLS policy). */
 export async function getPublicShipmentEvents(shipmentId: string): Promise<ShipmentEvent[]> {
   const supabase = getSupabasePublicClient();
-  const { data, error } = await supabase
-    .from("shipment_events")
-    .select("*")
-    .eq("shipment_id", shipmentId)
-    .order("event_at", { ascending: false });
+  const { data, error } = await supabase.rpc("get_public_shipment_events", {
+    p_shipment_ids: [shipmentId],
+  });
 
   if (error || !data) return [];
   return data as ShipmentEvent[];
