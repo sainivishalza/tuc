@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { locales } from "@/lib/i18n";
 import { createBlogPost, updateBlogPost } from "@/lib/actions/blogPosts";
 import type { BlogPost } from "@/lib/supabase/types";
+import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
 const BODY_PLACEHOLDER = `[
   { "type": "paragraph", "text": "Opening paragraph..." },
@@ -101,26 +102,22 @@ export default function BlogPostForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Slug *</label>
+          <label className={labelClass}>Slug *</label>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
             placeholder="how-to-find-reliable-suppliers-in-china"
             required
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
           <p className="mt-1 text-[11px] text-gray-400">Same slug across locales links the translations together.</p>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Locale *</label>
-          <select
-            value={locale}
-            onChange={(e) => setLocale(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-          >
+          <label className={labelClass}>Locale *</label>
+          <select value={locale} onChange={(e) => setLocale(e.target.value)} className={inputClass}>
             {locales.map((l) => (
               <option key={l} value={l}>{l}</option>
             ))}
@@ -129,47 +126,40 @@ export default function BlogPostForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">Title *</label>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-        />
+        <label className={labelClass}>Title *</label>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} required className={inputClass} />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">Excerpt *</label>
+        <label className={labelClass}>Excerpt *</label>
         <textarea
           value={excerpt}
           onChange={(e) => setExcerpt(e.target.value)}
           rows={2}
           required
-          className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={`resize-none ${inputClass}`}
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">TL;DR summary *</label>
+        <label className={labelClass}>TL;DR summary *</label>
         <textarea
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
           rows={2}
           required
-          className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={`resize-none ${inputClass}`}
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
-          Body (JSON array of blocks) *
-        </label>
+        <label className={labelClass}>Body (JSON array of blocks) *</label>
         <textarea
           value={bodyText}
           onChange={(e) => setBodyText(e.target.value)}
           rows={14}
           required
-          className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 font-mono text-xs"
+          className={`resize-y font-mono text-xs ${inputClass}`}
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Each block: {"{ type: \"paragraph\"|\"heading\", text }"}, {"{ type: \"list\", items: [...] }"}, or
@@ -178,14 +168,12 @@ export default function BlogPostForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
-          FAQ (JSON array of question/answer pairs)
-        </label>
+        <label className={labelClass}>FAQ (JSON array of question/answer pairs)</label>
         <textarea
           value={faqText}
           onChange={(e) => setFaqText(e.target.value)}
           rows={6}
-          className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 font-mono text-xs"
+          className={`resize-y font-mono text-xs ${inputClass}`}
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Renders as an FAQ section on the article and adds FAQPage schema. Leave as {"[]"} to skip.
@@ -198,60 +186,62 @@ export default function BlogPostForm({
           onChange={(e) => setAuthorName(e.target.value)}
           placeholder="Author name"
           required
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={inputClass}
         />
         <input
           value={authorTitle}
           onChange={(e) => setAuthorTitle(e.target.value)}
           placeholder="Author title"
           required
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={inputClass}
         />
         <input
           value={readTime}
           onChange={(e) => setReadTime(e.target.value)}
           placeholder="8 min read"
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">Author bio *</label>
+        <label className={labelClass}>Author bio *</label>
         <textarea
           value={authorBio}
           onChange={(e) => setAuthorBio(e.target.value)}
           rows={2}
           required
-          className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={`resize-none ${inputClass}`}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as BlogPost["status"])}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-        >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-        </select>
-        <input
-          type="date"
-          value={publishedAt ?? ""}
-          onChange={(e) => setPublishedAt(e.target.value)}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-        />
+        <div>
+          <label className={labelClass}>Status</label>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as BlogPost["status"])}
+            className={inputClass}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>Published date</label>
+          <input
+            type="date"
+            value={publishedAt ?? ""}
+            onChange={(e) => setPublishedAt(e.target.value)}
+            className={inputClass}
+          />
+        </div>
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={submitting} className="mt-2 w-fit">
         {submitting ? "Saving..." : postId ? "Save changes" : "Create post"}
-      </button>
+      </Button>
     </form>
   );
 }

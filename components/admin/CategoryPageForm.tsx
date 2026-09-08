@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { locales } from "@/lib/i18n";
 import { createCategoryPage, updateCategoryPage } from "@/lib/actions/categoryPages";
 import type { CategoryPage } from "@/lib/supabase/types";
+import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
 const HIGHLIGHTS_PLACEHOLDER = `[
   "Sample sourcing and factory shortlisting",
@@ -89,26 +90,22 @@ export default function CategoryPageForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Slug *</label>
+          <label className={labelClass}>Slug *</label>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
             placeholder="electronics-gadgets"
             required
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
           <p className="mt-1 text-[11px] text-gray-400">Same slug across locales links the translations together.</p>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Locale *</label>
-          <select
-            value={locale}
-            onChange={(e) => setLocale(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-          >
+          <label className={labelClass}>Locale *</label>
+          <select value={locale} onChange={(e) => setLocale(e.target.value)} className={inputClass}>
             {locales.map((l) => (
               <option key={l} value={l}>{l}</option>
             ))}
@@ -117,48 +114,46 @@ export default function CategoryPageForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">Category name *</label>
+        <label className={labelClass}>Category name *</label>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Electronics & Gadgets"
           required
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">Tagline *</label>
+        <label className={labelClass}>Tagline *</label>
         <textarea
           value={tagline}
           onChange={(e) => setTagline(e.target.value)}
           rows={2}
           required
-          className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={`resize-none ${inputClass}`}
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">Intro paragraph *</label>
+        <label className={labelClass}>Intro paragraph *</label>
         <textarea
           value={intro}
           onChange={(e) => setIntro(e.target.value)}
           rows={4}
           required
-          className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={`resize-none ${inputClass}`}
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
-          Highlights (JSON array of strings) *
-        </label>
+        <label className={labelClass}>Highlights (JSON array of strings) *</label>
         <textarea
           value={highlightsText}
           onChange={(e) => setHighlightsText(e.target.value)}
           rows={8}
           required
-          className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 font-mono text-xs"
+          className={`resize-y font-mono text-xs ${inputClass}`}
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Rendered as a bulleted &quot;What we handle&quot; list on the category page.
@@ -166,14 +161,12 @@ export default function CategoryPageForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
-          FAQ (JSON array of question/answer pairs)
-        </label>
+        <label className={labelClass}>FAQ (JSON array of question/answer pairs)</label>
         <textarea
           value={faqText}
           onChange={(e) => setFaqText(e.target.value)}
           rows={6}
-          className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 font-mono text-xs"
+          className={`resize-y font-mono text-xs ${inputClass}`}
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Renders as an FAQ section on the page and adds FAQPage schema. Leave as {"[]"} to skip.
@@ -181,31 +174,33 @@ export default function CategoryPageForm({
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as CategoryPage["status"])}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-        >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-        </select>
-        <input
-          type="date"
-          value={publishedAt ?? ""}
-          onChange={(e) => setPublishedAt(e.target.value)}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-        />
+        <div>
+          <label className={labelClass}>Status</label>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as CategoryPage["status"])}
+            className={inputClass}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>Published date</label>
+          <input
+            type="date"
+            value={publishedAt ?? ""}
+            onChange={(e) => setPublishedAt(e.target.value)}
+            className={inputClass}
+          />
+        </div>
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={submitting} className="mt-2 w-fit">
         {submitting ? "Saving..." : categoryId ? "Save changes" : "Create category page"}
-      </button>
+      </Button>
     </form>
   );
 }

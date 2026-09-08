@@ -14,6 +14,7 @@ import {
 } from "@/lib/actions/shipments";
 import { refreshShipmentFromApi } from "@/lib/actions/dhlSync";
 import type { Shipment, ShipmentStatus, Carrier, ShipmentEvent } from "@/lib/supabase/types";
+import { Button, Card, inputClass, labelClass, fileInputClass } from "@/components/admin/ui";
 
 const STATUS_OPTIONS: { value: ShipmentStatus; label: string }[] = [
   { value: "not_found", label: "Not found (no tracking data yet)" },
@@ -316,16 +317,16 @@ export default function ShipmentForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Tracking number *</label>
+          <label className={labelClass}>Tracking number *</label>
           <input
             value={trackingNumber}
             onChange={(e) => setTrackingNumber(e.target.value)}
             placeholder="FZBZA0822039"
             required
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
           <p className="mt-1 text-[11px] text-gray-400">
             This is the number your customer uses to track — give it to them as soon as they
@@ -333,12 +334,8 @@ export default function ShipmentForm({
           </p>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Carrier</label>
-          <select
-            value={carrierId}
-            onChange={(e) => setCarrierId(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-          >
+          <label className={labelClass}>Carrier</label>
+          <select value={carrierId} onChange={(e) => setCarrierId(e.target.value)} className={inputClass}>
             <option value="">— None —</option>
             {carriers.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -363,7 +360,7 @@ export default function ShipmentForm({
                 type="button"
                 onClick={handleRefreshFromApi}
                 disabled={syncing}
-                className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+                className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
               >
                 {syncing ? "Syncing..." : "Refresh from DHL"}
               </button>
@@ -381,94 +378,94 @@ export default function ShipmentForm({
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Customer name (private)</label>
+          <label className={labelClass}>Customer name (private)</label>
           <input
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             placeholder="e.g. Thabo M."
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Your reference (private)</label>
+          <label className={labelClass}>Your reference (private)</label>
           <input
             value={customerReference}
             onChange={(e) => setCustomerReference(e.target.value)}
             placeholder="e.g. order email, WhatsApp note"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Customer email (private)</label>
+          <label className={labelClass}>Customer email (private)</label>
           <input
             type="email"
             value={customerEmail}
             onChange={(e) => setCustomerEmail(e.target.value)}
             placeholder="e.g. customer@example.com"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
           <p className="mt-1 text-[11px] text-gray-400">
             If set, the customer gets an email whenever the status changes or you add an update.
           </p>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Carrier reference / waybill no. (private)</label>
+          <label className={labelClass}>Carrier reference / waybill no. (private)</label>
           <input
             value={carrierReferenceNo}
             onChange={(e) => setCarrierReferenceNo(e.target.value)}
             placeholder="e.g. the carrier's own reference number"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Recipient postal code (private)</label>
+          <label className={labelClass}>Recipient postal code (private)</label>
           <input
             value={recipientPostalCode}
             onChange={(e) => setRecipientPostalCode(e.target.value)}
             placeholder="e.g. 2000"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Destination country</label>
+          <label className={labelClass}>Destination country</label>
           <input
             value={destinationCountry}
             onChange={(e) => setDestinationCountry(e.target.value)}
             placeholder="South Africa"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Total pieces</label>
+          <label className={labelClass}>Total pieces</label>
           <input
             type="number"
             min="0"
             value={totalPieces}
             onChange={(e) => setTotalPieces(e.target.value)}
             placeholder="34"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-gray-700">Current location</label>
+          <label className={labelClass}>Current location</label>
           <input
             value={currentLocation}
             onChange={(e) => setCurrentLocation(e.target.value)}
             placeholder="Nansha"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className={inputClass}
           />
         </div>
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-gray-700">Status *</label>
+        <label className={labelClass}>Status *</label>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as ShipmentStatus)}
-          className="w-full max-w-xs rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          className={`max-w-xs ${inputClass}`}
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -476,8 +473,8 @@ export default function ShipmentForm({
         </select>
       </div>
 
-      <div className="rounded-xl border border-gray-200 p-4">
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
+      <Card>
+        <label className={labelClass}>
           Production progress (shown to the customer before it ships)
         </label>
         <p className="mb-3 text-[11px] text-gray-400">
@@ -495,15 +492,15 @@ export default function ShipmentForm({
                 onChange={(e) =>
                   setMilestones((prev) => ({ ...prev, [m.key]: e.target.value }))
                 }
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                className={inputClass}
               />
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
-      <div className="rounded-xl border border-gray-200 p-4">
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
+      <Card>
+        <label className={labelClass}>
           Milestone tracker (shown to the customer as a progress bar)
         </label>
         <p className="mb-3 text-[11px] text-gray-400">
@@ -520,20 +517,25 @@ export default function ShipmentForm({
                 onChange={(e) =>
                   setMilestones((prev) => ({ ...prev, [m.key]: e.target.value }))
                 }
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                className={inputClass}
               />
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       <label className="flex items-center gap-2 text-sm text-gray-700">
-        <input type="checkbox" checked={visible} onChange={(e) => setVisible(e.target.checked)} />
+        <input
+          type="checkbox"
+          checked={visible}
+          onChange={(e) => setVisible(e.target.checked)}
+          className="h-4 w-4 rounded border-gray-300 text-brand-900 focus:ring-accent"
+        />
         Visible on the public tracking page
       </label>
 
-      <div className="rounded-xl border border-gray-200 p-4">
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
+      <Card>
+        <label className={labelClass}>
           Packing list (Excel — a matching PDF is generated automatically)
         </label>
         {(hasExcel || hasPdf) && !packingFile && (
@@ -554,7 +556,7 @@ export default function ShipmentForm({
           type="file"
           accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
           onChange={(e) => setPackingFile(e.target.files?.[0] ?? null)}
-          className="w-full text-sm"
+          className={fileInputClass}
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Upload the packing list as Excel (.xlsx). The customer will be able to download it as
@@ -562,12 +564,10 @@ export default function ShipmentForm({
         </p>
         {uploadingPackingList && <p className="mt-2 text-xs text-gray-500">Uploading and converting…</p>}
         {packingListError && <p className="mt-2 text-xs text-red-500">{packingListError}</p>}
-      </div>
+      </Card>
 
-      <div className="rounded-xl border border-gray-200 p-4">
-        <label className="mb-1 block text-xs font-semibold text-gray-700">
-          Proof of delivery (photo or scanned signed receipt)
-        </label>
+      <Card>
+        <label className={labelClass}>Proof of delivery (photo or scanned signed receipt)</label>
         {hasPod && !podFile && (
           <div className="mb-3 flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
             <span>A proof of delivery is uploaded and available to the customer.</span>
@@ -586,7 +586,7 @@ export default function ShipmentForm({
           type="file"
           accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
           onChange={(e) => setPodFile(e.target.files?.[0] ?? null)}
-          className="w-full text-sm"
+          className={fileInputClass}
         />
         <p className="mt-1 text-[11px] text-gray-400">
           Upload once the parcel is signed for — a photo of the signed waybill or delivery note
@@ -594,21 +594,17 @@ export default function ShipmentForm({
         </p>
         {uploadingPod && <p className="mt-2 text-xs text-gray-500">Uploading…</p>}
         {podError && <p className="mt-2 text-xs text-red-500">{podError}</p>}
-      </div>
+      </Card>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={submitting} className="mt-2 w-fit">
         {submitting ? "Saving..." : shipmentId ? "Save changes" : "Create shipment"}
-      </button>
+      </Button>
 
       {shipmentId && (
-        <div className="mt-2 rounded-xl border border-gray-200 p-4">
-          <label className="mb-1 block text-xs font-semibold text-gray-700">
+        <Card className="mt-2">
+          <label className={labelClass}>
             Updates (shown to the customer as a timeline, most recent first)
           </label>
           <p className="mb-3 text-[11px] text-gray-400">
@@ -624,7 +620,7 @@ export default function ShipmentForm({
                 type="datetime-local"
                 value={newEventAt}
                 onChange={(e) => setNewEventAt(e.target.value)}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                className={inputClass}
               />
             </div>
             <div className="flex-1">
@@ -633,17 +629,12 @@ export default function ShipmentForm({
                 value={newEventDesc}
                 onChange={(e) => setNewEventDesc(e.target.value)}
                 placeholder="e.g. Customs clearance complete, released for delivery"
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                className={inputClass}
               />
             </div>
-            <button
-              type="button"
-              onClick={handleAddEvent}
-              disabled={addingEvent}
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-60"
-            >
+            <Button type="button" onClick={handleAddEvent} disabled={addingEvent}>
               {addingEvent ? "Adding..." : "Add"}
-            </button>
+            </Button>
           </div>
           {eventError && <p className="mt-2 text-xs text-red-500">{eventError}</p>}
 
@@ -671,7 +662,7 @@ export default function ShipmentForm({
           ) : (
             <p className="mt-3 text-xs text-gray-400">No updates yet.</p>
           )}
-        </div>
+        </Card>
       )}
     </form>
   );

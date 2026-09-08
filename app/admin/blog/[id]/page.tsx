@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getBlogPostById } from "@/lib/actions/blogPosts";
 import BlogPostForm from "@/components/admin/BlogPostForm";
+import AdminShell from "@/components/admin/AdminShell";
+import { BackLink, PageHeader, Card } from "@/components/admin/ui";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -21,22 +21,13 @@ export default async function EditBlogPostPage({
   if (!post) notFound();
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-8">
-      <div className="mx-auto max-w-3xl">
-        <Link
-          href="/admin/blog"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-900"
-        >
-          <ArrowLeft size={14} />
-          Blog Posts
-        </Link>
+    <AdminShell current="/admin/blog">
+      <BackLink href="/admin/blog">Blog Posts</BackLink>
+      <PageHeader title="Edit blog post" />
 
-        <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">Edit blog post</h1>
-
-        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
-          <BlogPostForm postId={post.id} initial={post} />
-        </div>
-      </div>
-    </main>
+      <Card className="max-w-3xl">
+        <BlogPostForm postId={post.id} initial={post} />
+      </Card>
+    </AdminShell>
   );
 }
