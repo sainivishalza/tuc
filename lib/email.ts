@@ -34,6 +34,10 @@ export async function sendEmail(params: {
         subject: params.subject,
         html: params.html,
       }),
+      // A hung Resend call must never hold up the server action that
+      // triggered it (a customer submitting a form, an admin saving a
+      // status change) — cap it well under any reasonable request timeout.
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!res.ok) {

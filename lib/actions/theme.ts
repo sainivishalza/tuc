@@ -8,8 +8,10 @@ import type { SiteTheme } from "@/lib/supabase/types";
 
 const DEFAULT_THEME: SiteTheme = {
   id: "default",
-  primary_color: "#064e3b",
-  accent_color: "#059669",
+  primary_color: "#0b192c",
+  accent_color: "#d97706",
+  surface_color: "#ffffff",
+  background_color: "#eef2f6",
   font_choice: "inter",
   text_scale: "medium",
   updated_at: "",
@@ -40,6 +42,10 @@ function sanitizeTheme(row: SiteTheme | null): SiteTheme {
     ...row,
     primary_color: HEX_COLOR_RE.test(row.primary_color) ? row.primary_color : DEFAULT_THEME.primary_color,
     accent_color: HEX_COLOR_RE.test(row.accent_color) ? row.accent_color : DEFAULT_THEME.accent_color,
+    surface_color: HEX_COLOR_RE.test(row.surface_color) ? row.surface_color : DEFAULT_THEME.surface_color,
+    background_color: HEX_COLOR_RE.test(row.background_color)
+      ? row.background_color
+      : DEFAULT_THEME.background_color,
     font_choice: ["inter", "poppins", "playfair"].includes(row.font_choice)
       ? row.font_choice
       : DEFAULT_THEME.font_choice,
@@ -55,6 +61,8 @@ export async function getSiteTheme(): Promise<SiteTheme> {
 export interface ThemeInput {
   primary_color: string;
   accent_color: string;
+  surface_color: string;
+  background_color: string;
   font_choice: SiteTheme["font_choice"];
   text_scale: SiteTheme["text_scale"];
 }
@@ -67,7 +75,12 @@ export interface ThemeSaveResult {
 export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResult> {
   await requireAdminAction();
 
-  if (!HEX_COLOR_RE.test(input.primary_color) || !HEX_COLOR_RE.test(input.accent_color)) {
+  if (
+    !HEX_COLOR_RE.test(input.primary_color) ||
+    !HEX_COLOR_RE.test(input.accent_color) ||
+    !HEX_COLOR_RE.test(input.surface_color) ||
+    !HEX_COLOR_RE.test(input.background_color)
+  ) {
     return { ok: false, message: "Colors must be a valid hex code like #059669." };
   }
 
@@ -76,6 +89,8 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
     id: "default",
     primary_color: input.primary_color,
     accent_color: input.accent_color,
+    surface_color: input.surface_color,
+    background_color: input.background_color,
     font_choice: input.font_choice,
     text_scale: input.text_scale,
     updated_at: new Date().toISOString(),

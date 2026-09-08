@@ -100,7 +100,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
   };
 
   return (
-    <section id="consultation" className="relative px-4 py-20 sm:px-6">
+    <section id="consultation" className="section-alt relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
         <SectionHeading
           badge={dict.consultation.badge}

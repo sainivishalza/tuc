@@ -3,16 +3,34 @@
 :root {
   color-scheme: light;
 
-  --background: #f7f9f8;
+  /* --background and --surface are two DIFFERENT tones on purpose — a
+     card (--surface) must always visibly pop off the page it sits on
+     (--background). Making them the same color (or both near-white) is
+     the "everywhere is white" problem; keep them distinguishable. Both
+     are admin-editable (see app/admin/theme) and overridden per-request
+     from the site_theme table (see app/layout.tsx) — these are just the
+     fallback defaults. */
+  --background: #eef2f6;
   --surface: #ffffff;
-  --surface-2: #ecf7f1;
-  --foreground: #0f1c17;
-  --muted: #5b6b64;
-  --border: #dbe7e0;
+  /* A subtly darker/cooler step down from --background, for sections
+     that want to stand out from their neighbors (see .section-alt below)
+     — derived rather than a separate admin field, so it always stays in
+     the same family as whatever background color is actually set. */
+  --surface-2: color-mix(in srgb, var(--background) 92%, var(--brand-navy) 8%);
+  --foreground: #0f172a;
+  /* Steel slate, not a light gray — subtitles and secondary copy read as
+     deliberately weighted rather than washed-out on a corporate site. */
+  --muted: #334155;
+  --border: #e2e8f0;
 
-  --brand-navy: #064e3b;
-  --brand-blue: #059669;
-  --accent: #059669;
+  /* Global trade / enterprise palette — deep navy for structure and trust
+     (headers, footers, hero), amber reserved for conversion moments
+     (buttons, CTAs) so it keeps its "pop" instead of being diluted across
+     every accent-colored detail on the page. A deeper, burnt amber rather
+     than a bright/candy one — reads as premium rather than "on sale". */
+  --brand-navy: #0b192c;
+  --brand-blue: #1e3e62;
+  --accent: #d97706;
   /* Derived from --accent rather than asked of the admin separately — one
      color picker, not two easily-mismatched ones. */
   --accent-dark: color-mix(in srgb, var(--accent) 75%, black);
@@ -23,9 +41,9 @@
      scale from this since it drives the root font-size. */
   --text-scale: 1;
 
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(15, 28, 23, 0.08);
-  --glass-shadow: 0 16px 40px -14px rgba(6, 78, 59, 0.16);
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-shadow: 0 16px 40px -14px rgba(11, 25, 44, 0.16);
 
   --color-brand-50: #ecfdf5;
   --color-brand-100: #d1fae5;
@@ -100,7 +118,7 @@ body {
 
 /* Named gradients — reused across buttons, badges, and hero backgrounds */
 .gradient-hero {
-  background: linear-gradient(135deg, #0f1712 0%, var(--brand-navy) 45%, var(--accent) 100%);
+  background: linear-gradient(135deg, #060d18 0%, var(--brand-navy) 45%, var(--accent) 100%);
 }
 .gradient-brand {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
@@ -195,15 +213,25 @@ body {
   50% { background-position: 100% 50%; }
 }
 
+/* The primary "Get a Quote" CTA treatment, used across every tool and
+   form on the site — this is the 10% conversion-accent color, deliberately
+   kept separate from the navy structural palette so it keeps popping
+   against both white sections and navy ones. */
 .brand-gradient-animated {
   background: linear-gradient(
     135deg,
-    var(--brand-navy),
-    var(--brand-blue),
-    var(--brand-navy)
+    var(--accent),
+    var(--accent-dark),
+    var(--accent)
   );
   background-size: 200% 100%;
   animation: gradient-shift 4s ease infinite;
+}
+
+/* Alternates with the plain page background to give consecutive sections
+   visual separation without every card needing its own border. */
+.section-alt {
+  background: var(--surface-2);
 }
 
 .stat-bar {

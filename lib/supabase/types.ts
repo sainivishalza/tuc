@@ -5,6 +5,8 @@ export interface SiteTheme {
   id: string;
   primary_color: string;
   accent_color: string;
+  surface_color: string;
+  background_color: string;
   font_choice: FontChoice;
   text_scale: TextScale;
   updated_at: string;
