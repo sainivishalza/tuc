@@ -18,16 +18,19 @@
      the same family as whatever background color is actually set. */
   --surface-2: color-mix(in srgb, var(--background) 92%, var(--brand-navy) 8%);
   --foreground: #0f172a;
-  --muted: #64748b;
+  /* Steel slate, not a light gray — subtitles and secondary copy read as
+     deliberately weighted rather than washed-out on a corporate site. */
+  --muted: #334155;
   --border: #e2e8f0;
 
   /* Global trade / enterprise palette — deep navy for structure and trust
      (headers, footers, hero), amber reserved for conversion moments
      (buttons, CTAs) so it keeps its "pop" instead of being diluted across
-     every accent-colored detail on the page. */
+     every accent-colored detail on the page. A deeper, burnt amber rather
+     than a bright/candy one — reads as premium rather than "on sale". */
   --brand-navy: #0b192c;
   --brand-blue: #1e3e62;
-  --accent: #f39c12;
+  --accent: #d97706;
   /* Derived from --accent rather than asked of the admin separately — one
      color picker, not two easily-mismatched ones. */
   --accent-dark: color-mix(in srgb, var(--accent) 75%, black);

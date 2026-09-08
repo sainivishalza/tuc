@@ -55,13 +55,13 @@ export default function Hero3D() {
       <ambientLight intensity={0.5} />
       <hemisphereLight args={["#dbe9f7", "#0b192c", 0.6]} />
       <directionalLight position={[4, 4, 4]} intensity={1.6} />
-      <directionalLight position={[-4, -2, -3]} intensity={0.5} color="#f39c12" />
+      <directionalLight position={[-4, -2, -3]} intensity={0.5} color="#d97706" />
       <directionalLight position={[0, -3, 2]} intensity={0.3} color="#eef2f6" />
 
       <Suspense fallback={null}>
         <CenterBlob />
         <OrbitNode position={[-1.9, 1.05, -0.5]} scale={0.26} color="#0b192c" />
-        <OrbitNode position={[1.95, -0.55, 0.3]} scale={0.18} color="#f39c12" />
+        <OrbitNode position={[1.95, -0.55, 0.3]} scale={0.18} color="#d97706" />
         <OrbitNode position={[1.4, 1.25, -1]} scale={0.14} color="#eef2f6" />
       </Suspense>
     </Canvas>

@@ -9,7 +9,7 @@ import type { SiteTheme } from "@/lib/supabase/types";
 const DEFAULT_THEME: SiteTheme = {
   id: "default",
   primary_color: "#0b192c",
-  accent_color: "#f39c12",
+  accent_color: "#d97706",
   surface_color: "#ffffff",
   background_color: "#eef2f6",
   font_choice: "inter",

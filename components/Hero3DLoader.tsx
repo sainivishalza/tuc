@@ -59,10 +59,10 @@ export default function Hero3DLoader() {
           totally empty box if WebGL is unavailable, without competing
           visually with the sphere when it does render. */}
       <div
-        className="absolute inset-8 -z-10 rounded-full opacity-20 blur-3xl"
+        className="absolute inset-8 -z-10 rounded-full opacity-30 blur-3xl"
         style={{
           background:
-            "radial-gradient(closest-side, var(--brand-blue) 0%, transparent 75%)",
+            "radial-gradient(closest-side, var(--accent) 0%, transparent 75%)",
         }}
       />
       {ready && (
