@@ -81,10 +81,10 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
 }
 
 const statMeta = [
-  { icon: Users, value: 500, suffix: "+", color: "text-blue-400" },
-  { icon: Globe, value: 15, suffix: "+", color: "text-emerald-400" },
-  { icon: Clock, value: 10, suffix: "+", color: "text-amber-400" },
-  { icon: Package, value: 2000, suffix: "+", color: "text-purple-400" },
+  { icon: Users, value: 500, suffix: "+", color: "text-brand-600", bg: "from-brand-500/20 to-transparent" },
+  { icon: Globe, value: 15, suffix: "+", color: "text-brand-900", bg: "from-brand-900/15 to-transparent" },
+  { icon: Clock, value: 10, suffix: "+", color: "text-brand-600", bg: "from-brand-400/20 to-transparent" },
+  { icon: Package, value: 2000, suffix: "+", color: "text-brand-800", bg: "from-brand-800/15 to-transparent" },
 ];
 
 export default function AnimatedStats({ dict }: { dict: Dictionary }) {
@@ -102,7 +102,7 @@ export default function AnimatedStats({ dict }: { dict: Dictionary }) {
               const Icon = stat.icon;
               return (
                 <div key={stat.label} className="flex flex-col items-center text-center">
-                  <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-${stat.color.replace('text-', '')}/20 to-transparent`}>
+                  <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.bg}`}>
                     <Icon size={28} className={stat.color} />
                   </div>
                   <AnimatedNumber target={stat.value} suffix={stat.suffix} />

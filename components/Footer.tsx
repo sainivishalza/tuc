@@ -14,13 +14,12 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
             <h3 className="font-display text-base font-semibold text-foreground">
               {dict.footer.tagline}
             </h3>
-            <p className="mt-1 text-sm text-muted">{dict.nav.chatWhatsapp}</p>
           </div>
           <a
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="gradient-brand flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/25 transition hover:scale-105"
+            className="brand-gradient flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:scale-105"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}
@@ -36,7 +35,7 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
                 U
               </span>
               <span className="font-display text-base font-semibold text-foreground">
-                <span className="text-emerald-600">The Unique</span> Choice
+                <span className="text-accent">The Unique</span> Choice
               </span>
             </Link>
             <p className="mt-3 text-sm text-muted">{dict.footer.tagline}</p>
