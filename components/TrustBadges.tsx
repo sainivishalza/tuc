@@ -5,12 +5,14 @@ import Reveal from "./Reveal";
 import type { Dictionary } from "@/lib/i18n";
 
 const badgeMeta = [
-  { icon: Shield, color: "text-blue-400", bg: "from-blue-500/15 to-blue-600/5" },
-  { icon: Lock, color: "text-emerald-400", bg: "from-emerald-500/15 to-emerald-600/5" },
-  { icon: CheckCircle, color: "text-amber-400", bg: "from-amber-500/15 to-amber-600/5" },
-  { icon: Truck, color: "text-purple-400", bg: "from-purple-500/15 to-purple-600/5" },
-  { icon: Award, color: "text-pink-400", bg: "from-pink-500/15 to-pink-600/5" },
-  { icon: Headphones, color: "text-cyan-400", bg: "from-cyan-500/15 to-cyan-600/5" },
+  { icon: Shield, color: "text-brand-600", bg: "from-brand-500/15 to-brand-700/5" },
+  { icon: Lock, color: "text-brand-900", bg: "from-brand-900/12 to-brand-700/5" },
+  { icon: CheckCircle, color: "text-brand-600", bg: "from-brand-400/15 to-brand-600/5" },
+  { icon: Truck, color: "text-brand-800", bg: "from-brand-800/12 to-brand-600/5" },
+  // Gold is the one deliberate break from the brand's green/navy tonal
+  // range — an award is gold, not a decorative color choice.
+  { icon: Award, color: "text-[#b08d4f]", bg: "from-[#b08d4f]/15 to-[#b08d4f]/5" },
+  { icon: Headphones, color: "text-brand-600", bg: "from-brand-500/12 to-brand-700/5" },
 ];
 
 export default function TrustBadges({ dict }: { dict: Dictionary }) {

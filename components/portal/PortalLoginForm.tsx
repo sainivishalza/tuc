@@ -18,7 +18,7 @@ export default function PortalLoginForm() {
             U
           </span>
           <span className="font-display text-base font-semibold tracking-tight">
-            <span className="text-emerald-600">The Unique</span> Choice
+            <span className="text-accent">The Unique</span> Choice
           </span>
         </Link>
 
