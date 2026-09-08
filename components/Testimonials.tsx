@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, MessageCircle, Quote, Star } from "lucide-react";
+import { Sparkles, MessageCircle, Star } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import type { Testimonial } from "@/lib/supabase/types";
 import Reveal from "./Reveal";
@@ -60,15 +60,20 @@ export default function Testimonials({
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {testimonials.map((t, i) => (
               <Reveal key={t.id} delay={i * 0.08}>
-                <div className="glass-strong flex h-full flex-col gap-3 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/5">
-                  <div className="flex items-start justify-between">
-                    <Quote size={18} className="shrink-0 text-accent/30" />
+                <div className="glass-strong relative flex h-full flex-col gap-1 overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/5">
+                  <span
+                    aria-hidden
+                    className="font-display pointer-events-none absolute -top-3 left-4 select-none text-7xl leading-none text-accent/10"
+                  >
+                    &ldquo;
+                  </span>
+                  <div className="flex items-start justify-end">
                     <StarRating rating={t.rating} />
                   </div>
-                  <p className="text-sm leading-relaxed text-muted sm:text-base">
-                    &ldquo;{t.quote}&rdquo;
+                  <p className="font-display relative text-base leading-relaxed text-foreground sm:text-lg">
+                    {t.quote}
                   </p>
-                  <div className="mt-auto flex items-center gap-3 pt-2">
+                  <div className="mt-auto flex items-center gap-3 pt-4">
                     <AvatarInitials name={t.name} />
                     <div>
                       <p className="font-display text-sm font-semibold">
