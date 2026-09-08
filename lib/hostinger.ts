@@ -17,6 +17,10 @@ export async function purgeHostingerCache(): Promise<{ ok: boolean; message: str
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
+        // Without a hard deadline, a slow/hanging Hostinger API call blocks
+        // instrumentation.ts's register() — which blocks the whole Next.js
+        // server from finishing startup, taking the entire site down.
+        signal: AbortSignal.timeout(8000),
       }
     );
 
