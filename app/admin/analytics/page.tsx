@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Eye, MousePointerClick, BarChart3 } from "lucide-react";
+import { ArrowLeft, Eye, MousePointerClick, BarChart3, Users, Compass } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getAnalyticsSummary } from "@/lib/actions/analytics";
 
@@ -47,12 +47,15 @@ function BarRow({ label, count, max }: { label: string; count: number; max: numb
 
 export default async function AnalyticsAdminPage() {
   await requireAdminPage();
-  const { total, pageViews, ctaClicks, recentEvents } = await getAnalyticsSummary();
+  const { total, pageViews, ctaClicks, sources, uniqueSessions, organicSessions, recentEvents } =
+    await getAnalyticsSummary();
 
   const topPages = Object.entries(pageViews).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const topCtas = Object.entries(ctaClicks).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const topSources = Object.entries(sources).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const maxPage = topPages[0]?.[1] ?? 1;
   const maxCta = topCtas[0]?.[1] ?? 1;
+  const maxSource = topSources[0]?.[1] ?? 1;
   const totalPageViews = Object.values(pageViews).reduce((a, b) => a + b, 0);
   const totalCtaClicks = Object.values(ctaClicks).reduce((a, b) => a + b, 0);
 
@@ -73,10 +76,27 @@ export default async function AnalyticsAdminPage() {
         </p>
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatCard icon={Users} label="Visitor Sessions" value={uniqueSessions} />
+          <StatCard icon={Compass} label="From Organic Search" value={organicSessions} />
           <StatCard icon={Eye} label="Total Page Views" value={totalPageViews} />
+        </div>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard icon={BarChart3} label="Unique Paths" value={Object.keys(pageViews).length} />
           <StatCard icon={MousePointerClick} label="CTA Clicks" value={totalCtaClicks} />
         </div>
+
+        {topSources.length > 0 && (
+          <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+            <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-gray-500">
+              Traffic Sources (by visitor session)
+            </h2>
+            <div className="space-y-2">
+              {topSources.map(([source, count]) => (
+                <BarRow key={source} label={source} count={count} max={maxSource} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {topPages.length > 0 && (
           <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
