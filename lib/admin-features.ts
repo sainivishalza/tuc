@@ -74,4 +74,11 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/carriers",
     status: "live",
   },
+  {
+    title: "Theme Settings",
+    description:
+      "Control the whole site's look from one screen — brand color, accent color, font, and text size. Changes apply everywhere (headings, buttons, nav) instantly, no code deploy.",
+    href: "/admin/theme",
+    status: "live",
+  },
 ];

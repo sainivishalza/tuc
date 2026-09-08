@@ -13,6 +13,15 @@
   --brand-navy: #064e3b;
   --brand-blue: #059669;
   --accent: #059669;
+  /* Derived from --accent rather than asked of the admin separately — one
+     color picker, not two easily-mismatched ones. */
+  --accent-dark: color-mix(in srgb, var(--accent) 75%, black);
+  --accent-glow: color-mix(in srgb, var(--accent) 35%, transparent);
+
+  /* Overridden per-request from the site_theme table (see app/layout.tsx) — 1
+     is the default/unscaled size; Tailwind's rem-based text utilities all
+     scale from this since it drives the root font-size. */
+  --text-scale: 1;
 
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(15, 28, 23, 0.08);
@@ -52,8 +61,8 @@
   --color-brand-800: var(--color-brand-800);
   --color-brand-900: var(--color-brand-900);
   --color-brand-950: var(--color-brand-950);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-inter);
+  --font-sans: var(--font-selected, var(--font-inter));
+  --font-display: var(--font-selected, var(--font-inter));
 }
 
 * {
@@ -62,12 +71,13 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: calc(16px * var(--text-scale));
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-family: var(--font-selected, var(--font-inter)), Arial, Helvetica, sans-serif;
   background-image:
     radial-gradient(circle, var(--border) 0.8px, transparent 0.8px);
   background-size: 28px 28px;
@@ -75,11 +85,11 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-selected, var(--font-inter)), sans-serif;
 }
 
 .eyebrow {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-selected, var(--font-inter)), sans-serif;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -87,10 +97,10 @@ body {
 
 /* Named gradients — reused across buttons, badges, and hero backgrounds */
 .gradient-hero {
-  background: linear-gradient(135deg, #0f1712 0%, #064e3b 45%, #059669 100%);
+  background: linear-gradient(135deg, #0f1712 0%, var(--brand-navy) 45%, var(--accent) 100%);
 }
 .gradient-brand {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
 }
 .gradient-warm {
   background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
@@ -109,20 +119,20 @@ body {
 }
 
 .brand-gradient {
-  background-image: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
   transition: box-shadow 0.3s, transform 0.3s;
 }
 .brand-gradient:hover {
   box-shadow:
-    0 0 20px rgba(5, 150, 105, 0.35),
-    0 0 50px rgba(5, 150, 105, 0.12);
+    0 0 20px var(--accent-glow),
+    0 0 50px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 .brand-gradient:active {
   transform: scale(0.97);
 }
 
 .brand-gradient-text {
-  background-image: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -151,7 +161,7 @@ body {
   transform: translateY(-3px);
   box-shadow:
     var(--glass-shadow),
-    0 8px 30px -6px rgba(5, 150, 105, 0.18);
+    0 8px 30px -6px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .card-hover {
@@ -171,7 +181,7 @@ body {
 }
 
 .section-number {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-selected, var(--font-inter)), sans-serif;
   font-weight: 600;
   color: var(--accent);
   opacity: 0.5;
@@ -205,9 +215,9 @@ body {
   padding: 1px;
   background: linear-gradient(
     135deg,
-    rgba(5, 150, 105, 0.3),
-    rgba(6, 78, 59, 0.1),
-    rgba(5, 150, 105, 0.3)
+    color-mix(in srgb, var(--accent) 30%, transparent),
+    color-mix(in srgb, var(--brand-navy) 10%, transparent),
+    color-mix(in srgb, var(--accent) 30%, transparent)
   );
   mask:
     linear-gradient(#fff 0 0) content-box,
