@@ -68,7 +68,7 @@ export default function LandedCostCalculator() {
                 >
                   {CATEGORY_PROFILES.map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {cat.emoji} {cat.label}
+                      {cat.label}
                     </option>
                   ))}
                 </select>

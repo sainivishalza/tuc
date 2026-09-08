@@ -7,7 +7,6 @@
 export interface CategoryProfile {
   id: string;
   label: string;
-  emoji: string;
   keywords: string[];
   moq: string;
   leadTime: string;
@@ -19,7 +18,6 @@ export const CATEGORY_PROFILES: CategoryProfile[] = [
   {
     id: "electronics",
     label: "Electronics & Gadgets",
-    emoji: "⚡",
     keywords: [
       "electronic", "gadget", "device", "charger", "cable", "earbud", "headphone",
       "speaker", "smart watch", "smartwatch", "led", "light strip", "camera",
@@ -34,7 +32,6 @@ export const CATEGORY_PROFILES: CategoryProfile[] = [
   {
     id: "home",
     label: "Home & Kitchen",
-    emoji: "🏠",
     keywords: [
       "home", "kitchen", "furniture", "appliance", "cookware", "decor",
       "storage", "organizer", "bedding", "towel", "utensil", "container",
@@ -48,7 +45,6 @@ export const CATEGORY_PROFILES: CategoryProfile[] = [
   {
     id: "fashion",
     label: "Fashion & Textiles",
-    emoji: "👔",
     keywords: [
       "fashion", "textile", "clothing", "apparel", "shirt", "dress", "fabric",
       "shoe", "footwear", "bag", "handbag", "jewelry", "accessory", "hat",
@@ -62,7 +58,6 @@ export const CATEGORY_PROFILES: CategoryProfile[] = [
   {
     id: "building",
     label: "Building Materials",
-    emoji: "🏗️",
     keywords: [
       "building", "construction", "tile", "fixture", "lighting", "hardware",
       "door", "window", "flooring", "cement", "pipe", "faucet", "valve",
@@ -76,7 +71,6 @@ export const CATEGORY_PROFILES: CategoryProfile[] = [
   {
     id: "packaging",
     label: "Packaging & Printing",
-    emoji: "📦",
     keywords: [
       "packaging", "printing", "box", "label", "carton", "sticker", "sleeve",
       "pouch", "bag", "print", "branding", "custom box", "gift box", "tag",
@@ -89,7 +83,6 @@ export const CATEGORY_PROFILES: CategoryProfile[] = [
   {
     id: "auto",
     label: "Auto Parts & Tools",
-    emoji: "🔧",
     keywords: [
       "auto", "car", "vehicle", "tool", "wrench", "tire", "engine", "mechanic",
       "industrial", "equipment", "machine", "drill", "hardware tool", "spare part",
@@ -104,7 +97,6 @@ export const CATEGORY_PROFILES: CategoryProfile[] = [
 const OTHER_PROFILE: CategoryProfile = {
   id: "other",
   label: "Other / Not Sure Yet",
-  emoji: "✨",
   keywords: [],
   moq: "Varies by product — we'll confirm once we see your item",
   leadTime: "Typically 20–45 days depending on complexity",

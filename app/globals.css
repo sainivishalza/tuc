@@ -62,7 +62,10 @@
   --color-brand-900: var(--color-brand-900);
   --color-brand-950: var(--color-brand-950);
   --font-sans: var(--font-selected, var(--font-inter));
-  --font-display: var(--font-selected, var(--font-inter));
+  /* Headings always use the serif display face regardless of the admin's
+     body-font pick — a serif/sans pairing is what actually reads as
+     "premium" rather than a single typeface used everywhere. */
+  --font-display: var(--font-playfair);
 }
 
 * {
@@ -85,7 +88,7 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-selected, var(--font-inter)), sans-serif;
+  font-family: var(--font-playfair), serif;
 }
 
 .eyebrow {

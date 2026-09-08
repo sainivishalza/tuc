@@ -7,6 +7,7 @@ import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
 import { matchProduct, type MatchResult } from "@/lib/productMatcher";
+import { CategoryBadge } from "./categoryVisuals";
 
 const TIMELINE_LABELS: Record<string, string> = {
   asap: "ASAP",
@@ -103,7 +104,7 @@ export default function ProductMatcher() {
               <Reveal delay={0} className="mt-6">
                 <div className="rounded-xl border border-border bg-surface p-5 sm:p-6">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-2xl">{result.profile.emoji}</span>
+                    <CategoryBadge id={result.profile.id} />
                     <h3 className="font-display text-lg font-semibold">
                       {result.profile.label}
                     </h3>

@@ -7,8 +7,6 @@ import {
   MessageCircle,
   ArrowRight,
   ArrowLeft,
-  Package,
-  User,
 } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import Reveal from "./Reveal";
@@ -17,15 +15,16 @@ import { whatsappLink } from "@/lib/whatsapp";
 import { trackCtaClick } from "@/lib/analytics";
 import { submitQuoteRequest } from "@/lib/actions/quoteRequests";
 import { usePathname } from "next/navigation";
+import { CategoryBadge } from "./categoryVisuals";
 
 const productCategories = [
-  { id: "electronics", label: "Electronics", emoji: "⚡" },
-  { id: "home", label: "Home & Kitchen", emoji: "🏠" },
-  { id: "fashion", label: "Fashion", emoji: "👔" },
-  { id: "building", label: "Building", emoji: "🏗️" },
-  { id: "packaging", label: "Packaging", emoji: "📦" },
-  { id: "auto", label: "Auto Parts", emoji: "🔧" },
-  { id: "other", label: "Other", emoji: "✨" },
+  { id: "electronics", label: "Electronics" },
+  { id: "home", label: "Home & Kitchen" },
+  { id: "fashion", label: "Fashion" },
+  { id: "building", label: "Building" },
+  { id: "packaging", label: "Packaging" },
+  { id: "auto", label: "Auto Parts" },
+  { id: "other", label: "Other" },
 ];
 
 const timelines = [
@@ -187,7 +186,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                             : "border-border hover:border-accent/50"
                         }`}
                       >
-                        <span className="text-2xl">{cat.emoji}</span>
+                        <CategoryBadge id={cat.id} size={36} />
                         <span className="text-xs font-medium">{cat.label}</span>
                       </button>
                     ))}
@@ -260,7 +259,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                     How can we reach you?
                   </h3>
                   <p className="text-sm text-muted">
-                    We'll respond within 24 hours with a detailed proposal.
+                    We&apos;ll respond within 24 hours with a detailed proposal.
                   </p>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
