@@ -8,6 +8,7 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getPublishedCategories } from "@/lib/actions/categoryPages";
 import { localeAlternates } from "@/lib/hreflang";
 import LazyOrderTimingPlanner from "@/components/LazyOrderTimingPlanner";
+import LazyPaymentSchedulePlanner from "@/components/LazyPaymentSchedulePlanner";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -74,6 +75,7 @@ export default async function SourcingIndexPage({
         </section>
 
         <LazyOrderTimingPlanner locale={locale} />
+        <LazyPaymentSchedulePlanner locale={locale} />
 
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto max-w-3xl">
