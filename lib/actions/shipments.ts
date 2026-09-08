@@ -28,7 +28,7 @@ export async function trackShipment(trackingNumber: string): Promise<PublicShipm
   let shipment = data as PublicShipment;
 
   if (shipment.carrier_api_provider === "dhl") {
-    const synced = await autoSyncIfStale(shipment.id, shipment.tracking_number, shipment.last_api_sync_at);
+    const synced = await autoSyncIfStale(shipment.id);
     if (synced) {
       const { data: refreshed } = await supabase
         .from("shipments_public")
@@ -79,7 +79,7 @@ export async function trackShipments(rawInput: string): Promise<TrackedShipmentR
   const dhlLinked = (shipments as PublicShipment[]).filter((s) => s.carrier_api_provider === "dhl");
   if (dhlLinked.length > 0) {
     const syncedFlags = await Promise.all(
-      dhlLinked.map((s) => autoSyncIfStale(s.id, s.tracking_number, s.last_api_sync_at))
+      dhlLinked.map((s) => autoSyncIfStale(s.id))
     );
     if (syncedFlags.some(Boolean)) {
       const refetched = await fetchShipments();

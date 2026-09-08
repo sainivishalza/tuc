@@ -74,17 +74,32 @@ async function syncDhlShipment(shipmentId: string, trackingNumber: string): Prom
 
 /** Best-effort auto-refresh used by the public tracking lookup — never
  * throws, since a DHL outage should never break tracking for shipments
- * we already have cached data for. */
-export async function autoSyncIfStale(
-  shipmentId: string,
-  trackingNumber: string,
-  lastApiSyncAt: string | null
-): Promise<boolean> {
-  const isStale = !lastApiSyncAt || Date.now() - new Date(lastApiSyncAt).getTime() > STALE_AFTER_MS;
+ * we already have cached data for.
+ *
+ * This is an exported Server Action, i.e. a directly callable network
+ * endpoint — never trust a caller-supplied tracking number or carrier
+ * check here, only the shipmentId. Everything else is re-derived from
+ * the database so a mismatched (shipmentId, trackingNumber) pair from a
+ * hand-crafted request can't overwrite one shipment's data with another
+ * tracking number's, or force a sync on a non-DHL shipment. */
+export async function autoSyncIfStale(shipmentId: string): Promise<boolean> {
+  const supabase = getSupabaseAdminClient();
+  const { data: shipment } = await supabase
+    .from("shipments")
+    .select("tracking_number, last_api_sync_at, carriers(api_provider)")
+    .eq("id", shipmentId)
+    .maybeSingle();
+
+  if (!shipment) return false;
+  const apiProvider = (shipment.carriers as unknown as { api_provider: string | null } | null)?.api_provider;
+  if (apiProvider !== "dhl") return false;
+
+  const isStale =
+    !shipment.last_api_sync_at || Date.now() - new Date(shipment.last_api_sync_at).getTime() > STALE_AFTER_MS;
   if (!isStale) return false;
 
   try {
-    const result = await syncDhlShipment(shipmentId, trackingNumber);
+    const result = await syncDhlShipment(shipmentId, shipment.tracking_number);
     return result.ok;
   } catch {
     return false;
