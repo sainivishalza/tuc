@@ -7,6 +7,7 @@ import TrustBadges from "@/components/TrustBadges";
 import Services from "@/components/Services";
 import ProductCategories from "@/components/ProductCategories";
 import HowItWorks from "@/components/HowItWorks";
+import LazyPlanMatchQuiz from "@/components/LazyPlanMatchQuiz";
 import Pricing from "@/components/Pricing";
 import WhyUs from "@/components/WhyUs";
 import LazyTestimonials from "@/components/LazyTestimonials";
@@ -99,6 +100,7 @@ export default async function LocalePage({
         <Services dict={dict} />
         <ProductCategories dict={dict} locale={locale} />
         <HowItWorks dict={dict} />
+        <LazyPlanMatchQuiz dict={dict} />
         <Pricing dict={dict} />
         <WhyUs dict={dict} />
         <LazyTestimonials dict={dict} testimonials={testimonials} />
