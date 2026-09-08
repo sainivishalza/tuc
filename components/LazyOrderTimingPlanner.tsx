@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { Locale } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 
 const OrderTimingPlanner = dynamic(() => import("./OrderTimingPlanner"), {
   ssr: false,
@@ -13,6 +13,6 @@ const OrderTimingPlanner = dynamic(() => import("./OrderTimingPlanner"), {
 // which would otherwise run once on the server at build/render time and
 // again on the client at hydration, risking a hydration mismatch if a
 // day boundary (or timezone) falls between the two.
-export default function LazyOrderTimingPlanner({ locale }: { locale: Locale }) {
-  return <OrderTimingPlanner locale={locale} />;
+export default function LazyOrderTimingPlanner({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  return <OrderTimingPlanner dict={dict} locale={locale} />;
 }

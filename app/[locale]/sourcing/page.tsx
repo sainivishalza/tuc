@@ -75,9 +75,9 @@ export default async function SourcingIndexPage({
           </div>
         </section>
 
-        <LazyOrderTimingPlanner locale={locale} />
-        <LazyPaymentSchedulePlanner locale={locale} />
-        <DocumentChecklist locale={locale} />
+        <LazyOrderTimingPlanner dict={dict} locale={locale} />
+        <LazyPaymentSchedulePlanner dict={dict} locale={locale} />
+        <DocumentChecklist dict={dict} locale={locale} />
 
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto max-w-3xl">

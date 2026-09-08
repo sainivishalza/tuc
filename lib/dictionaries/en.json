@@ -32,16 +32,46 @@
     "title": "Services Available",
     "subtitle": "Everything you need to source, verify, and ship products from China and Hong Kong — handled end to end.",
     "items": [
-      { "title": "Sourcing From China & Hong Kong", "desc": "We find the right factories and suppliers for your product, at the right price." },
-      { "title": "Door To Door Shipping", "desc": "Full logistics from the factory floor to your doorstep, tracked the whole way." },
-      { "title": "Small Parcel", "desc": "Low-volume orders and samples shipped without the bulk-freight hassle." },
-      { "title": "Factory Inspection", "desc": "We visit and verify factories in person before you commit to an order." },
-      { "title": "Verified Supplier", "desc": "Every supplier we recommend is checked for legitimacy and track record." },
-      { "title": "Payment Security", "desc": "Structured, secure payment handling to protect your money at every step." },
-      { "title": "Products Inspection", "desc": "Quality checks before shipping, so what you ordered is what you receive." },
-      { "title": "Manual Requests", "desc": "Can't find it online? Tell us what you need and we'll track it down." },
-      { "title": "Arrange Factory Contacts", "desc": "Direct introductions to factories — no unnecessary middlemen or markups." },
-      { "title": "Arrange Paid Samples & Shipping", "desc": "Get real samples in hand before you commit to a bulk order." }
+      {
+        "title": "Sourcing From China & Hong Kong",
+        "desc": "We find the right factories and suppliers for your product, at the right price."
+      },
+      {
+        "title": "Door To Door Shipping",
+        "desc": "Full logistics from the factory floor to your doorstep, tracked the whole way."
+      },
+      {
+        "title": "Small Parcel",
+        "desc": "Low-volume orders and samples shipped without the bulk-freight hassle."
+      },
+      {
+        "title": "Factory Inspection",
+        "desc": "We visit and verify factories in person before you commit to an order."
+      },
+      {
+        "title": "Verified Supplier",
+        "desc": "Every supplier we recommend is checked for legitimacy and track record."
+      },
+      {
+        "title": "Payment Security",
+        "desc": "Structured, secure payment handling to protect your money at every step."
+      },
+      {
+        "title": "Products Inspection",
+        "desc": "Quality checks before shipping, so what you ordered is what you receive."
+      },
+      {
+        "title": "Manual Requests",
+        "desc": "Can't find it online? Tell us what you need and we'll track it down."
+      },
+      {
+        "title": "Arrange Factory Contacts",
+        "desc": "Direct introductions to factories — no unnecessary middlemen or markups."
+      },
+      {
+        "title": "Arrange Paid Samples & Shipping",
+        "desc": "Get real samples in hand before you commit to a bulk order."
+      }
     ]
   },
   "howItWorks": {
@@ -49,11 +79,26 @@
     "title": "How It Works",
     "subtitle": "A simple, transparent process from first message to delivery.",
     "steps": [
-      { "title": "Message Us", "desc": "Tell us what product you're looking for on WhatsApp." },
-      { "title": "We Source & Verify", "desc": "We find verified suppliers and factories that match your needs." },
-      { "title": "You Approve Samples", "desc": "We arrange paid samples so you can check quality before committing." },
-      { "title": "Inspect & Ship", "desc": "We inspect the final products and arrange secure, tracked shipping." },
-      { "title": "Delivered to You", "desc": "Door-to-door delivery, tracked from the factory to your address." }
+      {
+        "title": "Message Us",
+        "desc": "Tell us what product you're looking for on WhatsApp."
+      },
+      {
+        "title": "We Source & Verify",
+        "desc": "We find verified suppliers and factories that match your needs."
+      },
+      {
+        "title": "You Approve Samples",
+        "desc": "We arrange paid samples so you can check quality before committing."
+      },
+      {
+        "title": "Inspect & Ship",
+        "desc": "We inspect the final products and arrange secure, tracked shipping."
+      },
+      {
+        "title": "Delivered to You",
+        "desc": "Door-to-door delivery, tracked from the factory to your address."
+      }
     ]
   },
   "whyUs": {
@@ -61,12 +106,30 @@
     "title": "Built on Verification, Not Promises",
     "subtitle": "We don't just say it's handled — every step is checked, documented, and confirmed with you.",
     "items": [
-      { "title": "Verified Supplier Network", "desc": "We only work with suppliers we've personally vetted." },
-      { "title": "Product Inspection Before Shipping", "desc": "Nothing ships until it passes a quality check." },
-      { "title": "Secure Payment Handling", "desc": "Your payments are handled through structured, protected steps." },
-      { "title": "Factory Inspection Available", "desc": "We can visit and verify a factory in person on request." },
-      { "title": "Door-to-Door Tracking", "desc": "Know where your shipment is at every stage of the journey." },
-      { "title": "Direct Factory Contacts", "desc": "We connect you directly — no hidden layers of middlemen." }
+      {
+        "title": "Verified Supplier Network",
+        "desc": "We only work with suppliers we've personally vetted."
+      },
+      {
+        "title": "Product Inspection Before Shipping",
+        "desc": "Nothing ships until it passes a quality check."
+      },
+      {
+        "title": "Secure Payment Handling",
+        "desc": "Your payments are handled through structured, protected steps."
+      },
+      {
+        "title": "Factory Inspection Available",
+        "desc": "We can visit and verify a factory in person on request."
+      },
+      {
+        "title": "Door-to-Door Tracking",
+        "desc": "Know where your shipment is at every stage of the journey."
+      },
+      {
+        "title": "Direct Factory Contacts",
+        "desc": "We connect you directly — no hidden layers of middlemen."
+      }
     ]
   },
   "testimonials": {
@@ -80,12 +143,30 @@
     "badge": "Questions",
     "title": "Frequently Asked Questions",
     "items": [
-      { "q": "How do I start an order?", "a": "Message us on WhatsApp with the product you're looking for. We'll ask a few questions and start sourcing right away." },
-      { "q": "Can I get samples before a bulk order?", "a": "Yes — we arrange paid samples so you can check quality and fit before committing to a larger order." },
-      { "q": "How is my payment protected?", "a": "We use structured, step-by-step payment handling so funds are only released as agreed milestones are met." },
-      { "q": "Do you inspect products before shipping?", "a": "Yes, every order goes through a product inspection before it's cleared for shipping." },
-      { "q": "What shipping options are available?", "a": "We offer both small parcel shipping for samples and low-volume orders, and full door-to-door freight for bulk orders." },
-      { "q": "Which countries do you ship to?", "a": "We currently ship from China & Hong Kong to Hong Kong, India, and South Africa, with more regions being added." }
+      {
+        "q": "How do I start an order?",
+        "a": "Message us on WhatsApp with the product you're looking for. We'll ask a few questions and start sourcing right away."
+      },
+      {
+        "q": "Can I get samples before a bulk order?",
+        "a": "Yes — we arrange paid samples so you can check quality and fit before committing to a larger order."
+      },
+      {
+        "q": "How is my payment protected?",
+        "a": "We use structured, step-by-step payment handling so funds are only released as agreed milestones are met."
+      },
+      {
+        "q": "Do you inspect products before shipping?",
+        "a": "Yes, every order goes through a product inspection before it's cleared for shipping."
+      },
+      {
+        "q": "What shipping options are available?",
+        "a": "We offer both small parcel shipping for samples and low-volume orders, and full door-to-door freight for bulk orders."
+      },
+      {
+        "q": "Which countries do you ship to?",
+        "a": "We currently ship from China & Hong Kong to Hong Kong, India, and South Africa, with more regions being added."
+      }
     ]
   },
   "contact": {
@@ -103,9 +184,18 @@
     "story": "The Unique Choice was founded to solve a simple problem: sourcing from China shouldn't require a plane ticket or a leap of faith. We built a network of verified factories and suppliers across mainland China and Hong Kong, combined it with hands-on inspection, and wrapped it in a transparent, step-by-step process.",
     "mission": "Our mission is to make international sourcing accessible, safe, and efficient for businesses of every size — from first-time buyers to established brands.",
     "values": [
-      { "title": "Verification First", "desc": "Every supplier we work with is personally vetted. We don't list factories we haven't inspected." },
-      { "title": "Full Transparency", "desc": "Photos, reports, and updates at every stage. You always know what's happening with your order." },
-      { "title": "Secure Handling", "desc": "Structured payments and protected shipping so your money and products are always safe." }
+      {
+        "title": "Verification First",
+        "desc": "Every supplier we work with is personally vetted. We don't list factories we haven't inspected."
+      },
+      {
+        "title": "Full Transparency",
+        "desc": "Photos, reports, and updates at every stage. You always know what's happening with your order."
+      },
+      {
+        "title": "Secure Handling",
+        "desc": "Structured payments and protected shipping so your money and products are always safe."
+      }
     ],
     "regions": "We operate across mainland China and Hong Kong, connecting buyers to factories in Shenzhen, Guangzhou, Yiwu, and beyond.",
     "cta": "Start Sourcing Today",
@@ -119,9 +209,21 @@
     "title": "Let's Talk About Your Next Order",
     "subtitle": "Whether you're sourcing your first product or your hundredth, we're here to help. Reach out and we'll respond within hours.",
     "channels": [
-      { "label": "WhatsApp", "value": "+91 98967 39100", "desc": "Fastest way to reach us. Most replies within a few hours." },
-      { "label": "Email", "value": "hello@theuniquechoice.com", "desc": "For detailed inquiries and documentation." },
-      { "label": "Phone", "value": "+91 98967 39100", "desc": "Available Monday–Saturday, 9 AM – 6 PM IST." }
+      {
+        "label": "WhatsApp",
+        "value": "+91 98967 39100",
+        "desc": "Fastest way to reach us. Most replies within a few hours."
+      },
+      {
+        "label": "Email",
+        "value": "hello@theuniquechoice.com",
+        "desc": "For detailed inquiries and documentation."
+      },
+      {
+        "label": "Phone",
+        "value": "+91 98967 39100",
+        "desc": "Available Monday–Saturday, 9 AM – 6 PM IST."
+      }
     ],
     "hours": "Our team is available Monday through Saturday, 9:00 AM to 6:00 PM Indian Standard Time. Messages received outside business hours are answered first thing the next working day.",
     "regions": "We serve clients in Hong Kong, India, and South Africa — with more regions coming soon.",
@@ -136,19 +238,40 @@
         "name": "Starter",
         "commission": "3%",
         "desc": "For buyers who already have suppliers in China",
-        "features": ["Supplier verification", "Payment assistance", "Quality inspection", "Shipping arrangement", "Free warehouse storage (30 days)"]
+        "features": [
+          "Supplier verification",
+          "Payment assistance",
+          "Quality inspection",
+          "Shipping arrangement",
+          "Free warehouse storage (30 days)"
+        ]
       },
       {
         "name": "Professional",
         "commission": "5-9%",
         "desc": "Full sourcing service for first-time buyers",
-        "features": ["Everything in Starter", "Manufacturer sourcing", "Private label solutions", "Custom product development", "Production follow-up", "Free product photography", "Factory on-site audits"]
+        "features": [
+          "Everything in Starter",
+          "Manufacturer sourcing",
+          "Private label solutions",
+          "Custom product development",
+          "Production follow-up",
+          "Free product photography",
+          "Factory on-site audits"
+        ]
       },
       {
         "name": "Enterprise",
         "commission": "Custom",
         "desc": "Tailored solutions for large-scale operations",
-        "features": ["Everything in Professional", "Dedicated team (up to 20 people)", "Credit payment terms", "Multi-supplier coordination", "Priority resolution", "Custom logistics solutions"]
+        "features": [
+          "Everything in Professional",
+          "Dedicated team (up to 20 people)",
+          "Credit payment terms",
+          "Multi-supplier coordination",
+          "Priority resolution",
+          "Custom logistics solutions"
+        ]
       }
     ],
     "cta": "Get a Free Quote"
@@ -175,12 +298,30 @@
     "title": "What We Source",
     "subtitle": "From electronics to home goods, we source across a wide range of industries.",
     "items": [
-      { "name": "Electronics & Gadgets", "desc": "Consumer electronics, smart devices, accessories" },
-      { "name": "Home & Kitchen", "desc": "Furniture, appliances, cookware, decor" },
-      { "name": "Fashion & Textiles", "desc": "Clothing, fabrics, accessories, footwear" },
-      { "name": "Building Materials", "desc": "Tiles, fixtures, lighting, hardware" },
-      { "name": "Packaging & Printing", "desc": "Custom boxes, labels, promotional materials" },
-      { "name": "Auto Parts & Tools", "desc": "Vehicle accessories, industrial tools, equipment" }
+      {
+        "name": "Electronics & Gadgets",
+        "desc": "Consumer electronics, smart devices, accessories"
+      },
+      {
+        "name": "Home & Kitchen",
+        "desc": "Furniture, appliances, cookware, decor"
+      },
+      {
+        "name": "Fashion & Textiles",
+        "desc": "Clothing, fabrics, accessories, footwear"
+      },
+      {
+        "name": "Building Materials",
+        "desc": "Tiles, fixtures, lighting, hardware"
+      },
+      {
+        "name": "Packaging & Printing",
+        "desc": "Custom boxes, labels, promotional materials"
+      },
+      {
+        "name": "Auto Parts & Tools",
+        "desc": "Vehicle accessories, industrial tools, equipment"
+      }
     ]
   },
   "blog": {
@@ -247,20 +388,46 @@
   },
   "stats": {
     "items": [
-      { "label": "Happy Clients" },
-      { "label": "Countries Served" },
-      { "label": "Years Experience" },
-      { "label": "Orders Completed" }
+      {
+        "label": "Happy Clients"
+      },
+      {
+        "label": "Countries Served"
+      },
+      {
+        "label": "Years Experience"
+      },
+      {
+        "label": "Orders Completed"
+      }
     ]
   },
   "trustBadges": {
     "items": [
-      { "title": "Verified Agent", "desc": "Every supplier personally vetted" },
-      { "title": "Secure Payments", "desc": "Protected transaction handling" },
-      { "title": "Quality Guaranteed", "desc": "Inspection before every shipment" },
-      { "title": "Insured Shipping", "desc": "Full coverage door-to-door" },
-      { "title": "100% Satisfaction", "desc": "Your success is our priority" },
-      { "title": "24/7 Support", "desc": "Always here when you need us" }
+      {
+        "title": "Verified Agent",
+        "desc": "Every supplier personally vetted"
+      },
+      {
+        "title": "Secure Payments",
+        "desc": "Protected transaction handling"
+      },
+      {
+        "title": "Quality Guaranteed",
+        "desc": "Inspection before every shipment"
+      },
+      {
+        "title": "Insured Shipping",
+        "desc": "Full coverage door-to-door"
+      },
+      {
+        "title": "100% Satisfaction",
+        "desc": "Your success is our priority"
+      },
+      {
+        "title": "24/7 Support",
+        "desc": "Always here when you need us"
+      }
     ]
   },
   "footer": {
@@ -269,5 +436,493 @@
     "servicesLabel": "Services",
     "companyLabel": "Company",
     "resourcesLabel": "Resources"
+  },
+  "tools": {
+    "categories": {
+      "electronics": {
+        "label": "Electronics & Gadgets",
+        "moq": "300–1,000 pcs for a first order",
+        "leadTime": "25–40 days production",
+        "certs": "CE / FCC / RoHS — required for most EU/US electronics imports",
+        "tip": "Ask the factory for a UN38.3 report up front if the product contains a lithium battery — it's required for air/sea freight and often takes the longest to get."
+      },
+      "home": {
+        "label": "Home & Kitchen",
+        "moq": "500–2,000 pcs for a first order",
+        "leadTime": "20–35 days production",
+        "certs": "LFGB/FDA food-contact testing for anything touching food or drink",
+        "tip": "Glass and ceramic pieces need reinforced export cartons and often a color-box redesign — build both into your first-sample budget."
+      },
+      "fashion": {
+        "label": "Fashion & Textiles",
+        "moq": "500–3,000 pcs per style/color for a first order",
+        "leadTime": "30–45 days production (add 7–10 days if custom fabric is dyed to order)",
+        "certs": "Care-label & fiber-content compliance for your destination market",
+        "tip": "Lock your size chart and colorway before bulk production — mid-run changes on apparel are the most common cause of delays we see."
+      },
+      "building": {
+        "label": "Building Materials",
+        "moq": "1 container (LCL or FCL) is typical for a first order",
+        "leadTime": "30–50 days production, longer for custom fittings",
+        "certs": "ISO / local building-code compliance — varies significantly by destination country",
+        "tip": "Get a pre-shipment inspection booked for anything ceramic or glass-based — breakage claims are far harder to resolve after the container has left port."
+      },
+      "packaging": {
+        "label": "Packaging & Printing",
+        "moq": "1,000–5,000 pcs for a first custom-print order",
+        "leadTime": "15–25 days production once artwork is approved",
+        "certs": "FSC certification available on request if recyclable/sustainable sourcing matters to your buyers",
+        "tip": "Ask for a physical die-line sample (not just a digital proof) before mass production — colors and fold lines both shift on press."
+      },
+      "auto": {
+        "label": "Auto Parts & Tools",
+        "moq": "500–2,000 pcs for a first order",
+        "leadTime": "25–40 days production",
+        "certs": "DOT / ISO / CE depending on the part and destination market",
+        "tip": "For fitment-sensitive parts, request a sample against your exact vehicle/machine spec before committing to bulk — generic 'universal fit' claims are the top cause of returns."
+      },
+      "other": {
+        "label": "Other / Not Sure Yet",
+        "moq": "Varies by product — we'll confirm once we see your item",
+        "leadTime": "Typically 20–45 days depending on complexity",
+        "certs": "We'll flag what's required once we know your product and destination market",
+        "tip": "No exact match yet — describe the product a little more (material, use case, or a reference link) and we'll route it to the right specialist."
+      }
+    },
+    "requirements": {
+      "waterproof": "Waterproof / weatherproof rating (IP65+)",
+      "branding": "Custom branding (OEM/private label)",
+      "foodGrade": "Food-grade certification (FDA/food contact)",
+      "regulatory": "Regulatory certification (CE/FCC/RoHS)",
+      "battery": "Lithium battery — air freight restrictions apply",
+      "fragile": "Fragile — reinforced packaging needed",
+      "ecoFriendly": "Eco-friendly / sustainable materials",
+      "childSafety": "Child safety compliance (ASTM/EN71)"
+    },
+    "productMatcher": {
+      "badge": "Free · Instant Match",
+      "title": "Not Sure Where to Start? Describe It.",
+      "subtitle": "Our sourcing-match engine reads your description and instantly returns the right category plus agent-level guidance — no signup, no cost, no waiting.",
+      "label": "What are you trying to source?",
+      "placeholder": "e.g. \"I need 2,000 waterproof LED strip lights for outdoor use, CE certified, timeline is next month.\"",
+      "analyzing": "Analyzing your request...",
+      "analyzeButton": "Analyze My Request",
+      "confidence": {
+        "high": "Strong match",
+        "medium": "Likely match",
+        "low": "Best guess"
+      },
+      "timeline": {
+        "asap": "ASAP",
+        "1month": "Within 1 month",
+        "3months": "Within 3 months",
+        "exploring": "Just exploring"
+      },
+      "qtyPrefix": "Qty",
+      "moqLabel": "Typical MOQ",
+      "leadTimeLabel": "Typical Lead Time",
+      "certsLabel": "Certifications",
+      "agentTip": "Agent tip:",
+      "getQuoteFor": "Get a Quote for"
+    },
+    "supplierRedFlags": {
+      "badge": "Free · Supplier Safety Check",
+      "title": "Is Your Supplier Legit?",
+      "subtitle": "Check off anything that applies to a factory or trading company you're considering. These are the same warning signs we screen for before ever recommending a supplier.",
+      "checkResult": "Check Result",
+      "whyThisMatters": "Why this matters",
+      "getHelp": "Get Help Verifying This Supplier",
+      "flags": {
+        "personal_account": {
+          "label": "They ask for payment to a personal bank account or personal Alipay/WeChat, not a registered company account",
+          "explanation": "Legitimate factories get paid through a business bank account tied to their registered company name. Payment to a personal account is the single most common pattern in supplier scams — if the deal falls apart, there's no verifiable company to chase."
+        },
+        "no_business_license": {
+          "label": "They can't or won't share their business license (营业执照) or company registration details",
+          "explanation": "Every legally operating factory in China has a business license with a verifiable registration number. A supplier who dodges this request either isn't who they claim to be, or is a trading company posing as a factory."
+        },
+        "price_too_good": {
+          "label": "Their quoted price is dramatically lower than every other quote you've received for the same spec",
+          "explanation": "An outlier-low price is usually a different (lower) spec than you asked for, a bait-and-switch after deposit, or a listing with no real intent to ship. Get the exact spec in writing and compare like-for-like."
+        },
+        "no_video_call": {
+          "label": "They refuse a video call or live factory walkthrough when you ask for one",
+          "explanation": "A real factory has nothing to hide about its production floor. This alone doesn't prove fraud, but combined with any other flag here it's a strong signal to slow down."
+        },
+        "pressure_full_payment": {
+          "label": "They pressure you to pay 100% upfront instead of a standard deposit + balance split",
+          "explanation": "The industry-standard structure is a deposit (commonly 30%) before production and the balance before or at shipment. A supplier insisting on full payment upfront is removing your only leverage if something goes wrong."
+        },
+        "no_samples": {
+          "label": "They won't provide a paid sample before you commit to a bulk order",
+          "explanation": "Reputable factories are used to producing paid samples — buyers covering the sample cost and shipping is normal. A flat refusal, especially alongside pressure to skip straight to bulk, is a red flag."
+        },
+        "inconsistent_details": {
+          "label": "Company name, address, or bank details are inconsistent across their quote, invoice, and website/listing",
+          "explanation": "Mismatched details across documents is one of the clearest signs of an impersonation scam — a fraudulent party copying a real factory's marketing materials while routing payment elsewhere."
+        }
+      },
+      "verdicts": {
+        "clear": {
+          "headline": "No red flags noted",
+          "message": "That's a good sign — still worth the basic checks (business license, sample, standard payment terms) before you send a deposit."
+        },
+        "stop": {
+          "headline": "Stop before sending any payment",
+          "message": "At least one of the flags you checked is a serious warning sign on its own. Get a second opinion before you pay a deposit — we can verify this supplier for you at no cost."
+        },
+        "caution": {
+          "headline": "A few things worth clarifying first",
+          "message": "None of these are dealbreakers alone, but get clear answers before you commit — or let us verify the supplier for you."
+        }
+      },
+      "helpMessageWithFlags": "I'd like help verifying a supplier. Red flags I noticed: {flags}.",
+      "helpMessageNoFlags": "I'd like help verifying a supplier before I send a deposit."
+    },
+    "cbmCalculator": {
+      "badge": "Free · Instant Estimate",
+      "title": "How Much Space Does Your Order Take?",
+      "subtitle": "Enter your carton dimensions and quantity to get your total CBM, weight, and the right shipping method — before you commit to a freight quote.",
+      "lengthLabel": "Length (cm)",
+      "widthLabel": "Width (cm)",
+      "heightLabel": "Height (cm)",
+      "weightLabel": "Weight per carton (kg)",
+      "cartonsLabel": "Number of cartons",
+      "calculateButton": "Calculate CBM",
+      "totalVolume": "Total volume",
+      "totalWeight": "Total weight",
+      "chargeableWeight": "Chargeable weight (air)",
+      "recommended": "Recommended",
+      "useInLandedCost": "Use Weight in Landed Cost Calculator",
+      "getQuote": "Get a Quote",
+      "recommendation": {
+        "air": "Air freight or express courier — too small to benefit from ocean freight.",
+        "lcl": "LCL (shared container) — the usual choice at this volume.",
+        "compare20": "Compare LCL vs. a dedicated 20ft container — often close in price past ~15 CBM.",
+        "fcl40": "Dedicated 40ft container (FCL).",
+        "multiple40": "Multiple 40ft containers — plan for about {n}."
+      },
+      "fits20": "Fits in one 20ft container.",
+      "fits40": "Fits in one 40ft container.",
+      "about40Note": "About {n} × 40ft containers.",
+      "tipBulky": "Your cargo is bulky relative to its weight — air freight and express couriers bill by volumetric weight ({volumetric} kg here), not actual weight ({actual} kg). Ocean freight is priced by volume too, so this mainly matters if you're comparing against air.",
+      "tipDense": "Your cargo is dense enough that carriers will bill by actual weight, not volume — that generally works in your favor on cost.",
+      "quoteMessage": "Shipment is {cbm} CBM, {weight} kg total ({cartons} cartons at {dims}cm, {perCarton}kg each). {recommendation}"
+    },
+    "destinations": {
+      "us": {
+        "label": "United States",
+        "taxLabel": "Sales tax",
+        "taxNote": "No federal import VAT — state sales tax varies and isn't included here."
+      },
+      "uk": {
+        "label": "United Kingdom",
+        "taxLabel": "Import VAT",
+        "taxNote": "Standard UK import VAT rate."
+      },
+      "eu": {
+        "label": "European Union",
+        "taxLabel": "Import VAT",
+        "taxNote": "EU average — the exact rate depends on the destination country."
+      },
+      "canada": {
+        "label": "Canada",
+        "taxLabel": "GST",
+        "taxNote": "Federal GST only — provincial sales tax may add more."
+      },
+      "australia": {
+        "label": "Australia",
+        "taxLabel": "GST",
+        "taxNote": "Standard Australian import GST rate."
+      },
+      "other": {
+        "label": "Other / Not sure yet",
+        "taxLabel": "Import tax",
+        "taxNote": "Varies by country — we'll confirm the exact rate with your quote."
+      }
+    },
+    "shippingMethods": {
+      "sea": "Sea freight (consolidated)",
+      "air": "Air freight",
+      "express": "Express courier"
+    },
+    "landedCostCalculator": {
+      "badge": "Free · Instant Estimate",
+      "title": "Estimate Your Landed Cost",
+      "subtitle": "Get a ballpark of duty, freight, and import tax before you commit — plug in your numbers and see a total range in seconds.",
+      "categoryLabel": "Product category",
+      "destinationLabel": "Destination",
+      "quantityLabel": "Quantity",
+      "unitPriceLabel": "Unit price (USD)",
+      "shippingMethodLabel": "Shipping method",
+      "weightLabel": "Total weight in kg (optional)",
+      "weightPlaceholder": "Leave blank to skip freight estimate",
+      "calculateButton": "Calculate Landed Cost",
+      "productValue": "Product value",
+      "estimatedDuty": "Estimated duty ({low}–{high}%)",
+      "estimatedFreight": "Estimated freight",
+      "freightFallback": "Add a weight above to include freight",
+      "estimatedTotal": "Estimated total landed cost",
+      "disclaimer": "Ballpark for budgeting only — {taxNote} Exact duty depends on your product's HS code. Request a quote for binding numbers confirmed by our customs broker.",
+      "estimateSellingPrice": "Estimate Selling Price",
+      "getExactQuote": "Get an Exact Quote",
+      "quoteMessage": "Estimated landed cost for {quantity} units at ${unitPrice}/unit to {destination}: {low}–{high}. Please confirm exact numbers."
+    },
+    "sellingPriceCalculator": {
+      "badge": "Free · Instant Estimate",
+      "title": "What Should You Sell It For?",
+      "subtitle": "Work back from your landed cost and target margin to a real selling price — including marketplace fees, so the margin you set is the margin you actually keep.",
+      "landedCostLabel": "Landed cost per unit (USD)",
+      "fulfillmentLabel": "Fulfillment cost per unit (USD)",
+      "fulfillmentHint": "Packaging, pick-and-pack, last-mile shipping to your customer. Leave 0 if unsure.",
+      "marginLabel": "Target profit margin (%)",
+      "marginHint": "As a % of your selling price, not your cost.",
+      "feeLabel": "Marketplace/platform fee (%)",
+      "feeHint": "e.g. Amazon ~15%, Etsy ~6.5%. 0 for your own store.",
+      "quantityLabel": "Quantity",
+      "calculateButton": "Calculate Selling Price",
+      "invalidResult": "Your target margin plus the marketplace fee add up to 100% or more of the selling price — there's no price that works. Lower the margin or the fee and try again.",
+      "suggestedPrice": "Suggested selling price",
+      "profitPerUnit": "Profit per unit",
+      "markup": "Markup over cost",
+      "totalProfit": "Total profit ({quantity} units)",
+      "explainer": "Margin and markup aren't the same thing — a 30% margin needs roughly a 43% markup over cost, which is why this works backward from your price instead of just adding a percentage to your cost.",
+      "getQuote": "Get a Quote",
+      "quoteMessage": "I'd like a quote — I've already sized my target selling price and margin."
+    },
+    "readinessQuiz": {
+      "badge": "Free · 30-Second Check",
+      "title": "Are You Ready to Get a Quote?",
+      "subtitle": "Answer five quick questions and see exactly what to prepare before you talk to a sourcing agent — and what you can already skip.",
+      "yes": "Yes",
+      "notYet": "Not yet",
+      "seeScore": "See My Readiness Score",
+      "beforeYouRequest": "Before you request a quote",
+      "getQuoteAnyway": "Get a Quote Anyway",
+      "quoteMessage": "Sourcing readiness score: {score}/{total} ({tier}).",
+      "questions": {
+        "reference": {
+          "question": "Do you have a product reference — a photo, link, or sample — ready to share?",
+          "tip": "Send us a photo, a link to a similar product, or a sample. It's the single fastest way to get an accurate quote."
+        },
+        "quantity": {
+          "question": "Do you know your target quantity, or at least a rough MOQ range?",
+          "tip": "Even a rough range (e.g. \"500–1,000 units\") lets us quote realistic per-unit pricing — exact MOQs vary a lot by factory."
+        },
+        "certifications": {
+          "question": "Do you know which certifications your destination market requires (CE, FCC, FDA, RoHS, etc.)?",
+          "tip": "Certification needs depend on your product and destination country. Mention your target market and we'll flag what's required."
+        },
+        "budget": {
+          "question": "Do you have a target unit price or budget range in mind?",
+          "tip": "A target price helps us recommend the right tier of factory instead of showing you options outside your budget."
+        },
+        "timeline": {
+          "question": "Do you have a shipping deadline or timeline in mind?",
+          "tip": "Even \"sometime next quarter\" helps us pick between sea, air, and express freight when we quote your shipping cost."
+        }
+      },
+      "tiers": {
+        "ready": {
+          "label": "Fully ready",
+          "message": "You've got everything a quote needs — skip straight to the form and we'll respond within 24 hours."
+        },
+        "almost": {
+          "label": "Almost ready",
+          "message": "You're most of the way there. Fill in the gaps below and your quote will come back faster and more accurate."
+        },
+        "early": {
+          "label": "Early stage",
+          "message": "That's completely normal this early on — most buyers start here. Try the Smart Match tool above to firm up the basics first."
+        }
+      }
+    },
+    "incotermGuide": {
+      "badge": "Free · 2-Question Guide",
+      "title": "Which Shipping Term Should You Use?",
+      "subtitle": "EXW, FOB, CIF, DAP, DDP — the letters your supplier throws at you decide who pays for what, and who's on the hook if something goes wrong. Answer two questions to find yours.",
+      "step1Question": "How much of the shipping process do you want to handle yourself?",
+      "step1Options": {
+        "everything": "Everything — I have my own freight forwarder and customs broker",
+        "destination_side": "Just the destination side — I'll clear customs and arrange final delivery myself",
+        "nothing": "Nothing — I want it delivered to my door with as little hassle as possible"
+      },
+      "step2DestinationQuestion": "Do you want to book the main freight yourself, or have the supplier arrange and insure it to your port?",
+      "step2DestinationOptions": {
+        "book_myself": "I'll book the freight myself",
+        "supplier_arranges": "Let the supplier arrange and insure it"
+      },
+      "step2NothingQuestion": "Do you want to personally handle import duties and taxes, or have them included in one price?",
+      "step2NothingOptions": {
+        "handle_duties_myself": "I'll handle duties and taxes myself",
+        "all_included": "Include everything in one price"
+      },
+      "watchOutLabel": "Watch out:",
+      "startOver": "Start over",
+      "getQuote": "Get a Quote — mention {id} terms",
+      "you": "You",
+      "supplier": "Supplier",
+      "stages": {
+        "exportCustoms": "Export customs clearance (China)",
+        "mainFreight": "Main freight (sea/air)",
+        "insurance": "Cargo insurance",
+        "importCustoms": "Import customs clearance (your country)",
+        "dutiesTaxes": "Import duties & taxes",
+        "finalDelivery": "Final delivery to your door"
+      },
+      "profiles": {
+        "EXW": {
+          "name": "Ex Works (EXW)",
+          "summary": "The supplier just makes the goods available at their factory — you or your agent handle everything from there.",
+          "watchOut": "You're on the hook for export customs paperwork too, which most overseas buyers aren't set up to file themselves — usually only worth it if you already have a China-based agent."
+        },
+        "FOB": {
+          "name": "Free On Board (FOB)",
+          "summary": "The supplier delivers the goods onto the ship and clears export customs — you take over from the port of departure.",
+          "watchOut": "The most common choice for experienced importers who want to shop around for their own freight forwarder and control shipping cost directly."
+        },
+        "CIF": {
+          "name": "Cost, Insurance & Freight (CIF)",
+          "summary": "The supplier arranges and pays for the main freight and insurance to your destination port — you take over from there.",
+          "watchOut": "Convenient, but the supplier picks the carrier and insurer, which sometimes costs more than booking it yourself would."
+        },
+        "DAP": {
+          "name": "Delivered At Place (DAP)",
+          "summary": "The supplier delivers all the way to your named destination — but you're still responsible for import customs clearance and paying duties/taxes.",
+          "watchOut": "Unexpected duty and tax bills right when the shipment arrives are the most common surprise here — ask for an estimate up front."
+        },
+        "DDP": {
+          "name": "Delivered Duty Paid (DDP)",
+          "summary": "The supplier handles everything, including import duties and taxes — you just receive the delivery.",
+          "watchOut": "The simplest option, but usually the most expensive per unit since the supplier is pricing in every risk and fee upfront."
+        }
+      }
+    },
+    "orderTiming": {
+      "badge": "Free · China Manufacturing Calendar",
+      "title": "Will Your Order Beat the Holidays?",
+      "subtitle": "Chinese New Year, Golden Week, and peak shipping season quietly add weeks to a timeline that looks fine on paper. Check your target delivery date against them.",
+      "targetDateLabel": "When do you need it delivered?",
+      "leadTimeLabel": "Estimated production + shipping time (days)",
+      "leadTimeHint": "Typical: ~20-25 days air, ~35-45 days sea. Add 10-15 for custom production.",
+      "checkButton": "Check My Timeline",
+      "placeOrderBy": "Place your order by {date}",
+      "noClosures": "No factory closures fall inside this window.",
+      "orderByNotDate": "Order by {adjusted}, not {original}",
+      "closureOverlapOne": "Your window overlaps a factory closure — {days} closure day added to stay on schedule.",
+      "closureOverlapMany": "Your window overlaps a factory closure — {days} closure days added to stay on schedule.",
+      "getQuote": "Get a Quote",
+      "events": {
+        "cny": {
+          "name": "Chinese New Year {year}",
+          "note": "Most factories close for one to two weeks around Chinese New Year and take another one to two weeks to return to full output — the single biggest cause of missed deadlines in China sourcing."
+        },
+        "peakSeason": {
+          "name": "Peak shipping season {year}",
+          "note": "Freight rates rise and container space tightens as factories rush to ship before Christmas retail deadlines — book earlier than usual and expect less flexibility on price."
+        },
+        "goldenWeek": {
+          "name": "Golden Week {year}",
+          "note": "China's National Day holiday — factories and customs offices close for about a week nationwide."
+        },
+        "laborDay": {
+          "name": "Labor Day holiday {year}",
+          "note": "A shorter nationwide holiday, but it still closes factories and can add a few days to a production timeline."
+        }
+      }
+    },
+    "paymentSchedule": {
+      "badge": "Free · Instant Schedule",
+      "title": "Plan Your Payment Schedule",
+      "subtitle": "See the actual dates and amounts you'll be asked for — deposit, balance, and everything in between — before you agree to anything.",
+      "totalValueLabel": "Total order value (USD)",
+      "depositLabel": "Deposit (%)",
+      "depositHint": "Typical range: 20-50%. 30% is standard.",
+      "leadTimeLabel": "Production lead time (days)",
+      "orderDateLabel": "Order confirmation date",
+      "generateButton": "Generate Schedule",
+      "escrowTipLabel": "First order with this supplier?",
+      "escrowTip": "Consider routing the deposit through a Trade Assurance or escrow-style payment instead of a direct wire — it holds your payment until the supplier ships what was agreed.",
+      "getQuote": "Get a Quote",
+      "milestones": {
+        "deposit": {
+          "label": "Deposit due",
+          "note": "{pct}% deposit to confirm your order and start production."
+        },
+        "productionStart": {
+          "label": "Production starts",
+          "note": "The factory begins production once your deposit clears."
+        },
+        "qc": {
+          "label": "Quality inspection",
+          "note": "Pre-shipment QC inspection, while there's still time to fix issues before the goods leave the factory."
+        },
+        "balance": {
+          "label": "Balance due",
+          "note": "Remaining balance, due before the goods are released for shipment."
+        },
+        "ship": {
+          "label": "Goods ship",
+          "note": "The factory releases your shipment once the balance clears."
+        }
+      }
+    },
+    "planMatch": {
+      "badge": "Free · 3-Question Match",
+      "title": "Not Sure Which Plan Fits?",
+      "subtitle": "Answer three quick questions and we'll point you to the right tier — no need to compare commission percentages yourself.",
+      "q1": "Do you already have a factory or supplier in China, or do you need help finding one?",
+      "q1Options": {
+        "have": "I already have a supplier",
+        "need": "I need help finding one"
+      },
+      "q2": "Do you need custom branding, private labeling, or product development on top of sourcing?",
+      "q2Options": {
+        "no": "No, just sourcing an existing product",
+        "yes": "Yes, I want custom branding or development"
+      },
+      "q3": "How many suppliers or product lines will you need managed at once?",
+      "q3Options": {
+        "one": "Just one, for now",
+        "multiple": "Multiple, on an ongoing basis"
+      },
+      "recommended": "Recommended:",
+      "commissionSuffix": " commission",
+      "startOver": "Start over",
+      "seePlanDetails": "See {plan} Plan Details",
+      "reasons": {
+        "0": "You already have a supplier — you mainly need verification, secure payment, inspection, and shipping handled.",
+        "1": "You need sourcing help — finding a factory, custom branding, or product development — for a single product line.",
+        "2": "Multiple suppliers or product lines running at once is exactly what the dedicated team and multi-supplier coordination in this tier are built for."
+      }
+    },
+    "documentChecklist": {
+      "badge": "Free · Instant Checklist",
+      "title": "What Documents Will You Need?",
+      "subtitle": "Pick your product category and get the paperwork checklist for a China shipment — the same documents we prepare for every order.",
+      "categoryLabel": "Product category",
+      "generateButton": "Generate Checklist",
+      "disclaimer": "A general starting list, not a substitute for your customs broker's guidance — exact requirements vary by destination country and change over time.",
+      "getQuote": "Get a Quote",
+      "certificationSuffix": " certification",
+      "coreDocuments": {
+        "commercialInvoice": {
+          "name": "Commercial Invoice",
+          "note": "Lists what's being shipped and its declared value — customs uses this to assess duty."
+        },
+        "packingList": {
+          "name": "Packing List",
+          "note": "Itemizes what's in each carton — customs and your freight forwarder both need this to match cargo to paperwork."
+        },
+        "billOfLading": {
+          "name": "Bill of Lading (sea) or Air Waybill (air)",
+          "note": "Your proof of shipment, and the document that lets you or your forwarder claim the goods at destination."
+        },
+        "certOfOrigin": {
+          "name": "Certificate of Origin",
+          "note": "States the goods were manufactured in China — sometimes required for preferential duty rates depending on your country's trade agreements."
+        }
+      }
+    }
   }
 }

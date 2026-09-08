@@ -6,8 +6,10 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
-import type { Locale } from "@/lib/i18n";
-import { planOrderTiming, type TimingResult } from "@/lib/orderTiming";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { getCalendarEvents, planOrderTiming, type TimingResult } from "@/lib/orderTiming";
+
+const DATE_LOCALES: Record<Locale, string> = { en: "en-US", zh: "zh-CN", ru: "ru-RU" };
 
 function defaultTargetDate(): string {
   const d = new Date();
@@ -15,16 +17,19 @@ function defaultTargetDate(): string {
   return d.toISOString().slice(0, 10);
 }
 
-function formatDate(iso: string): string {
-  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-}
+export default function OrderTimingPlanner({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const t = dict.tools.orderTiming;
+  const events = getCalendarEvents(t.events);
 
-export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
+  function formatDate(iso: string): string {
+    return new Date(`${iso}T00:00:00Z`).toLocaleDateString(DATE_LOCALES[locale], {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    });
+  }
+
   const [targetDate, setTargetDate] = useState(defaultTargetDate);
   const [leadTime, setLeadTime] = useState("45");
   const [result, setResult] = useState<TimingResult | null>(null);
@@ -35,7 +40,7 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
 
   const handleCheck = () => {
     if (!canCheck) return;
-    setResult(planOrderTiming(targetDate, days));
+    setResult(planOrderTiming(targetDate, days, events));
   };
 
   const closures = result?.conflicts.filter((c) => c.impact === "closure") ?? [];
@@ -44,17 +49,13 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
   return (
     <section className="px-4 pb-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          badge="Free · China Manufacturing Calendar"
-          title="Will Your Order Beat the Holidays?"
-          subtitle="Chinese New Year, Golden Week, and peak shipping season quietly add weeks to a timeline that looks fine on paper. Check your target delivery date against them."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-medium">When do you need it delivered?</label>
+                <label className="mb-2 block text-sm font-medium">{t.targetDateLabel}</label>
                 <input
                   type="date"
                   value={targetDate}
@@ -63,7 +64,7 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Estimated production + shipping time (days)</label>
+                <label className="mb-2 block text-sm font-medium">{t.leadTimeLabel}</label>
                 <input
                   type="number"
                   min="1"
@@ -71,7 +72,7 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
                   onChange={(e) => setLeadTime(e.target.value)}
                   className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                 />
-                <p className="mt-1.5 text-xs text-muted">Typical: ~20-25 days air, ~35-45 days sea. Add 10-15 for custom production.</p>
+                <p className="mt-1.5 text-xs text-muted">{t.leadTimeHint}</p>
               </div>
             </div>
 
@@ -81,7 +82,7 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
               className="brand-gradient mt-6 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
             >
               <CalendarClock size={16} />
-              Check My Timeline
+              {t.checkButton}
             </button>
 
             {result && (
@@ -94,9 +95,9 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
                       </span>
                       <div>
                         <p className="font-display text-base font-semibold">
-                          Place your order by {formatDate(result.orderByDate)}
+                          {t.placeOrderBy.replace("{date}", formatDate(result.orderByDate))}
                         </p>
-                        <p className="mt-1 text-sm text-muted">No factory closures fall inside this window.</p>
+                        <p className="mt-1 text-sm text-muted">{t.noClosures}</p>
                       </div>
                     </div>
                   ) : (
@@ -106,11 +107,18 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
                       </span>
                       <div>
                         <p className="font-display text-base font-semibold">
-                          Order by {result.adjustedOrderByDate ? formatDate(result.adjustedOrderByDate) : formatDate(result.orderByDate)}, not{" "}
-                          {formatDate(result.orderByDate)}
+                          {t.orderByNotDate
+                            .replace(
+                              "{adjusted}",
+                              formatDate(result.adjustedOrderByDate ?? result.orderByDate)
+                            )
+                            .replace("{original}", formatDate(result.orderByDate))}
                         </p>
                         <p className="mt-1 text-sm text-muted">
-                          Your window overlaps a factory closure — {result.totalClosureDays} closure day{result.totalClosureDays === 1 ? "" : "s"} added to stay on schedule.
+                          {(result.totalClosureDays === 1 ? t.closureOverlapOne : t.closureOverlapMany).replace(
+                            "{days}",
+                            String(result.totalClosureDays)
+                          )}
                         </p>
                       </div>
                     </div>
@@ -136,7 +144,7 @@ export default function OrderTimingPlanner({ locale }: { locale: Locale }) {
                     onClick={() => trackCtaClick("Order Timing Get Quote", pathname)}
                     className="brand-gradient-animated mt-5 flex w-fit items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get a Quote
+                    {t.getQuote}
                     <ArrowRight size={16} />
                   </a>
                 </div>

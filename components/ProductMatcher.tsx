@@ -6,15 +6,9 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
-import { matchProduct, type MatchResult } from "@/lib/productMatcher";
+import type { Dictionary } from "@/lib/i18n";
+import { getCategoryProfiles, getOtherProfile, matchProduct, type MatchResult } from "@/lib/productMatcher";
 import { CategoryBadge } from "./categoryVisuals";
-
-const TIMELINE_LABELS: Record<string, string> = {
-  asap: "ASAP",
-  "1month": "Within 1 month",
-  "3months": "Within 3 months",
-  exploring: "Just exploring",
-};
 
 const CONFIDENCE_STYLES: Record<MatchResult["confidence"], string> = {
   high: "bg-green-500/15 text-green-600",
@@ -22,16 +16,11 @@ const CONFIDENCE_STYLES: Record<MatchResult["confidence"], string> = {
   low: "bg-surface-2 text-muted",
 };
 
-const CONFIDENCE_LABELS: Record<MatchResult["confidence"], string> = {
-  high: "Strong match",
-  medium: "Likely match",
-  low: "Best guess",
-};
+export default function ProductMatcher({ dict }: { dict: Dictionary }) {
+  const t = dict.tools.productMatcher;
+  const categories = getCategoryProfiles(dict.tools.categories);
+  const otherProfile = getOtherProfile(dict.tools.categories.other);
 
-const EXAMPLE_PLACEHOLDER =
-  "e.g. \"I need 2,000 waterproof LED strip lights for outdoor use, CE certified, timeline is next month.\"";
-
-export default function ProductMatcher() {
   const [description, setDescription] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<MatchResult | null>(null);
@@ -45,7 +34,7 @@ export default function ProductMatcher() {
     // entirely in the browser (no external API), this just gives the
     // result a moment to render as a distinct step rather than a flash.
     setTimeout(() => {
-      setResult(matchProduct(description));
+      setResult(matchProduct(description, categories, otherProfile));
       setAnalyzing(false);
     }, 500);
   };
@@ -64,21 +53,15 @@ export default function ProductMatcher() {
   return (
     <section id="smart-match" className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          badge="Free · Instant Match"
-          title="Not Sure Where to Start? Describe It."
-          subtitle="Our sourcing-match engine reads your description and instantly returns the right category plus agent-level guidance — no signup, no cost, no waiting."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
-            <label className="mb-2 block text-sm font-medium">
-              What are you trying to source?
-            </label>
+            <label className="mb-2 block text-sm font-medium">{t.label}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={EXAMPLE_PLACEHOLDER}
+              placeholder={t.placeholder}
               rows={3}
               className="w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             />
@@ -90,12 +73,12 @@ export default function ProductMatcher() {
               {analyzing ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  Analyzing your request...
+                  {t.analyzing}
                 </>
               ) : (
                 <>
                   <Sparkles size={16} />
-                  Analyze My Request
+                  {t.analyzeButton}
                 </>
               )}
             </button>
@@ -111,28 +94,28 @@ export default function ProductMatcher() {
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold ${CONFIDENCE_STYLES[result.confidence]}`}
                     >
-                      {CONFIDENCE_LABELS[result.confidence]}
+                      {t.confidence[result.confidence]}
                     </span>
                   </div>
 
-                  {(result.quantity || result.timelineId || result.requirements.length > 0) && (
+                  {(result.quantity || result.timelineId || result.requirementIds.length > 0) && (
                     <div className="mt-4 flex flex-wrap gap-2">
                       {result.quantity && (
                         <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
-                          Qty: {result.quantity}
+                          {t.qtyPrefix}: {result.quantity}
                         </span>
                       )}
                       {result.timelineId && (
                         <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
-                          {TIMELINE_LABELS[result.timelineId]}
+                          {t.timeline[result.timelineId]}
                         </span>
                       )}
-                      {result.requirements.map((req) => (
+                      {result.requirementIds.map((reqId) => (
                         <span
-                          key={req}
+                          key={reqId}
                           className="rounded-full bg-surface-2 px-3 py-1 text-xs font-medium text-foreground"
                         >
-                          {req}
+                          {dict.tools.requirements[reqId as keyof typeof dict.tools.requirements]}
                         </span>
                       ))}
                     </div>
@@ -141,33 +124,33 @@ export default function ProductMatcher() {
                   <dl className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div>
                       <dt className="text-xs font-semibold uppercase tracking-wider text-muted">
-                        Typical MOQ
+                        {t.moqLabel}
                       </dt>
                       <dd className="mt-1 text-sm">{result.profile.moq}</dd>
                     </div>
                     <div>
                       <dt className="text-xs font-semibold uppercase tracking-wider text-muted">
-                        Typical Lead Time
+                        {t.leadTimeLabel}
                       </dt>
                       <dd className="mt-1 text-sm">{result.profile.leadTime}</dd>
                     </div>
                     <div>
                       <dt className="text-xs font-semibold uppercase tracking-wider text-muted">
-                        Certifications
+                        {t.certsLabel}
                       </dt>
                       <dd className="mt-1 text-sm">{result.profile.certs}</dd>
                     </div>
                   </dl>
 
                   <p className="mt-5 rounded-lg bg-accent/5 px-4 py-3 text-sm text-muted">
-                    <strong className="text-foreground">Agent tip:</strong> {result.profile.tip}
+                    <strong className="text-foreground">{t.agentTip}</strong> {result.profile.tip}
                   </p>
 
                   <button
                     onClick={handleGetQuote}
                     className="brand-gradient-animated mt-5 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get a Quote for {result.profile.label}
+                    {t.getQuoteFor} {result.profile.label}
                     <ArrowRight size={16} />
                   </button>
                 </div>

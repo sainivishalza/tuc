@@ -14,9 +14,3 @@ export function matchPlan(supplier: SupplierAnswer, custom: CustomAnswer, scale:
   if (supplier === "have_supplier" && custom === "no") return 0;
   return 1;
 }
-
-export const PLAN_REASONS: Record<PlanIndex, string> = {
-  0: "You already have a supplier — you mainly need verification, secure payment, inspection, and shipping handled.",
-  1: "You need sourcing help — finding a factory, custom branding, or product development — for a single product line.",
-  2: "Multiple suppliers or product lines running at once is exactly what the dedicated team and multi-supplier coordination in this tier are built for.",
-};

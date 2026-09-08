@@ -5,9 +5,9 @@ import { Compass, ArrowRight, RotateCcw } from "lucide-react";
 import Reveal from "./Reveal";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
-import type { Locale } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import {
-  INCOTERM_PROFILES,
+  getIncotermProfiles,
   pickIncoterm,
   type Step1Answer,
   type Step2DestinationAnswer,
@@ -17,14 +17,17 @@ import {
 const OPTION_CLASS =
   "w-full rounded-xl border-2 border-border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 hover:border-accent/50";
 
-export default function IncotermGuide({ locale }: { locale: Locale }) {
+export default function IncotermGuide({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const t = dict.tools.incotermGuide;
+  const profiles = getIncotermProfiles(t.profiles, t.stages);
+
   const [step1, setStep1] = useState<Step1Answer | null>(null);
   const [step2Destination, setStep2Destination] = useState<Step2DestinationAnswer | null>(null);
   const [step2Nothing, setStep2Nothing] = useState<Step2NothingAnswer | null>(null);
   const pathname = usePathname() ?? "/";
 
   const resultId = pickIncoterm(step1, step2Destination, step2Nothing);
-  const result = resultId ? INCOTERM_PROFILES[resultId] : null;
+  const result = resultId ? profiles[resultId] : null;
 
   const reset = () => {
     setStep1(null);
@@ -36,59 +39,48 @@ export default function IncotermGuide({ locale }: { locale: Locale }) {
     <section className="px-4 pb-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
         <Reveal>
-          <span className="eyebrow accent-text text-xs sm:text-sm">Free · 2-Question Guide</span>
-          <h2 className="font-display mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-            Which Shipping Term Should You Use?
-          </h2>
-          <p className="mt-3 text-sm text-muted sm:text-base">
-            EXW, FOB, CIF, DAP, DDP — the letters your supplier throws at you decide who pays for what,
-            and who&apos;s on the hook if something goes wrong. Answer two questions to find yours.
-          </p>
+          <span className="eyebrow accent-text text-xs sm:text-sm">{t.badge}</span>
+          <h2 className="font-display mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{t.title}</h2>
+          <p className="mt-3 text-sm text-muted sm:text-base">{t.subtitle}</p>
         </Reveal>
 
         <Reveal delay={0.1} className="mt-8">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             {!result && (
               <div className="space-y-3">
-                <h3 className="font-display text-base font-semibold">
-                  How much of the shipping process do you want to handle yourself?
-                </h3>
+                <h3 className="font-display text-base font-semibold">{t.step1Question}</h3>
                 <button className={OPTION_CLASS} onClick={() => setStep1("everything")}>
-                  Everything — I have my own freight forwarder and customs broker
+                  {t.step1Options.everything}
                 </button>
                 <button className={OPTION_CLASS} onClick={() => setStep1("destination_side")}>
-                  Just the destination side — I&apos;ll clear customs and arrange final delivery myself
+                  {t.step1Options.destination_side}
                 </button>
                 <button className={OPTION_CLASS} onClick={() => setStep1("nothing")}>
-                  Nothing — I want it delivered to my door with as little hassle as possible
+                  {t.step1Options.nothing}
                 </button>
               </div>
             )}
 
             {!result && step1 === "destination_side" && (
               <div className="mt-6 space-y-3 border-t border-border pt-6">
-                <h3 className="font-display text-base font-semibold">
-                  Do you want to book the main freight yourself, or have the supplier arrange and insure it to your port?
-                </h3>
+                <h3 className="font-display text-base font-semibold">{t.step2DestinationQuestion}</h3>
                 <button className={OPTION_CLASS} onClick={() => setStep2Destination("book_myself")}>
-                  I&apos;ll book the freight myself
+                  {t.step2DestinationOptions.book_myself}
                 </button>
                 <button className={OPTION_CLASS} onClick={() => setStep2Destination("supplier_arranges")}>
-                  Let the supplier arrange and insure it
+                  {t.step2DestinationOptions.supplier_arranges}
                 </button>
               </div>
             )}
 
             {!result && step1 === "nothing" && (
               <div className="mt-6 space-y-3 border-t border-border pt-6">
-                <h3 className="font-display text-base font-semibold">
-                  Do you want to personally handle import duties and taxes, or have them included in one price?
-                </h3>
+                <h3 className="font-display text-base font-semibold">{t.step2NothingQuestion}</h3>
                 <button className={OPTION_CLASS} onClick={() => setStep2Nothing("handle_duties_myself")}>
-                  I&apos;ll handle duties and taxes myself
+                  {t.step2NothingOptions.handle_duties_myself}
                 </button>
                 <button className={OPTION_CLASS} onClick={() => setStep2Nothing("all_included")}>
-                  Include everything in one price
+                  {t.step2NothingOptions.all_included}
                 </button>
               </div>
             )}
@@ -112,17 +104,17 @@ export default function IncotermGuide({ locale }: { locale: Locale }) {
                       <span>{r.stage}</span>
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${
-                          r.party === "You" ? "bg-accent/15 text-accent" : "bg-surface-2 text-foreground"
+                          r.party === "you" ? "bg-accent/15 text-accent" : "bg-surface-2 text-foreground"
                         }`}
                       >
-                        {r.party}
+                        {r.party === "you" ? t.you : t.supplier}
                       </span>
                     </div>
                   ))}
                 </div>
 
                 <p className="mt-5 rounded-lg bg-accent/5 px-4 py-3 text-sm text-muted">
-                  <strong className="text-foreground">Watch out:</strong> {result.watchOut}
+                  <strong className="text-foreground">{t.watchOutLabel}</strong> {result.watchOut}
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-3">
@@ -131,14 +123,14 @@ export default function IncotermGuide({ locale }: { locale: Locale }) {
                     className="flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium transition hover:bg-surface-2"
                   >
                     <RotateCcw size={15} />
-                    Start over
+                    {t.startOver}
                   </button>
                   <a
                     href={`/${locale}#consultation`}
                     onClick={() => trackCtaClick("Incoterm Guide Get Quote", pathname)}
                     className="brand-gradient-animated flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get a Quote — mention {result.id} terms
+                    {t.getQuote.replace("{id}", result.id)}
                     <ArrowRight size={16} />
                   </a>
                 </div>

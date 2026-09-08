@@ -105,12 +105,12 @@ export default async function LocalePage({
         <Pricing dict={dict} />
         <WhyUs dict={dict} />
         <LazyTestimonials dict={dict} testimonials={testimonials} />
-        <LazyProductMatcher />
-        <LazySupplierRedFlags />
-        <LazyCbmCalculator />
-        <LazyLandedCostCalculator />
-        <LazySellingPriceCalculator />
-        <LazyReadinessQuiz />
+        <LazyProductMatcher dict={dict} />
+        <LazySupplierRedFlags dict={dict} />
+        <LazyCbmCalculator dict={dict} />
+        <LazyLandedCostCalculator dict={dict} />
+        <LazySellingPriceCalculator dict={dict} />
+        <LazyReadinessQuiz dict={dict} />
         <LazyQuoteWizard dict={dict} />
         <LazyFAQ dict={dict} />
         <LazyContactCTA dict={dict} />
