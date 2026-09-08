@@ -52,7 +52,7 @@ export default function ProductCategories({
   locale: Locale;
 }) {
   return (
-    <section className="section-alt relative px-4 py-20 sm:px-6">
+    <section className="section-tint-amber relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-5xl">
         <SectionHeading
           badge={dict.categories.badge}

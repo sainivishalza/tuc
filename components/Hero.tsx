@@ -6,7 +6,7 @@ import Hero3DLoader from "./Hero3DLoader";
 
 export default function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
-    <section className="relative overflow-hidden px-4 pb-16 pt-16 sm:px-6 sm:pt-20">
+    <section className="gradient-hero-light relative overflow-hidden px-4 pb-16 pt-16 sm:px-6 sm:pt-20">
       <div className="blob -top-24 -left-24 h-80 w-80 bg-brand-blue/15" />
       <div className="blob bottom-0 left-1/4 h-72 w-72 bg-accent/15" />
 

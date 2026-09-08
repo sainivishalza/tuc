@@ -51,7 +51,7 @@ export default function ProductMatcher({ dict }: { dict: Dictionary }) {
   };
 
   return (
-    <section id="smart-match" className="section-alt relative px-4 py-20 sm:px-6">
+    <section id="smart-match" className="section-tint-blue relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
         <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
