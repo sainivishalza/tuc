@@ -10,19 +10,8 @@ import {
   type TrackedShipmentResult,
 } from "@/lib/actions/shipments";
 import type { Dictionary } from "@/lib/i18n";
-import type { PublicShipment, ShipmentEvent, ShipmentStatus } from "@/lib/supabase/types";
-
-const statusColors: Record<ShipmentStatus, string> = {
-  not_found: "bg-gray-100 text-gray-500",
-  not_shipped: "bg-gray-100 text-gray-500",
-  in_production: "bg-purple-100 text-purple-700",
-  quality_check: "bg-indigo-100 text-indigo-700",
-  ready_to_ship: "bg-teal-100 text-teal-700",
-  in_transit: "bg-blue-100 text-blue-700",
-  delayed: "bg-amber-100 text-amber-700",
-  delivered: "bg-emerald-100 text-emerald-700",
-  exception: "bg-red-100 text-red-700",
-};
+import type { PublicShipment, ShipmentEvent } from "@/lib/supabase/types";
+import { STATUS_COLORS } from "@/lib/shipmentStatus";
 
 type ProductionMilestoneField =
   | "milestone_deposit_paid_at"
@@ -223,7 +212,7 @@ function ShipmentResultCard({
             </span>
           )}
         </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${statusColors[shipment.status]}`}>
+        <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${STATUS_COLORS[shipment.status]}`}>
           {dict.tracking.status[shipment.status]}
         </span>
       </div>

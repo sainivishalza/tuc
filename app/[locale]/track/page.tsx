@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
@@ -55,6 +56,14 @@ export default async function TrackPage({
                 <TrackingLookup dict={dict} />
               </Suspense>
             </div>
+
+            <p className="mt-8 text-sm text-muted">
+              Tracking multiple shipments?{" "}
+              <Link href="/portal/login" className="font-semibold text-accent hover:underline">
+                Sign in to your client portal
+              </Link>{" "}
+              to see all of them in one place.
+            </p>
           </div>
         </section>
       </main>

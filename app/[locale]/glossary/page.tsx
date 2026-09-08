@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getPublishedGlossaryTerms } from "@/lib/actions/glossaryTerms";
 import { localeAlternates } from "@/lib/hreflang";
+import IncotermGuide from "@/components/IncotermGuide";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -71,6 +72,8 @@ export default async function GlossaryPage({
             </p>
           </div>
         </section>
+
+        <IncotermGuide locale={locale} />
 
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto max-w-3xl">

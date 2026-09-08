@@ -7,9 +7,16 @@ import TrustBadges from "@/components/TrustBadges";
 import Services from "@/components/Services";
 import ProductCategories from "@/components/ProductCategories";
 import HowItWorks from "@/components/HowItWorks";
+import LazyPlanMatchQuiz from "@/components/LazyPlanMatchQuiz";
 import Pricing from "@/components/Pricing";
 import WhyUs from "@/components/WhyUs";
 import LazyTestimonials from "@/components/LazyTestimonials";
+import LazyProductMatcher from "@/components/LazyProductMatcher";
+import LazySupplierRedFlags from "@/components/LazySupplierRedFlags";
+import LazyCbmCalculator from "@/components/LazyCbmCalculator";
+import LazyLandedCostCalculator from "@/components/LazyLandedCostCalculator";
+import LazySellingPriceCalculator from "@/components/LazySellingPriceCalculator";
+import LazyReadinessQuiz from "@/components/LazyReadinessQuiz";
 import LazyQuoteWizard from "@/components/LazyQuoteWizard";
 import LazyFAQ from "@/components/LazyFAQ";
 import LazyContactCTA from "@/components/LazyContactCTA";
@@ -94,9 +101,16 @@ export default async function LocalePage({
         <Services dict={dict} />
         <ProductCategories dict={dict} locale={locale} />
         <HowItWorks dict={dict} />
+        <LazyPlanMatchQuiz dict={dict} />
         <Pricing dict={dict} />
         <WhyUs dict={dict} />
         <LazyTestimonials dict={dict} testimonials={testimonials} />
+        <LazyProductMatcher />
+        <LazySupplierRedFlags />
+        <LazyCbmCalculator />
+        <LazyLandedCostCalculator />
+        <LazySellingPriceCalculator />
+        <LazyReadinessQuiz />
         <LazyQuoteWizard dict={dict} />
         <LazyFAQ dict={dict} />
         <LazyContactCTA dict={dict} />
