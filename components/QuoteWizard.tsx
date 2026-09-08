@@ -50,15 +50,17 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
   const [whatsapp, setWhatsapp] = useState("");
   const pathname = usePathname() ?? "/";
 
-  // Lets the free Smart Sourcing Match section above hand off its detected
-  // category + description without prop-drilling through the whole page —
-  // both sections mount independently and only need to talk to each other
-  // when the customer clicks "Get a Quote" on a match result.
+  // Lets the free Smart Sourcing Match, Landed Cost, and Readiness Quiz
+  // sections above hand off their detected category/description without
+  // prop-drilling through the whole page — these sections mount
+  // independently and only need to talk to each other when the customer
+  // clicks a "Get a Quote" CTA. Category is optional since the readiness
+  // quiz doesn't collect one.
   useEffect(() => {
     function handlePrefill(e: Event) {
-      const detail = (e as CustomEvent<{ category: string; message: string }>).detail;
+      const detail = (e as CustomEvent<{ category?: string; message: string }>).detail;
       if (!detail) return;
-      setSelectedCategory(detail.category);
+      if (detail.category) setSelectedCategory(detail.category);
       setMessage(detail.message);
     }
     window.addEventListener("tuc:quote-prefill", handlePrefill);
