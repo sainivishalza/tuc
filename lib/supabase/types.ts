@@ -1,3 +1,15 @@
+export type FontChoice = "inter" | "poppins" | "playfair";
+export type TextScale = "small" | "medium" | "large";
+
+export interface SiteTheme {
+  id: string;
+  primary_color: string;
+  accent_color: string;
+  font_choice: FontChoice;
+  text_scale: TextScale;
+  updated_at: string;
+}
+
 export interface QuoteRequest {
   id: string;
   name: string;
