@@ -3,6 +3,7 @@ import { requireAdminPage } from "@/lib/adminAuth";
 import { adminFeatures, type AdminFeature } from "@/lib/admin-features";
 import AdminShell from "@/components/admin/AdminShell";
 import { PageHeader, Badge } from "@/components/admin/ui";
+import PurgeCacheButton from "@/components/admin/PurgeCacheButton";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -20,6 +21,8 @@ export default async function AdminPage() {
           <FeatureCard key={f.title} {...f} />
         ))}
       </div>
+
+      <PurgeCacheButton />
 
       <p className="text-xs text-gray-400">
         To add a new feature here, add an entry to lib/admin-features.ts.
