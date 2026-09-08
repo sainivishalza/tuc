@@ -9,6 +9,7 @@ import { getPublishedCategories } from "@/lib/actions/categoryPages";
 import { localeAlternates } from "@/lib/hreflang";
 import LazyOrderTimingPlanner from "@/components/LazyOrderTimingPlanner";
 import LazyPaymentSchedulePlanner from "@/components/LazyPaymentSchedulePlanner";
+import DocumentChecklist from "@/components/DocumentChecklist";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -76,6 +77,7 @@ export default async function SourcingIndexPage({
 
         <LazyOrderTimingPlanner locale={locale} />
         <LazyPaymentSchedulePlanner locale={locale} />
+        <DocumentChecklist locale={locale} />
 
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto max-w-3xl">
