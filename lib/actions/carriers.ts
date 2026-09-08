@@ -34,6 +34,8 @@ export interface CarrierInput {
   name: string;
   website_url: string | null;
   notes: string | null;
+  /** "dhl" to link this carrier to live DHL tracking, or null for manual entry. */
+  api_provider: string | null;
 }
 
 export async function createCarrier(input: CarrierInput): Promise<void> {
@@ -44,6 +46,7 @@ export async function createCarrier(input: CarrierInput): Promise<void> {
     name: input.name.trim(),
     website_url: input.website_url?.trim() || null,
     notes: input.notes?.trim() || null,
+    api_provider: input.api_provider || null,
   });
 
   if (error) throw new Error(error.message);
@@ -60,6 +63,7 @@ export async function updateCarrier(id: string, input: CarrierInput): Promise<vo
       name: input.name.trim(),
       website_url: input.website_url?.trim() || null,
       notes: input.notes?.trim() || null,
+      api_provider: input.api_provider || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);

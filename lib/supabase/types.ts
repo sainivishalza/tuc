@@ -83,6 +83,8 @@ export interface Carrier {
   name: string;
   website_url: string | null;
   notes: string | null;
+  /** Free-text tag for a linked live-tracking API — only "dhl" is wired up so far. Null = manual entry only. */
+  api_provider: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -90,6 +92,9 @@ export interface Carrier {
 export type ShipmentStatus =
   | "not_found"
   | "not_shipped"
+  | "in_production"
+  | "quality_check"
+  | "ready_to_ship"
   | "in_transit"
   | "delayed"
   | "delivered"
@@ -109,6 +114,12 @@ export interface Shipment {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  /** Pre-shipment production stages — shown to the customer as an earlier tracker on the same page. */
+  milestone_deposit_paid_at: string | null;
+  milestone_sample_approved_at: string | null;
+  milestone_production_started_at: string | null;
+  milestone_qc_passed_at: string | null;
+  milestone_ready_to_ship_at: string | null;
   milestone_received_at: string | null;
   milestone_shipped_at: string | null;
   milestone_departed_at: string | null;
@@ -119,6 +130,8 @@ export interface Shipment {
   packing_list_pdf_path: string | null;
   /** Signed proof-of-delivery (photo or scanned receipt), uploaded once the parcel is signed for. */
   pod_file_path: string | null;
+  /** Last time this shipment's status/events were pulled from the carrier's API (null if never synced or manually tracked). */
+  last_api_sync_at: string | null;
   visible: boolean;
   created_at: string;
   updated_at: string;
@@ -129,10 +142,18 @@ export interface PublicShipment {
   id: string;
   tracking_number: string;
   carrier_name: string | null;
+  /** The carrier's api_provider tag (e.g. "dhl"), or null for manually-tracked carriers. */
+  carrier_api_provider: string | null;
+  last_api_sync_at: string | null;
   destination_country: string | null;
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  milestone_deposit_paid_at: string | null;
+  milestone_sample_approved_at: string | null;
+  milestone_production_started_at: string | null;
+  milestone_qc_passed_at: string | null;
+  milestone_ready_to_ship_at: string | null;
   milestone_received_at: string | null;
   milestone_shipped_at: string | null;
   milestone_departed_at: string | null;

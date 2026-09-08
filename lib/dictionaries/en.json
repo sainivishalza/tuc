@@ -206,6 +206,15 @@
     "piecesLabel": "Total pieces",
     "locationLabel": "Current location",
     "carrierLabel": "Carrier",
+    "liveTracking": "Live",
+    "production": {
+      "title": "Production Progress",
+      "depositPaid": "Deposit Paid",
+      "sampleApproved": "Sample Approved",
+      "productionStarted": "Production Started",
+      "qcPassed": "QC Passed",
+      "readyToShip": "Ready to Ship"
+    },
     "milestones": {
       "title": "Shipment Progress",
       "received": "Received",
@@ -226,7 +235,10 @@
     "downloadPod": "Download proof of delivery",
     "status": {
       "not_found": "Not Found Yet",
-      "not_shipped": "Not Yet Shipped",
+      "not_shipped": "Order Placed",
+      "in_production": "In Production",
+      "quality_check": "Quality Check",
+      "ready_to_ship": "Ready to Ship",
       "in_transit": "In Transit",
       "delayed": "Delayed",
       "delivered": "Delivered",

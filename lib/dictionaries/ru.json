@@ -200,6 +200,15 @@
     "piecesLabel": "Всего мест",
     "locationLabel": "Текущее местоположение",
     "carrierLabel": "Перевозчик",
+    "liveTracking": "Онлайн",
+    "production": {
+      "title": "Ход производства",
+      "depositPaid": "Депозит оплачен",
+      "sampleApproved": "Образец утверждён",
+      "productionStarted": "Производство начато",
+      "qcPassed": "Контроль качества пройден",
+      "readyToShip": "Готово к отправке"
+    },
     "milestones": {
       "title": "Ход доставки",
       "received": "Принято на склад",
@@ -220,7 +229,10 @@
     "downloadPod": "Скачать подтверждение доставки",
     "status": {
       "not_found": "Информация отсутствует",
-      "not_shipped": "Еще не отправлено",
+      "not_shipped": "Заказ оформлен",
+      "in_production": "В производстве",
+      "quality_check": "Контроль качества",
+      "ready_to_ship": "Готово к отправке",
       "in_transit": "В пути",
       "delayed": "Задержка",
       "delivered": "Доставлено",

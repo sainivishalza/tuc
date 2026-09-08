@@ -12,11 +12,15 @@ import {
   addShipmentEvent,
   deleteShipmentEvent,
 } from "@/lib/actions/shipments";
+import { refreshShipmentFromApi } from "@/lib/actions/dhlSync";
 import type { Shipment, ShipmentStatus, Carrier, ShipmentEvent } from "@/lib/supabase/types";
 
 const STATUS_OPTIONS: { value: ShipmentStatus; label: string }[] = [
   { value: "not_found", label: "Not found (no tracking data yet)" },
-  { value: "not_shipped", label: "Not yet shipped" },
+  { value: "not_shipped", label: "Order placed (not yet in production)" },
+  { value: "in_production", label: "In production" },
+  { value: "quality_check", label: "Quality check" },
+  { value: "ready_to_ship", label: "Ready to ship" },
   { value: "in_transit", label: "In transit" },
   { value: "delayed", label: "Delayed" },
   { value: "delivered", label: "Delivered" },
@@ -24,12 +28,25 @@ const STATUS_OPTIONS: { value: ShipmentStatus; label: string }[] = [
 ];
 
 type MilestoneKey =
+  | "milestone_deposit_paid_at"
+  | "milestone_sample_approved_at"
+  | "milestone_production_started_at"
+  | "milestone_qc_passed_at"
+  | "milestone_ready_to_ship_at"
   | "milestone_received_at"
   | "milestone_shipped_at"
   | "milestone_departed_at"
   | "milestone_arrived_at"
   | "milestone_out_for_delivery_at"
   | "milestone_delivered_at";
+
+const PRODUCTION_MILESTONES: { key: MilestoneKey; label: string }[] = [
+  { key: "milestone_deposit_paid_at", label: "Deposit paid" },
+  { key: "milestone_sample_approved_at", label: "Sample approved" },
+  { key: "milestone_production_started_at", label: "Production started" },
+  { key: "milestone_qc_passed_at", label: "QC passed" },
+  { key: "milestone_ready_to_ship_at", label: "Ready to ship" },
+];
 
 const MILESTONES: { key: MilestoneKey; label: string }[] = [
   { key: "milestone_received_at", label: "Received (in storage)" },
@@ -90,6 +107,11 @@ export default function ShipmentForm({
   const [currentLocation, setCurrentLocation] = useState(initial?.current_location ?? "");
   const [status, setStatus] = useState<ShipmentStatus>(initial?.status ?? "in_transit");
   const [milestones, setMilestones] = useState<Record<MilestoneKey, string>>({
+    milestone_deposit_paid_at: toDatetimeLocal(initial?.milestone_deposit_paid_at),
+    milestone_sample_approved_at: toDatetimeLocal(initial?.milestone_sample_approved_at),
+    milestone_production_started_at: toDatetimeLocal(initial?.milestone_production_started_at),
+    milestone_qc_passed_at: toDatetimeLocal(initial?.milestone_qc_passed_at),
+    milestone_ready_to_ship_at: toDatetimeLocal(initial?.milestone_ready_to_ship_at),
     milestone_received_at: toDatetimeLocal(initial?.milestone_received_at),
     milestone_shipped_at: toDatetimeLocal(initial?.milestone_shipped_at),
     milestone_departed_at: toDatetimeLocal(initial?.milestone_departed_at),
@@ -118,6 +140,34 @@ export default function ShipmentForm({
   const [addingEvent, setAddingEvent] = useState(false);
   const [eventError, setEventError] = useState("");
 
+  const lastApiSyncAt = initial?.last_api_sync_at ?? null;
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState("");
+
+  const selectedCarrier = carriers.find((c) => c.id === carrierId);
+  const isApiLinked = selectedCarrier?.api_provider === "dhl";
+
+  async function handleRefreshFromApi() {
+    if (!shipmentId) return;
+    setSyncing(true);
+    setSyncMessage("");
+    try {
+      const result = await refreshShipmentFromApi(shipmentId);
+      if (result.ok) {
+        // A sync can touch status, location, milestones, and events all at
+        // once — reload rather than patching each field individually so
+        // every part of the form reflects what's now in the database.
+        window.location.reload();
+        return;
+      }
+      setSyncMessage(result.message);
+    } catch (err) {
+      setSyncMessage(err instanceof Error ? err.message : "Failed to sync from DHL.");
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -134,6 +184,11 @@ export default function ShipmentForm({
         total_pieces: totalPieces ? Number(totalPieces) : null,
         current_location: currentLocation || null,
         status,
+        milestone_deposit_paid_at: fromDatetimeLocal(milestones.milestone_deposit_paid_at),
+        milestone_sample_approved_at: fromDatetimeLocal(milestones.milestone_sample_approved_at),
+        milestone_production_started_at: fromDatetimeLocal(milestones.milestone_production_started_at),
+        milestone_qc_passed_at: fromDatetimeLocal(milestones.milestone_qc_passed_at),
+        milestone_ready_to_ship_at: fromDatetimeLocal(milestones.milestone_ready_to_ship_at),
         milestone_received_at: fromDatetimeLocal(milestones.milestone_received_at),
         milestone_shipped_at: fromDatetimeLocal(milestones.milestone_shipped_at),
         milestone_departed_at: fromDatetimeLocal(milestones.milestone_departed_at),
@@ -270,7 +325,10 @@ export default function ShipmentForm({
             required
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
           />
-          <p className="mt-1 text-[11px] text-gray-400">This is the number your customer uses to track — give it to them directly.</p>
+          <p className="mt-1 text-[11px] text-gray-400">
+            This is the number your customer uses to track — give it to them as soon as they
+            place the order, so they can follow production too, not just shipping.
+          </p>
         </div>
         <div>
           <label className="mb-1 block text-xs font-semibold text-gray-700">Carrier</label>
@@ -286,6 +344,32 @@ export default function ShipmentForm({
           </select>
         </div>
       </div>
+
+      {isApiLinked && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold text-emerald-900">Live tracking via DHL</p>
+              <p className="mt-0.5 text-[11px] text-emerald-800">
+                {lastApiSyncAt
+                  ? `Last synced ${formatEventAt(lastApiSyncAt)}. Status, location, milestones, and updates below are pulled from DHL automatically.`
+                  : "Not synced yet. Save the shipment first, then refresh to pull live status from DHL."}
+              </p>
+            </div>
+            {shipmentId && (
+              <button
+                type="button"
+                onClick={handleRefreshFromApi}
+                disabled={syncing}
+                className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              >
+                {syncing ? "Syncing..." : "Refresh from DHL"}
+              </button>
+            )}
+          </div>
+          {syncMessage && <p className="mt-2 text-xs text-emerald-900">{syncMessage}</p>}
+        </div>
+      )}
 
       <div className="rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
         The fields below are for you only — they never appear on the public tracking page,
@@ -375,6 +459,32 @@ export default function ShipmentForm({
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
+      </div>
+
+      <div className="rounded-xl border border-gray-200 p-4">
+        <label className="mb-1 block text-xs font-semibold text-gray-700">
+          Production progress (shown to the customer before it ships)
+        </label>
+        <p className="mb-3 text-[11px] text-gray-400">
+          Give the customer this tracking number as soon as they place the order — filling in
+          these steps as production happens lets them follow along from deposit to delivery with
+          one code, without waiting for a shipment to exist yet.
+        </p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {PRODUCTION_MILESTONES.map((m) => (
+            <div key={m.key}>
+              <label className="mb-1 block text-[11px] font-medium text-gray-600">{m.label}</label>
+              <input
+                type="datetime-local"
+                value={milestones[m.key]}
+                onChange={(e) =>
+                  setMilestones((prev) => ({ ...prev, [m.key]: e.target.value }))
+                }
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="rounded-xl border border-gray-200 p-4">

@@ -6,6 +6,7 @@ import PDFDocument from "pdfkit";
 import { getSupabasePublicClient } from "@/lib/supabase/publicClient";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
+import { autoSyncIfStale } from "@/lib/actions/dhlSync";
 import type { Shipment, PublicShipment, ShipmentStatus, ShipmentEvent } from "@/lib/supabase/types";
 
 const BUCKET = "packing-lists";
@@ -24,7 +25,21 @@ export async function trackShipment(trackingNumber: string): Promise<PublicShipm
     .maybeSingle();
 
   if (error || !data) return null;
-  return data as PublicShipment;
+  let shipment = data as PublicShipment;
+
+  if (shipment.carrier_api_provider === "dhl") {
+    const synced = await autoSyncIfStale(shipment.id);
+    if (synced) {
+      const { data: refreshed } = await supabase
+        .from("shipments_public")
+        .select("*")
+        .eq("id", shipment.id)
+        .maybeSingle();
+      if (refreshed) shipment = refreshed as PublicShipment;
+    }
+  }
+
+  return shipment;
 }
 
 export interface TrackedShipmentResult {
@@ -52,13 +67,24 @@ export async function trackShipments(rawInput: string): Promise<TrackedShipmentR
   if (trackingNumbers.length === 0) return [];
 
   const supabase = getSupabasePublicClient();
-  const { data: shipments, error } = await supabase
-    .from("shipments_public")
-    .select("*")
-    .in("tracking_number", trackingNumbers);
+  const fetchShipments = () =>
+    supabase.from("shipments_public").select("*").in("tracking_number", trackingNumbers);
 
-  if (error) {
+  const first = await fetchShipments();
+  let shipments = first.data;
+  if (first.error) {
     return trackingNumbers.map((trackingNumber) => ({ trackingNumber, shipment: null, events: [] }));
+  }
+
+  const dhlLinked = (shipments as PublicShipment[]).filter((s) => s.carrier_api_provider === "dhl");
+  if (dhlLinked.length > 0) {
+    const syncedFlags = await Promise.all(
+      dhlLinked.map((s) => autoSyncIfStale(s.id))
+    );
+    if (syncedFlags.some(Boolean)) {
+      const refetched = await fetchShipments();
+      if (!refetched.error && refetched.data) shipments = refetched.data;
+    }
   }
 
   const byTrackingNumber = new Map((shipments as PublicShipment[]).map((s) => [s.tracking_number, s]));
@@ -198,6 +224,11 @@ export interface ShipmentInput {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  milestone_deposit_paid_at: string | null;
+  milestone_sample_approved_at: string | null;
+  milestone_production_started_at: string | null;
+  milestone_qc_passed_at: string | null;
+  milestone_ready_to_ship_at: string | null;
   milestone_received_at: string | null;
   milestone_shipped_at: string | null;
   milestone_departed_at: string | null;
@@ -228,6 +259,11 @@ export async function createShipment(input: ShipmentInput): Promise<string> {
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
+      milestone_deposit_paid_at: input.milestone_deposit_paid_at || null,
+      milestone_sample_approved_at: input.milestone_sample_approved_at || null,
+      milestone_production_started_at: input.milestone_production_started_at || null,
+      milestone_qc_passed_at: input.milestone_qc_passed_at || null,
+      milestone_ready_to_ship_at: input.milestone_ready_to_ship_at || null,
       milestone_received_at: input.milestone_received_at || null,
       milestone_shipped_at: input.milestone_shipped_at || null,
       milestone_departed_at: input.milestone_departed_at || null,
@@ -261,6 +297,11 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
+      milestone_deposit_paid_at: input.milestone_deposit_paid_at || null,
+      milestone_sample_approved_at: input.milestone_sample_approved_at || null,
+      milestone_production_started_at: input.milestone_production_started_at || null,
+      milestone_qc_passed_at: input.milestone_qc_passed_at || null,
+      milestone_ready_to_ship_at: input.milestone_ready_to_ship_at || null,
       milestone_received_at: input.milestone_received_at || null,
       milestone_shipped_at: input.milestone_shipped_at || null,
       milestone_departed_at: input.milestone_departed_at || null,
