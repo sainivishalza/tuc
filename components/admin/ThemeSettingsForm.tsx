@@ -30,6 +30,8 @@ function isValidHex(value: string): boolean {
 export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
   const [primaryColor, setPrimaryColor] = useState(initial.primary_color);
   const [accentColor, setAccentColor] = useState(initial.accent_color);
+  const [surfaceColor, setSurfaceColor] = useState(initial.surface_color);
+  const [backgroundColor, setBackgroundColor] = useState(initial.background_color);
   const [fontChoice, setFontChoice] = useState<FontChoice>(initial.font_choice);
   const [textScale, setTextScale] = useState<TextScale>(initial.text_scale);
   const [saving, setSaving] = useState(false);
@@ -43,7 +45,12 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
     setError("");
     setMessage("");
 
-    if (!isValidHex(primaryColor) || !isValidHex(accentColor)) {
+    if (
+      !isValidHex(primaryColor) ||
+      !isValidHex(accentColor) ||
+      !isValidHex(surfaceColor) ||
+      !isValidHex(backgroundColor)
+    ) {
       setError("Colors must be a valid hex code like #059669.");
       return;
     }
@@ -53,6 +60,8 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
       const result = await updateSiteTheme({
         primary_color: primaryColor,
         accent_color: accentColor,
+        surface_color: surfaceColor,
+        background_color: backgroundColor,
         font_choice: fontChoice,
         text_scale: textScale,
       });
@@ -85,7 +94,26 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
           value={accentColor}
           onChange={setAccentColor}
         />
+        <ColorField
+          label="Card background"
+          sublabel="Every white card, panel, and popup"
+          placeholder="#ffffff"
+          value={surfaceColor}
+          onChange={setSurfaceColor}
+        />
+        <ColorField
+          label="Body background"
+          sublabel="Behind cards — keep this different from the card color above, or cards stop standing out"
+          placeholder="#eef2f6"
+          value={backgroundColor}
+          onChange={setBackgroundColor}
+        />
       </div>
+      {surfaceColor.toLowerCase() === backgroundColor.toLowerCase() && (
+        <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+          Card background and body background are the same color — cards will blend into the page instead of standing out.
+        </p>
+      )}
 
       <div>
         <label className={labelClass}>Font</label>
@@ -130,25 +158,30 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
       <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Preview</p>
         <div
-          className="rounded-xl border border-gray-200 bg-white p-6"
-          style={{ fontFamily: selectedFont.cssVar }}
+          className="rounded-xl border border-gray-200 p-6"
+          style={{ fontFamily: selectedFont.cssVar, background: backgroundColor }}
         >
-          <p
-            className="font-bold"
-            style={{ color: primaryColor, fontSize: `calc(${SIZE_PREVIEW_REM[textScale]} * 1.75)` }}
+          <div
+            className="rounded-xl border border-gray-200 p-6 shadow-sm"
+            style={{ background: surfaceColor }}
           >
-            Your Trusted Sourcing Partner
-          </p>
-          <p className="mt-2 text-gray-600" style={{ fontSize: SIZE_PREVIEW_REM[textScale] }}>
-            This is how body text and paragraphs will look across the site.
-          </p>
-          <button
-            type="button"
-            className="mt-4 rounded-full px-5 py-2.5 text-sm font-semibold text-white"
-            style={{ background: `linear-gradient(135deg, ${accentColor}, ${primaryColor})` }}
-          >
-            Chat on WhatsApp
-          </button>
+            <p
+              className="font-bold"
+              style={{ color: primaryColor, fontSize: `calc(${SIZE_PREVIEW_REM[textScale]} * 1.75)` }}
+            >
+              Your Trusted Sourcing Partner
+            </p>
+            <p className="mt-2 text-gray-600" style={{ fontSize: SIZE_PREVIEW_REM[textScale] }}>
+              This is how body text and paragraphs will look across the site.
+            </p>
+            <button
+              type="button"
+              className="mt-4 rounded-full px-5 py-2.5 text-sm font-semibold text-white"
+              style={{ background: `linear-gradient(135deg, ${accentColor}, ${primaryColor})` }}
+            >
+              Chat on WhatsApp
+            </button>
+          </div>
         </div>
       </div>
 
