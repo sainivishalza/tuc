@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getSupabasePublicClient } from "@/lib/supabase/publicClient";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
+import { notifyNewQuoteRequest } from "@/lib/notify";
 import type { QuoteRequest } from "@/lib/supabase/types";
 
 export interface QuoteRequestInput {
@@ -37,6 +38,16 @@ export async function submitQuoteRequest(
   if (error) {
     return { success: false, error: "Something went wrong. Please try again." };
   }
+
+  await notifyNewQuoteRequest({
+    name: input.name.trim(),
+    email: input.email.trim(),
+    whatsapp: input.whatsapp.trim() || null,
+    product: input.product.trim() || null,
+    quantity: input.quantity.trim() || null,
+    timeline: input.timeline.trim() || null,
+    message: input.message.trim() || null,
+  });
 
   return { success: true };
 }
