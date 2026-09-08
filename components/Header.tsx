@@ -42,13 +42,13 @@ export default function Header({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full">
-      <div className="glass mx-auto mt-3 flex max-w-6xl items-center justify-between rounded-2xl px-4 py-3 sm:px-6">
+    <header className="sticky top-0 z-50 w-full bg-brand-navy shadow-lg shadow-black/10">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
         <Link href={`/${locale}`} className="flex items-center gap-2.5">
           <span className="brand-gradient flex h-9 w-9 items-center justify-center rounded-lg font-display text-base font-semibold text-white">
             U
           </span>
-          <span className="font-display text-base font-semibold tracking-tight sm:text-lg">
+          <span className="font-display text-base font-semibold tracking-tight text-white sm:text-lg">
             <span className="text-accent">The Unique</span> Choice
           </span>
         </Link>
@@ -58,7 +58,7 @@ export default function Header({
             <a
               key={l.href}
               href={l.href}
-              className="group relative text-sm font-medium text-foreground/75 transition hover:text-foreground"
+              className="group relative text-sm font-medium text-white/70 transition hover:text-white"
             >
               {l.label}
               <span className="absolute -bottom-1 left-0 h-0.5 w-0 rounded-full bg-accent transition-all duration-300 group-hover:w-full" />
@@ -72,7 +72,7 @@ export default function Header({
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="brand-gradient flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:scale-105"
+            className="brand-gradient-animated flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md shadow-black/20 transition hover:scale-105"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}
@@ -80,7 +80,7 @@ export default function Header({
         </div>
 
         <button
-          className="flex items-center justify-center rounded-full p-2 text-foreground lg:hidden"
+          className="flex items-center justify-center rounded-full p-2 text-white lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -89,13 +89,13 @@ export default function Header({
       </div>
 
       {open && (
-        <div ref={menuRef} className="glass mx-3 mt-2 flex flex-col gap-1 rounded-2xl p-4 lg:hidden">
+        <div ref={menuRef} className="flex flex-col gap-1 border-t border-white/10 bg-brand-navy p-4 lg:hidden">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 transition hover:bg-surface-2"
+              className="rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
             >
               {l.label}
             </a>
@@ -107,7 +107,7 @@ export default function Header({
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="brand-gradient mt-2 flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-white"
+            className="brand-gradient-animated mt-2 flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-white"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}

@@ -63,7 +63,7 @@ export default function SellingPriceCalculator({ dict }: { dict: Dictionary }) {
   };
 
   return (
-    <section id="selling-price" className="relative px-4 py-20 sm:px-6">
+    <section id="selling-price" className="section-alt relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
         <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 

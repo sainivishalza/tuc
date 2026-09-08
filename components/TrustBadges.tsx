@@ -23,7 +23,7 @@ export default function TrustBadges({ dict }: { dict: Dictionary }) {
   }));
 
   return (
-    <section className="relative px-4 py-16 sm:px-6">
+    <section className="section-alt relative px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-5xl">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
           {badges.map((badge, i) => {
