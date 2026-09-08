@@ -11,6 +11,7 @@ import Pricing from "@/components/Pricing";
 import WhyUs from "@/components/WhyUs";
 import LazyTestimonials from "@/components/LazyTestimonials";
 import LazyProductMatcher from "@/components/LazyProductMatcher";
+import LazySupplierRedFlags from "@/components/LazySupplierRedFlags";
 import LazyCbmCalculator from "@/components/LazyCbmCalculator";
 import LazyLandedCostCalculator from "@/components/LazyLandedCostCalculator";
 import LazyReadinessQuiz from "@/components/LazyReadinessQuiz";
@@ -102,6 +103,7 @@ export default async function LocalePage({
         <WhyUs dict={dict} />
         <LazyTestimonials dict={dict} testimonials={testimonials} />
         <LazyProductMatcher />
+        <LazySupplierRedFlags />
         <LazyCbmCalculator />
         <LazyLandedCostCalculator />
         <LazyReadinessQuiz />
