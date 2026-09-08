@@ -201,6 +201,14 @@
     "locationLabel": "当前所在地",
     "carrierLabel": "承运商",
     "liveTracking": "实时",
+    "production": {
+      "title": "生产进度",
+      "depositPaid": "已付定金",
+      "sampleApproved": "样品已确认",
+      "productionStarted": "已开始生产",
+      "qcPassed": "质检已通过",
+      "readyToShip": "备货完成"
+    },
     "milestones": {
       "title": "运输进度",
       "received": "已入仓",
@@ -221,7 +229,10 @@
     "downloadPod": "下载签收证明",
     "status": {
       "not_found": "暂无信息",
-      "not_shipped": "尚未发货",
+      "not_shipped": "订单已下达",
+      "in_production": "生产中",
+      "quality_check": "质检中",
+      "ready_to_ship": "备货完成",
       "in_transit": "运输途中",
       "delayed": "运输延迟",
       "delivered": "已签收",

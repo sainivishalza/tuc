@@ -14,13 +14,23 @@ import type { PublicShipment, ShipmentEvent, ShipmentStatus } from "@/lib/supaba
 const statusColors: Record<ShipmentStatus, string> = {
   not_found: "bg-gray-100 text-gray-500",
   not_shipped: "bg-gray-100 text-gray-500",
+  in_production: "bg-purple-100 text-purple-700",
+  quality_check: "bg-indigo-100 text-indigo-700",
+  ready_to_ship: "bg-teal-100 text-teal-700",
   in_transit: "bg-blue-100 text-blue-700",
   delayed: "bg-amber-100 text-amber-700",
   delivered: "bg-emerald-100 text-emerald-700",
   exception: "bg-red-100 text-red-700",
 };
 
-type MilestoneField =
+type ProductionMilestoneField =
+  | "milestone_deposit_paid_at"
+  | "milestone_sample_approved_at"
+  | "milestone_production_started_at"
+  | "milestone_qc_passed_at"
+  | "milestone_ready_to_ship_at";
+
+type ShippingMilestoneField =
   | "milestone_received_at"
   | "milestone_shipped_at"
   | "milestone_departed_at"
@@ -28,7 +38,19 @@ type MilestoneField =
   | "milestone_out_for_delivery_at"
   | "milestone_delivered_at";
 
-function milestoneSteps(dict: Dictionary): { field: MilestoneField; label: string }[] {
+type MilestoneField = ProductionMilestoneField | ShippingMilestoneField;
+
+function productionSteps(dict: Dictionary): { field: ProductionMilestoneField; label: string }[] {
+  return [
+    { field: "milestone_deposit_paid_at", label: dict.tracking.production.depositPaid },
+    { field: "milestone_sample_approved_at", label: dict.tracking.production.sampleApproved },
+    { field: "milestone_production_started_at", label: dict.tracking.production.productionStarted },
+    { field: "milestone_qc_passed_at", label: dict.tracking.production.qcPassed },
+    { field: "milestone_ready_to_ship_at", label: dict.tracking.production.readyToShip },
+  ];
+}
+
+function shippingSteps(dict: Dictionary): { field: ShippingMilestoneField; label: string }[] {
   return [
     { field: "milestone_received_at", label: dict.tracking.milestones.received },
     { field: "milestone_shipped_at", label: dict.tracking.milestones.shipped },
@@ -202,10 +224,19 @@ function ShipmentResultCard({
         )}
       </div>
 
-      <div className="mt-6 border-t border-border pt-5">
-        <p className="font-display text-sm font-semibold">{dict.tracking.milestones.title}</p>
-        <MilestoneTracker dict={dict} shipment={shipment} />
-      </div>
+      {hasAnyMilestone(shipment, productionSteps(dict)) && (
+        <div className="mt-6 border-t border-border pt-5">
+          <p className="font-display text-sm font-semibold">{dict.tracking.production.title}</p>
+          <MilestoneTracker steps={productionSteps(dict)} shipment={shipment} />
+        </div>
+      )}
+
+      {hasAnyMilestone(shipment, shippingSteps(dict)) && (
+        <div className="mt-6 border-t border-border pt-5">
+          <p className="font-display text-sm font-semibold">{dict.tracking.milestones.title}</p>
+          <MilestoneTracker steps={shippingSteps(dict)} shipment={shipment} />
+        </div>
+      )}
 
       <div className="mt-6 border-t border-border pt-5">
         <p className="font-display text-sm font-semibold">{dict.tracking.updatesTitle}</p>
@@ -293,8 +324,17 @@ function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; 
   );
 }
 
-function MilestoneTracker({ dict, shipment }: { dict: Dictionary; shipment: PublicShipment }) {
-  const steps = milestoneSteps(dict);
+function hasAnyMilestone(shipment: PublicShipment, steps: { field: MilestoneField }[]): boolean {
+  return steps.some((s) => shipment[s.field] != null);
+}
+
+function MilestoneTracker({
+  steps,
+  shipment,
+}: {
+  steps: { field: MilestoneField; label: string }[];
+  shipment: PublicShipment;
+}) {
   const dates = steps.map((s) => shipment[s.field]);
   let lastDoneIndex = -1;
   dates.forEach((d, i) => {

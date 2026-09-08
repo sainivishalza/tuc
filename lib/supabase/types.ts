@@ -92,6 +92,9 @@ export interface Carrier {
 export type ShipmentStatus =
   | "not_found"
   | "not_shipped"
+  | "in_production"
+  | "quality_check"
+  | "ready_to_ship"
   | "in_transit"
   | "delayed"
   | "delivered"
@@ -111,6 +114,12 @@ export interface Shipment {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  /** Pre-shipment production stages — shown to the customer as an earlier tracker on the same page. */
+  milestone_deposit_paid_at: string | null;
+  milestone_sample_approved_at: string | null;
+  milestone_production_started_at: string | null;
+  milestone_qc_passed_at: string | null;
+  milestone_ready_to_ship_at: string | null;
   milestone_received_at: string | null;
   milestone_shipped_at: string | null;
   milestone_departed_at: string | null;
@@ -140,6 +149,11 @@ export interface PublicShipment {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  milestone_deposit_paid_at: string | null;
+  milestone_sample_approved_at: string | null;
+  milestone_production_started_at: string | null;
+  milestone_qc_passed_at: string | null;
+  milestone_ready_to_ship_at: string | null;
   milestone_received_at: string | null;
   milestone_shipped_at: string | null;
   milestone_departed_at: string | null;

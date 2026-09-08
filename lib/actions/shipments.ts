@@ -224,6 +224,11 @@ export interface ShipmentInput {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  milestone_deposit_paid_at: string | null;
+  milestone_sample_approved_at: string | null;
+  milestone_production_started_at: string | null;
+  milestone_qc_passed_at: string | null;
+  milestone_ready_to_ship_at: string | null;
   milestone_received_at: string | null;
   milestone_shipped_at: string | null;
   milestone_departed_at: string | null;
@@ -254,6 +259,11 @@ export async function createShipment(input: ShipmentInput): Promise<string> {
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
+      milestone_deposit_paid_at: input.milestone_deposit_paid_at || null,
+      milestone_sample_approved_at: input.milestone_sample_approved_at || null,
+      milestone_production_started_at: input.milestone_production_started_at || null,
+      milestone_qc_passed_at: input.milestone_qc_passed_at || null,
+      milestone_ready_to_ship_at: input.milestone_ready_to_ship_at || null,
       milestone_received_at: input.milestone_received_at || null,
       milestone_shipped_at: input.milestone_shipped_at || null,
       milestone_departed_at: input.milestone_departed_at || null,
@@ -287,6 +297,11 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
+      milestone_deposit_paid_at: input.milestone_deposit_paid_at || null,
+      milestone_sample_approved_at: input.milestone_sample_approved_at || null,
+      milestone_production_started_at: input.milestone_production_started_at || null,
+      milestone_qc_passed_at: input.milestone_qc_passed_at || null,
+      milestone_ready_to_ship_at: input.milestone_ready_to_ship_at || null,
       milestone_received_at: input.milestone_received_at || null,
       milestone_shipped_at: input.milestone_shipped_at || null,
       milestone_departed_at: input.milestone_departed_at || null,
