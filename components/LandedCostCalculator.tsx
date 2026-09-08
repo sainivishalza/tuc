@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calculator, ArrowRight } from "lucide-react";
 import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
@@ -27,6 +27,18 @@ export default function LandedCostCalculator() {
   const price = Number(unitPrice);
   const weight = weightKg.trim() ? Number(weightKg) : null;
   const canCalculate = qty > 0 && price > 0;
+
+  // Lets the CBM Calculator above hand off the total weight it computed
+  // so the customer doesn't have to re-type it here.
+  useEffect(() => {
+    function handleCbmComputed(e: Event) {
+      const detail = (e as CustomEvent<{ weightKg: number }>).detail;
+      if (!detail) return;
+      setWeightKg(String(Math.round(detail.weightKg)));
+    }
+    window.addEventListener("tuc:cbm-computed", handleCbmComputed);
+    return () => window.removeEventListener("tuc:cbm-computed", handleCbmComputed);
+  }, []);
 
   const handleCalculate = () => {
     if (!canCalculate) return;
