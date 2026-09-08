@@ -1,18 +1,7 @@
 import "server-only";
 import { sendEmail } from "@/lib/email";
 import type { ShipmentStatus } from "@/lib/supabase/types";
-
-const STATUS_LABELS: Record<ShipmentStatus, string> = {
-  not_found: "Not found",
-  not_shipped: "Order placed",
-  in_production: "In production",
-  quality_check: "Quality check",
-  ready_to_ship: "Ready to ship",
-  in_transit: "In transit",
-  delayed: "Delayed",
-  delivered: "Delivered",
-  exception: "Possible exception",
-};
+import { STATUS_LABELS } from "@/lib/shipmentStatus";
 
 const SITE_URL = "https://theuniquechoice.com";
 
