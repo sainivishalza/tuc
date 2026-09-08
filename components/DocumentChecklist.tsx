@@ -6,17 +6,21 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
-import type { Locale } from "@/lib/i18n";
-import { CATEGORY_PROFILES } from "@/lib/productMatcher";
-import { buildDocumentChecklist } from "@/lib/documentChecklist";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { getCategoryProfiles } from "@/lib/productMatcher";
+import { getCoreDocuments, buildDocumentChecklist } from "@/lib/documentChecklist";
 
-export default function DocumentChecklist({ locale }: { locale: Locale }) {
-  const [categoryId, setCategoryId] = useState(CATEGORY_PROFILES[0].id);
+export default function DocumentChecklist({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const t = dict.tools.documentChecklist;
+  const categories = getCategoryProfiles(dict.tools.categories);
+  const coreDocuments = getCoreDocuments(t.coreDocuments);
+
+  const [categoryId, setCategoryId] = useState(categories[0].id);
   const [generated, setGenerated] = useState(false);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const pathname = usePathname() ?? "/";
 
-  const documents = buildDocumentChecklist(categoryId);
+  const documents = buildDocumentChecklist(categoryId, categories, coreDocuments, t.certificationSuffix);
 
   const toggle = (name: string) => {
     setChecked((prev) => {
@@ -35,15 +39,11 @@ export default function DocumentChecklist({ locale }: { locale: Locale }) {
   return (
     <section className="px-4 pb-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          badge="Free · Instant Checklist"
-          title="What Documents Will You Need?"
-          subtitle="Pick your product category and get the paperwork checklist for a China shipment — the same documents we prepare for every order."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
-            <label className="mb-2 block text-sm font-medium">Product category</label>
+            <label className="mb-2 block text-sm font-medium">{t.categoryLabel}</label>
             <div className="flex flex-wrap gap-3 sm:flex-nowrap">
               <select
                 value={categoryId}
@@ -53,7 +53,7 @@ export default function DocumentChecklist({ locale }: { locale: Locale }) {
                 }}
                 className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:max-w-xs"
               >
-                {CATEGORY_PROFILES.map((cat) => (
+                {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.label}
                   </option>
@@ -64,7 +64,7 @@ export default function DocumentChecklist({ locale }: { locale: Locale }) {
                 className="brand-gradient flex shrink-0 items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
               >
                 <FileCheck2 size={16} />
-                Generate Checklist
+                {t.generateButton}
               </button>
             </div>
 
@@ -98,17 +98,14 @@ export default function DocumentChecklist({ locale }: { locale: Locale }) {
                     ))}
                   </div>
 
-                  <p className="mt-5 text-xs text-muted">
-                    A general starting list, not a substitute for your customs broker&apos;s guidance — exact
-                    requirements vary by destination country and change over time.
-                  </p>
+                  <p className="mt-5 text-xs text-muted">{t.disclaimer}</p>
 
                   <a
                     href={`/${locale}#consultation`}
                     onClick={() => trackCtaClick("Document Checklist Get Quote", pathname)}
                     className="brand-gradient-animated mt-5 flex w-fit items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get a Quote
+                    {t.getQuote}
                     <ArrowRight size={16} />
                   </a>
                 </div>

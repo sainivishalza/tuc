@@ -6,27 +6,31 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
-import type { Locale } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import { buildPaymentSchedule, type PaymentScheduleResult } from "@/lib/paymentSchedule";
+
+const INTL_LOCALES: Record<Locale, string> = { en: "en-US", zh: "zh-CN", ru: "ru-RU" };
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function formatUsd(value: number): string {
-  return value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
+export default function PaymentSchedulePlanner({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const t = dict.tools.paymentSchedule;
 
-function formatDate(iso: string): string {
-  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-}
+  function formatUsd(value: number): string {
+    return value.toLocaleString(INTL_LOCALES[locale], { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  }
 
-export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
+  function formatDate(iso: string): string {
+    return new Date(`${iso}T00:00:00Z`).toLocaleDateString(INTL_LOCALES[locale], {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
+  }
+
   const [totalValue, setTotalValue] = useState("10000");
   const [depositPct, setDepositPct] = useState("30");
   const [leadTime, setLeadTime] = useState("35");
@@ -41,23 +45,19 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
 
   const handleGenerate = () => {
     if (!canGenerate) return;
-    setResult(buildPaymentSchedule({ totalValue: value, depositPct: pct, leadTimeDays: days }, orderDate));
+    setResult(buildPaymentSchedule({ totalValue: value, depositPct: pct, leadTimeDays: days }, orderDate, t.milestones));
   };
 
   return (
     <section className="px-4 pb-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          badge="Free · Instant Schedule"
-          title="Plan Your Payment Schedule"
-          subtitle="See the actual dates and amounts you'll be asked for — deposit, balance, and everything in between — before you agree to anything."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-medium">Total order value (USD)</label>
+                <label className="mb-2 block text-sm font-medium">{t.totalValueLabel}</label>
                 <input
                   type="number"
                   min="0"
@@ -67,7 +67,7 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Deposit (%)</label>
+                <label className="mb-2 block text-sm font-medium">{t.depositLabel}</label>
                 <input
                   type="number"
                   min="1"
@@ -76,10 +76,10 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
                   onChange={(e) => setDepositPct(e.target.value)}
                   className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                 />
-                <p className="mt-1.5 text-xs text-muted">Typical range: 20-50%. 30% is standard.</p>
+                <p className="mt-1.5 text-xs text-muted">{t.depositHint}</p>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Production lead time (days)</label>
+                <label className="mb-2 block text-sm font-medium">{t.leadTimeLabel}</label>
                 <input
                   type="number"
                   min="1"
@@ -89,7 +89,7 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Order confirmation date</label>
+                <label className="mb-2 block text-sm font-medium">{t.orderDateLabel}</label>
                 <input
                   type="date"
                   value={orderDate}
@@ -105,7 +105,7 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
               className="brand-gradient mt-6 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
             >
               <Wallet size={16} />
-              Generate Schedule
+              {t.generateButton}
             </button>
 
             {result && (
@@ -113,7 +113,7 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
                 <div className="rounded-xl border border-border bg-surface p-5 sm:p-6">
                   <div className="flex flex-col divide-y divide-border">
                     {result.milestones.map((m) => (
-                      <div key={m.label} className="flex items-start gap-4 py-4 first:pt-0 last:pb-0">
+                      <div key={m.id} className="flex items-start gap-4 py-4 first:pt-0 last:pb-0">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
                           <CircleDollarSign size={16} />
                         </div>
@@ -132,9 +132,7 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
                   </div>
 
                   <p className="mt-5 rounded-lg bg-accent/5 px-4 py-3 text-sm text-muted">
-                    <strong className="text-foreground">First order with this supplier?</strong> Consider routing the
-                    deposit through a Trade Assurance or escrow-style payment instead of a direct wire — it holds your
-                    payment until the supplier ships what was agreed.
+                    <strong className="text-foreground">{t.escrowTipLabel}</strong> {t.escrowTip}
                   </p>
 
                   <a
@@ -142,7 +140,7 @@ export default function PaymentSchedulePlanner({ locale }: { locale: Locale }) {
                     onClick={() => trackCtaClick("Payment Schedule Get Quote", pathname)}
                     className="brand-gradient-animated mt-5 flex w-fit items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get a Quote
+                    {t.getQuote}
                     <ArrowRight size={16} />
                   </a>
                 </div>

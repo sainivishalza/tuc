@@ -3,12 +3,18 @@
 // first-time buyers off guard; this checks a target delivery date against
 // them and works out a safer order-by date.
 
-export interface CalendarEvent {
+export type CalendarEventId = "cny" | "peakSeason" | "goldenWeek" | "laborDay";
+
+export interface CalendarEventContent {
   name: string;
+  note: string;
+}
+
+export interface CalendarEvent extends CalendarEventContent {
+  id: CalendarEventId;
   start: string; // ISO date, "YYYY-MM-DD"
   end: string; // ISO date, inclusive
   impact: "closure" | "peak-season";
-  note: string;
 }
 
 // Chinese New Year dates are fixed years in advance on the lunar calendar
@@ -37,42 +43,48 @@ function daysBetween(a: string, b: string): number {
   return Math.round((new Date(`${b}T00:00:00Z`).getTime() - new Date(`${a}T00:00:00Z`).getTime()) / 86_400_000);
 }
 
-function buildCalendarEvents(): CalendarEvent[] {
+function fillYear(template: string, year: number): string {
+  return template.replace("{year}", String(year));
+}
+
+export function getCalendarEvents(content: Record<CalendarEventId, CalendarEventContent>): CalendarEvent[] {
   const events: CalendarEvent[] = [];
   for (const { year, date } of CNY_DATES) {
     events.push({
-      name: `Chinese New Year ${year}`,
+      id: "cny",
+      name: fillYear(content.cny.name, year),
+      note: content.cny.note,
       start: addDays(date, -10),
       end: addDays(date, 18),
       impact: "closure",
-      note: "Most factories close for one to two weeks around Chinese New Year and take another one to two weeks to return to full output — the single biggest cause of missed deadlines in China sourcing.",
     });
     events.push({
-      name: `Peak shipping season ${year}`,
+      id: "peakSeason",
+      name: fillYear(content.peakSeason.name, year),
+      note: content.peakSeason.note,
       start: `${year}-08-15`,
       end: `${year}-10-15`,
       impact: "peak-season",
-      note: "Freight rates rise and container space tightens as factories rush to ship before Christmas retail deadlines — book earlier than usual and expect less flexibility on price.",
     });
     events.push({
-      name: `Golden Week ${year}`,
+      id: "goldenWeek",
+      name: fillYear(content.goldenWeek.name, year),
+      note: content.goldenWeek.note,
       start: `${year}-10-01`,
       end: `${year}-10-08`,
       impact: "closure",
-      note: "China's National Day holiday — factories and customs offices close for about a week nationwide.",
     });
     events.push({
-      name: `Labor Day holiday ${year}`,
+      id: "laborDay",
+      name: fillYear(content.laborDay.name, year),
+      note: content.laborDay.note,
       start: `${year}-04-29`,
       end: `${year}-05-05`,
       impact: "closure",
-      note: "A shorter nationwide holiday, but it still closes factories and can add a few days to a production timeline.",
     });
   }
   return events;
 }
-
-export const CALENDAR_EVENTS = buildCalendarEvents();
 
 export interface TimingResult {
   orderByDate: string;
@@ -85,9 +97,9 @@ function rangesOverlap(aStart: string, aEnd: string, bStart: string, bEnd: strin
   return aStart <= bEnd && bStart <= aEnd;
 }
 
-export function planOrderTiming(targetDeliveryDate: string, leadTimeDays: number): TimingResult {
+export function planOrderTiming(targetDeliveryDate: string, leadTimeDays: number, events: CalendarEvent[]): TimingResult {
   const orderByDate = addDays(targetDeliveryDate, -leadTimeDays);
-  const conflicts = CALENDAR_EVENTS.filter((e) => rangesOverlap(orderByDate, targetDeliveryDate, e.start, e.end));
+  const conflicts = events.filter((e) => rangesOverlap(orderByDate, targetDeliveryDate, e.start, e.end));
 
   const closures = conflicts.filter((c) => c.impact === "closure");
   const totalClosureDays = closures.reduce((sum, c) => sum + daysBetween(c.start, c.end) + 1, 0);

@@ -6,13 +6,15 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
+import type { Dictionary } from "@/lib/i18n";
 import { calculateSellingPrice, type SellingPriceResult } from "@/lib/pricingCalculator";
 
 function formatUsd(value: number): string {
   return value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
 }
 
-export default function SellingPriceCalculator() {
+export default function SellingPriceCalculator({ dict }: { dict: Dictionary }) {
+  const t = dict.tools.sellingPriceCalculator;
   const [landedCost, setLandedCost] = useState("5.00");
   const [fulfillment, setFulfillment] = useState("0");
   const [marginPct, setMarginPct] = useState("30");
@@ -56,24 +58,20 @@ export default function SellingPriceCalculator() {
 
   const handleGetQuote = () => {
     trackCtaClick("Selling Price Get Quote", pathname);
-    window.dispatchEvent(new CustomEvent("tuc:quote-prefill", { detail: { message: "I'd like a quote — I've already sized my target selling price and margin." } }));
+    window.dispatchEvent(new CustomEvent("tuc:quote-prefill", { detail: { message: t.quoteMessage } }));
     document.getElementById("consultation")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <section id="selling-price" className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          badge="Free · Instant Estimate"
-          title="What Should You Sell It For?"
-          subtitle="Work back from your landed cost and target margin to a real selling price — including marketplace fees, so the margin you set is the margin you actually keep."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-medium">Landed cost per unit (USD)</label>
+                <label className="mb-2 block text-sm font-medium">{t.landedCostLabel}</label>
                 <input
                   type="number"
                   min="0"
@@ -84,7 +82,7 @@ export default function SellingPriceCalculator() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Fulfillment cost per unit (USD)</label>
+                <label className="mb-2 block text-sm font-medium">{t.fulfillmentLabel}</label>
                 <input
                   type="number"
                   min="0"
@@ -93,10 +91,10 @@ export default function SellingPriceCalculator() {
                   onChange={(e) => setFulfillment(e.target.value)}
                   className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                 />
-                <p className="mt-1.5 text-xs text-muted">Packaging, pick-and-pack, last-mile shipping to your customer. Leave 0 if unsure.</p>
+                <p className="mt-1.5 text-xs text-muted">{t.fulfillmentHint}</p>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Target profit margin (%)</label>
+                <label className="mb-2 block text-sm font-medium">{t.marginLabel}</label>
                 <input
                   type="number"
                   min="1"
@@ -105,10 +103,10 @@ export default function SellingPriceCalculator() {
                   onChange={(e) => setMarginPct(e.target.value)}
                   className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                 />
-                <p className="mt-1.5 text-xs text-muted">As a % of your selling price, not your cost.</p>
+                <p className="mt-1.5 text-xs text-muted">{t.marginHint}</p>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Marketplace/platform fee (%)</label>
+                <label className="mb-2 block text-sm font-medium">{t.feeLabel}</label>
                 <input
                   type="number"
                   min="0"
@@ -117,10 +115,10 @@ export default function SellingPriceCalculator() {
                   onChange={(e) => setFeePct(e.target.value)}
                   className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                 />
-                <p className="mt-1.5 text-xs text-muted">e.g. Amazon ~15%, Etsy ~6.5%. 0 for your own store.</p>
+                <p className="mt-1.5 text-xs text-muted">{t.feeHint}</p>
               </div>
               <div className="col-span-full sm:max-w-[calc(50%-0.5rem)]">
-                <label className="mb-2 block text-sm font-medium">Quantity</label>
+                <label className="mb-2 block text-sm font-medium">{t.quantityLabel}</label>
                 <input
                   type="number"
                   min="1"
@@ -137,51 +135,45 @@ export default function SellingPriceCalculator() {
               className="brand-gradient mt-6 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
             >
               <Tag size={16} />
-              Calculate Selling Price
+              {t.calculateButton}
             </button>
 
             {result === "invalid" && (
-              <p className="mt-6 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-600">
-                Your target margin plus the marketplace fee add up to 100% or more of the selling price — there&apos;s no
-                price that works. Lower the margin or the fee and try again.
-              </p>
+              <p className="mt-6 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-600">{t.invalidResult}</p>
             )}
 
             {result && result !== "invalid" && (
               <Reveal delay={0} className="mt-6">
                 <div className="rounded-xl border border-border bg-surface p-5 sm:p-6">
                   <div className="rounded-lg bg-accent/10 px-4 py-4">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-accent">Suggested selling price</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-accent">{t.suggestedPrice}</p>
                     <p className="font-display mt-1 text-2xl font-bold">{formatUsd(result.sellingPrice)}</p>
                   </div>
 
                   <dl className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div>
-                      <dt className="text-xs font-semibold uppercase tracking-wider text-muted">Profit per unit</dt>
+                      <dt className="text-xs font-semibold uppercase tracking-wider text-muted">{t.profitPerUnit}</dt>
                       <dd className="mt-1 text-sm">{formatUsd(result.profitPerUnit)}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs font-semibold uppercase tracking-wider text-muted">Markup over cost</dt>
+                      <dt className="text-xs font-semibold uppercase tracking-wider text-muted">{t.markup}</dt>
                       <dd className="mt-1 text-sm">{result.markupPct.toFixed(0)}%</dd>
                     </div>
                     <div>
                       <dt className="text-xs font-semibold uppercase tracking-wider text-muted">
-                        Total profit ({quantity} units)
+                        {t.totalProfit.replace("{quantity}", quantity)}
                       </dt>
                       <dd className="mt-1 text-sm">{formatUsd(result.totalProfit)}</dd>
                     </div>
                   </dl>
 
-                  <p className="mt-5 text-xs text-muted">
-                    Margin and markup aren&apos;t the same thing — a 30% margin needs roughly a 43% markup over cost,
-                    which is why this works backward from your price instead of just adding a percentage to your cost.
-                  </p>
+                  <p className="mt-5 text-xs text-muted">{t.explainer}</p>
 
                   <button
                     onClick={handleGetQuote}
                     className="brand-gradient-animated mt-5 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get a Quote
+                    {t.getQuote}
                     <ArrowRight size={16} />
                   </button>
                 </div>

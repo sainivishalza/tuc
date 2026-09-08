@@ -4,22 +4,31 @@
 // numbers on a first call before a customs broker confirms the exact
 // HS-code-based figures.
 
-export interface Destination {
-  id: string;
+export interface DestinationContent {
   label: string;
   taxLabel: string;
-  taxRate: number;
   taxNote: string;
 }
 
-export const DESTINATIONS: Destination[] = [
-  { id: "us", label: "United States", taxLabel: "Sales tax", taxRate: 0, taxNote: "No federal import VAT — state sales tax varies and isn't included here." },
-  { id: "uk", label: "United Kingdom", taxLabel: "Import VAT", taxRate: 20, taxNote: "Standard UK import VAT rate." },
-  { id: "eu", label: "European Union", taxLabel: "Import VAT", taxRate: 21, taxNote: "EU average — the exact rate depends on the destination country." },
-  { id: "canada", label: "Canada", taxLabel: "GST", taxRate: 5, taxNote: "Federal GST only — provincial sales tax may add more." },
-  { id: "australia", label: "Australia", taxLabel: "GST", taxRate: 10, taxNote: "Standard Australian import GST rate." },
-  { id: "other", label: "Other / Not sure yet", taxLabel: "Import tax", taxRate: 0, taxNote: "Varies by country — we'll confirm the exact rate with your quote." },
-];
+export interface Destination extends DestinationContent {
+  id: string;
+  taxRate: number;
+}
+
+const DESTINATION_TAX_RATES: Record<string, number> = {
+  us: 0,
+  uk: 20,
+  eu: 21,
+  canada: 5,
+  australia: 10,
+  other: 0,
+};
+
+export const DESTINATION_IDS = ["us", "uk", "eu", "canada", "australia", "other"];
+
+export function getDestinations(content: Record<string, DestinationContent>): Destination[] {
+  return DESTINATION_IDS.map((id) => ({ id, taxRate: DESTINATION_TAX_RATES[id], ...content[id] }));
+}
 
 type Rate = { low: number; high: number };
 
@@ -33,11 +42,17 @@ const DUTY_RATES: Record<string, Record<string, Rate>> = {
   other: { us: { low: 0, high: 10 }, uk: { low: 0, high: 10 }, eu: { low: 0, high: 10 }, canada: { low: 0, high: 10 }, australia: { low: 0, high: 10 }, other: { low: 0, high: 15 } },
 };
 
-export const SHIPPING_METHODS: { id: string; label: string; rate: Rate }[] = [
-  { id: "sea", label: "Sea freight (consolidated)", rate: { low: 2.5, high: 4.5 } },
-  { id: "air", label: "Air freight", rate: { low: 5.5, high: 8.5 } },
-  { id: "express", label: "Express courier", rate: { low: 8, high: 13 } },
-];
+const SHIPPING_METHOD_RATES: Record<string, Rate> = {
+  sea: { low: 2.5, high: 4.5 },
+  air: { low: 5.5, high: 8.5 },
+  express: { low: 8, high: 13 },
+};
+
+export const SHIPPING_METHOD_IDS = ["sea", "air", "express"];
+
+export function getShippingMethods(content: Record<string, string>): { id: string; label: string; rate: Rate }[] {
+  return SHIPPING_METHOD_IDS.map((id) => ({ id, label: content[id], rate: SHIPPING_METHOD_RATES[id] }));
+}
 
 export interface LandedCostInput {
   categoryId: string;
@@ -58,10 +73,14 @@ export interface LandedCostResult {
   dutyRate: Rate;
 }
 
-export function calculateLandedCost(input: LandedCostInput): LandedCostResult {
-  const destination = DESTINATIONS.find((d) => d.id === input.destinationId) ?? DESTINATIONS[DESTINATIONS.length - 1];
+export function calculateLandedCost(
+  input: LandedCostInput,
+  destinations: Destination[],
+  shippingMethods: { id: string; label: string; rate: Rate }[]
+): LandedCostResult {
+  const destination = destinations.find((d) => d.id === input.destinationId) ?? destinations[destinations.length - 1];
   const dutyRate = DUTY_RATES[input.categoryId]?.[destination.id] ?? DUTY_RATES.other[destination.id];
-  const method = SHIPPING_METHODS.find((m) => m.id === input.methodId) ?? SHIPPING_METHODS[0];
+  const method = shippingMethods.find((m) => m.id === input.methodId) ?? shippingMethods[0];
 
   const productValue = input.quantity * input.unitPrice;
   const duty: Rate = {

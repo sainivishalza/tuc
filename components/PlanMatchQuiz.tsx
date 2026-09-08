@@ -7,18 +7,13 @@ import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n";
-import {
-  matchPlan,
-  PLAN_REASONS,
-  type SupplierAnswer,
-  type CustomAnswer,
-  type ScaleAnswer,
-} from "@/lib/planMatcher";
+import { matchPlan, type SupplierAnswer, type CustomAnswer, type ScaleAnswer } from "@/lib/planMatcher";
 
 const OPTION_CLASS =
   "w-full rounded-xl border-2 border-border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 hover:border-accent/50";
 
 export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
+  const t = dict.tools.planMatch;
   const [supplier, setSupplier] = useState<SupplierAnswer | null>(null);
   const [custom, setCustom] = useState<CustomAnswer | null>(null);
   const [scale, setScale] = useState<ScaleAnswer | null>(null);
@@ -41,52 +36,42 @@ export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
   return (
     <section className="px-4 pb-4 sm:px-6">
       <div className="mx-auto max-w-2xl">
-        <SectionHeading
-          badge="Free · 3-Question Match"
-          title="Not Sure Which Plan Fits?"
-          subtitle="Answer three quick questions and we'll point you to the right tier — no need to compare commission percentages yourself."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-8">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             {!plan && (
               <div className="space-y-3">
-                <h3 className="font-display text-base font-semibold">
-                  Do you already have a factory or supplier in China, or do you need help finding one?
-                </h3>
+                <h3 className="font-display text-base font-semibold">{t.q1}</h3>
                 <button className={OPTION_CLASS} onClick={() => setSupplier("have_supplier")}>
-                  I already have a supplier
+                  {t.q1Options.have}
                 </button>
                 <button className={OPTION_CLASS} onClick={() => setSupplier("need_sourcing")}>
-                  I need help finding one
+                  {t.q1Options.need}
                 </button>
               </div>
             )}
 
             {!plan && supplier && !custom && (
               <div className="mt-6 space-y-3 border-t border-border pt-6">
-                <h3 className="font-display text-base font-semibold">
-                  Do you need custom branding, private labeling, or product development on top of sourcing?
-                </h3>
+                <h3 className="font-display text-base font-semibold">{t.q2}</h3>
                 <button className={OPTION_CLASS} onClick={() => setCustom("no")}>
-                  No, just sourcing an existing product
+                  {t.q2Options.no}
                 </button>
                 <button className={OPTION_CLASS} onClick={() => setCustom("yes")}>
-                  Yes, I want custom branding or development
+                  {t.q2Options.yes}
                 </button>
               </div>
             )}
 
             {!plan && supplier && custom && !scale && (
               <div className="mt-6 space-y-3 border-t border-border pt-6">
-                <h3 className="font-display text-base font-semibold">
-                  How many suppliers or product lines will you need managed at once?
-                </h3>
+                <h3 className="font-display text-base font-semibold">{t.q3}</h3>
                 <button className={OPTION_CLASS} onClick={() => setScale("one")}>
-                  Just one, for now
+                  {t.q3Options.one}
                 </button>
                 <button className={OPTION_CLASS} onClick={() => setScale("multiple_ongoing")}>
-                  Multiple, on an ongoing basis
+                  {t.q3Options.multiple}
                 </button>
               </div>
             )}
@@ -97,26 +82,28 @@ export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                     <Sparkles size={18} />
                   </div>
-                  <h3 className="font-display text-lg font-semibold">Recommended: {plan.name}</h3>
+                  <h3 className="font-display text-lg font-semibold">
+                    {t.recommended} {plan.name}
+                  </h3>
                   <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-bold text-accent">
                     {plan.commission}
-                    {plan.commission !== "Custom" ? " commission" : ""}
+                    {plan.commission !== "Custom" ? t.commissionSuffix : ""}
                   </span>
                 </div>
-                <p className="mt-3 text-sm text-muted">{PLAN_REASONS[planIndex]}</p>
+                <p className="mt-3 text-sm text-muted">{t.reasons[String(planIndex) as "0" | "1" | "2"]}</p>
 
                 <div className="mt-5 flex flex-wrap gap-3">
                   <button
                     onClick={reset}
                     className="rounded-full border border-border px-5 py-2.5 text-sm font-medium transition hover:bg-surface-2"
                   >
-                    Start over
+                    {t.startOver}
                   </button>
                   <button
                     onClick={handleSeePlan}
                     className="brand-gradient-animated flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    See {plan.name} Plan Details
+                    {t.seePlanDetails.replace("{plan}", plan.name)}
                     <ArrowDown size={16} />
                   </button>
                 </div>

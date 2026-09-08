@@ -3,6 +3,13 @@
 // dates and dollar amounts a first-time buyer will actually see —
 // deposit, production start, QC inspection, balance due, and ship date.
 
+export type MilestoneId = "deposit" | "productionStart" | "qc" | "balance" | "ship";
+
+export interface MilestoneContent {
+  label: string;
+  note: string;
+}
+
 export interface PaymentScheduleInput {
   totalValue: number;
   depositPct: number;
@@ -10,6 +17,7 @@ export interface PaymentScheduleInput {
 }
 
 export interface PaymentMilestone {
+  id: MilestoneId;
   label: string;
   date: string;
   amount: number | null;
@@ -31,7 +39,11 @@ function addDays(iso: string, days: number): string {
 const PRODUCTION_START_OFFSET = 3; // days for deposit to clear and PO to be confirmed
 const SHIP_BUFFER_OFFSET = 2; // days between balance clearing and goods actually leaving
 
-export function buildPaymentSchedule(input: PaymentScheduleInput, orderDateIso: string): PaymentScheduleResult {
+export function buildPaymentSchedule(
+  input: PaymentScheduleInput,
+  orderDateIso: string,
+  content: Record<MilestoneId, MilestoneContent>
+): PaymentScheduleResult {
   const depositAmount = Math.round((input.totalValue * input.depositPct) / 100);
   const balanceAmount = input.totalValue - depositAmount;
 
@@ -41,34 +53,39 @@ export function buildPaymentSchedule(input: PaymentScheduleInput, orderDateIso: 
 
   const milestones: PaymentMilestone[] = [
     {
-      label: "Deposit due",
+      id: "deposit",
+      label: content.deposit.label,
       date: orderDateIso,
       amount: depositAmount,
-      note: `${input.depositPct}% deposit to confirm your order and start production.`,
+      note: content.deposit.note.replace("{pct}", String(input.depositPct)),
     },
     {
-      label: "Production starts",
+      id: "productionStart",
+      label: content.productionStart.label,
       date: addDays(orderDateIso, PRODUCTION_START_OFFSET),
       amount: null,
-      note: "The factory begins production once your deposit clears.",
+      note: content.productionStart.note,
     },
     {
-      label: "Quality inspection",
+      id: "qc",
+      label: content.qc.label,
       date: addDays(orderDateIso, qcOffset),
       amount: null,
-      note: "Pre-shipment QC inspection, while there's still time to fix issues before the goods leave the factory.",
+      note: content.qc.note,
     },
     {
-      label: "Balance due",
+      id: "balance",
+      label: content.balance.label,
       date: addDays(orderDateIso, balanceDueOffset),
       amount: balanceAmount,
-      note: "Remaining balance, due before the goods are released for shipment.",
+      note: content.balance.note,
     },
     {
-      label: "Goods ship",
+      id: "ship",
+      label: content.ship.label,
       date: addDays(orderDateIso, shipOffset),
       amount: null,
-      note: "The factory releases your shipment once the balance clears.",
+      note: content.ship.note,
     },
   ];
 

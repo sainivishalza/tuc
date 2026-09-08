@@ -6,7 +6,8 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
-import { RED_FLAGS, getRedFlagVerdict } from "@/lib/supplierRedFlags";
+import type { Dictionary } from "@/lib/i18n";
+import { getRedFlags, getRedFlagVerdict } from "@/lib/supplierRedFlags";
 
 const VERDICT_STYLES = {
   clear: { icon: CheckCircle2, className: "bg-green-500/15 text-green-600" },
@@ -14,7 +15,10 @@ const VERDICT_STYLES = {
   stop: { icon: OctagonAlert, className: "bg-red-500/15 text-red-600" },
 } as const;
 
-export default function SupplierRedFlags() {
+export default function SupplierRedFlags({ dict }: { dict: Dictionary }) {
+  const t = dict.tools.supplierRedFlags;
+  const redFlags = getRedFlags(t.flags);
+
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [submitted, setSubmitted] = useState(false);
   const pathname = usePathname() ?? "/";
@@ -30,16 +34,16 @@ export default function SupplierRedFlags() {
   };
 
   const checkedIds = Array.from(checked);
-  const verdict = submitted ? getRedFlagVerdict(checkedIds) : null;
+  const verdict = submitted ? getRedFlagVerdict(checkedIds, redFlags, t.verdicts) : null;
   const VerdictIcon = verdict ? VERDICT_STYLES[verdict.level].icon : null;
-  const checkedFlags = RED_FLAGS.filter((f) => checked.has(f.id));
+  const checkedFlags = redFlags.filter((f) => checked.has(f.id));
 
   const handleGetHelp = () => {
     trackCtaClick("Supplier Red Flags Get Help", pathname);
     const summary =
       checkedFlags.length > 0
-        ? `I'd like help verifying a supplier. Red flags I noticed: ${checkedFlags.map((f) => f.label).join("; ")}.`
-        : "I'd like help verifying a supplier before I send a deposit.";
+        ? t.helpMessageWithFlags.replace("{flags}", checkedFlags.map((f) => f.label).join("; "))
+        : t.helpMessageNoFlags;
     window.dispatchEvent(new CustomEvent("tuc:quote-prefill", { detail: { message: summary } }));
     document.getElementById("consultation")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -47,16 +51,12 @@ export default function SupplierRedFlags() {
   return (
     <section className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          badge="Free · Supplier Safety Check"
-          title="Is Your Supplier Legit?"
-          subtitle="Check off anything that applies to a factory or trading company you're considering. These are the same warning signs we screen for before ever recommending a supplier."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="space-y-3">
-              {RED_FLAGS.map((flag) => (
+              {redFlags.map((flag) => (
                 <label
                   key={flag.id}
                   className={`flex cursor-pointer items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200 ${
@@ -79,7 +79,7 @@ export default function SupplierRedFlags() {
               className="brand-gradient mt-6 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
             >
               <ShieldAlert size={16} />
-              Check Result
+              {t.checkResult}
             </button>
 
             {verdict && VerdictIcon && (
@@ -95,7 +95,7 @@ export default function SupplierRedFlags() {
 
                   {checkedFlags.length > 0 && (
                     <div className="mt-5 space-y-3">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted">Why this matters</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted">{t.whyThisMatters}</p>
                       {checkedFlags.map((f) => (
                         <p key={f.id} className="rounded-lg bg-accent/5 px-4 py-3 text-sm text-muted">
                           <strong className="text-foreground">{f.label}.</strong> {f.explanation}
@@ -108,7 +108,7 @@ export default function SupplierRedFlags() {
                     onClick={handleGetHelp}
                     className="brand-gradient-animated mt-5 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get Help Verifying This Supplier
+                    {t.getHelp}
                     <ArrowRight size={16} />
                   </button>
                 </div>

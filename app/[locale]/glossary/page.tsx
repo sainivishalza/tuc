@@ -73,7 +73,7 @@ export default async function GlossaryPage({
           </div>
         </section>
 
-        <IncotermGuide locale={locale} />
+        <IncotermGuide dict={dict} locale={locale} />
 
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto max-w-3xl">

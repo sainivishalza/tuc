@@ -6,7 +6,8 @@ import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
-import { QUIZ_QUESTIONS, getReadinessResult, type ReadinessResult } from "@/lib/readinessQuiz";
+import type { Dictionary } from "@/lib/i18n";
+import { getQuizQuestions, getReadinessResult, type ReadinessResult } from "@/lib/readinessQuiz";
 
 const TIER_STYLES: Record<ReadinessResult["tier"], string> = {
   ready: "bg-green-500/15 text-green-600",
@@ -14,8 +15,11 @@ const TIER_STYLES: Record<ReadinessResult["tier"], string> = {
   early: "bg-accent/15 text-accent",
 };
 
-export default function ReadinessQuiz() {
-  const [answers, setAnswers] = useState<(boolean | null)[]>(QUIZ_QUESTIONS.map(() => null));
+export default function ReadinessQuiz({ dict }: { dict: Dictionary }) {
+  const t = dict.tools.readinessQuiz;
+  const questions = getQuizQuestions(t.questions);
+
+  const [answers, setAnswers] = useState<(boolean | null)[]>(questions.map(() => null));
   const [result, setResult] = useState<ReadinessResult | null>(null);
   const pathname = usePathname() ?? "/";
 
@@ -30,7 +34,7 @@ export default function ReadinessQuiz() {
 
   const handleSeeScore = () => {
     if (!allAnswered) return;
-    setResult(getReadinessResult(answers));
+    setResult(getReadinessResult(answers, questions, t.tiers));
   };
 
   const handleGetQuote = () => {
@@ -38,7 +42,12 @@ export default function ReadinessQuiz() {
     trackCtaClick("Readiness Quiz Get Quote", pathname);
     window.dispatchEvent(
       new CustomEvent("tuc:quote-prefill", {
-        detail: { message: `Sourcing readiness score: ${result.score}/${result.total} (${result.tierLabel}).` },
+        detail: {
+          message: t.quoteMessage
+            .replace("{score}", String(result.score))
+            .replace("{total}", String(result.total))
+            .replace("{tier}", result.tierLabel),
+        },
       })
     );
     document.getElementById("consultation")?.scrollIntoView({ behavior: "smooth" });
@@ -47,16 +56,12 @@ export default function ReadinessQuiz() {
   return (
     <section id="readiness-quiz" className="relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          badge="Free · 30-Second Check"
-          title="Are You Ready to Get a Quote?"
-          subtitle="Answer five quick questions and see exactly what to prepare before you talk to a sourcing agent — and what you can already skip."
-        />
+        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
 
         <Reveal delay={0.15} className="mt-10">
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="space-y-5">
-              {QUIZ_QUESTIONS.map((q, i) => (
+              {questions.map((q, i) => (
                 <div key={q.id} className="border-b border-border pb-5 last:border-0 last:pb-0">
                   <p className="text-sm font-medium">{q.question}</p>
                   <div className="mt-3 flex gap-3">
@@ -69,7 +74,7 @@ export default function ReadinessQuiz() {
                       }`}
                     >
                       <Check size={14} />
-                      Yes
+                      {t.yes}
                     </button>
                     <button
                       onClick={() => handleAnswer(i, false)}
@@ -80,7 +85,7 @@ export default function ReadinessQuiz() {
                       }`}
                     >
                       <X size={14} />
-                      Not yet
+                      {t.notYet}
                     </button>
                   </div>
                 </div>
@@ -93,7 +98,7 @@ export default function ReadinessQuiz() {
               className="brand-gradient mt-6 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
             >
               <ClipboardCheck size={16} />
-              See My Readiness Score
+              {t.seeScore}
             </button>
 
             {result && (
@@ -112,7 +117,7 @@ export default function ReadinessQuiz() {
                   {result.missingTips.length > 0 && (
                     <div className="mt-5 space-y-3">
                       <p className="text-xs font-semibold uppercase tracking-wider text-muted">
-                        Before you request a quote
+                        {t.beforeYouRequest}
                       </p>
                       {result.missingTips.map((tip) => (
                         <p key={tip} className="rounded-lg bg-accent/5 px-4 py-3 text-sm text-muted">
@@ -126,7 +131,7 @@ export default function ReadinessQuiz() {
                     onClick={handleGetQuote}
                     className="brand-gradient-animated mt-5 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
                   >
-                    Get a Quote Anyway
+                    {t.getQuoteAnyway}
                     <ArrowRight size={16} />
                   </button>
                 </div>
