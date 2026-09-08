@@ -194,5 +194,9 @@ export interface AnalyticsEvent {
   locale: string | null;
   cta_id: string | null;
   session_id: string | null;
+  referrer: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
   created_at: string;
 }
