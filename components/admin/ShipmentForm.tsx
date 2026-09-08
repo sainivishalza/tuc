@@ -100,6 +100,7 @@ export default function ShipmentForm({
   const [carrierId, setCarrierId] = useState(initial?.carrier_id ?? "");
   const [customerName, setCustomerName] = useState(initial?.customer_name ?? "");
   const [customerReference, setCustomerReference] = useState(initial?.customer_reference ?? "");
+  const [customerEmail, setCustomerEmail] = useState(initial?.customer_email ?? "");
   const [carrierReferenceNo, setCarrierReferenceNo] = useState(initial?.carrier_reference_no ?? "");
   const [recipientPostalCode, setRecipientPostalCode] = useState(initial?.recipient_postal_code ?? "");
   const [destinationCountry, setDestinationCountry] = useState(initial?.destination_country ?? "");
@@ -178,6 +179,7 @@ export default function ShipmentForm({
         carrier_id: carrierId || null,
         customer_name: customerName || null,
         customer_reference: customerReference || null,
+        customer_email: customerEmail || null,
         carrier_reference_no: carrierReferenceNo || null,
         recipient_postal_code: recipientPostalCode || null,
         destination_country: destinationCountry || null,
@@ -395,6 +397,19 @@ export default function ShipmentForm({
             placeholder="e.g. order email, WhatsApp note"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
           />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-semibold text-gray-700">Customer email (private)</label>
+          <input
+            type="email"
+            value={customerEmail}
+            onChange={(e) => setCustomerEmail(e.target.value)}
+            placeholder="e.g. customer@example.com"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+          />
+          <p className="mt-1 text-[11px] text-gray-400">
+            If set, the customer gets an email whenever the status changes or you add an update.
+          </p>
         </div>
         <div>
           <label className="mb-1 block text-xs font-semibold text-gray-700">Carrier reference / waybill no. (private)</label>

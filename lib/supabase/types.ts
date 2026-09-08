@@ -118,6 +118,8 @@ export interface Shipment {
   carrier_id: string | null;
   customer_name: string | null;
   customer_reference: string | null;
+  /** Admin-only — used to send status/update notifications, never shown on the public tracking page. */
+  customer_email: string | null;
   /** Admin-only — the carrier's own reference/waybill number, never shown to customers. */
   carrier_reference_no: string | null;
   /** Admin-only — never shown to customers. */
