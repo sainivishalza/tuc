@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
@@ -50,7 +51,9 @@ export default async function TrackPage({
             </p>
 
             <div className="mt-10">
-              <TrackingLookup dict={dict} />
+              <Suspense fallback={null}>
+                <TrackingLookup dict={dict} />
+              </Suspense>
             </div>
           </div>
         </section>

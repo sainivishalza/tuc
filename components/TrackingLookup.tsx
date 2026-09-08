@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, Package, MapPin, Truck, Clock, FileSpreadsheet, FileText, Check, Radio } from "lucide-react";
 import {
   trackShipments,
@@ -76,20 +77,38 @@ function formatEventDate(iso: string): string {
 type DownloadState = { trackingNumber: string; kind: "excel" | "pdf" | "pod" } | null;
 
 export default function TrackingLookup({ dict }: { dict: Dictionary }) {
-  const [value, setValue] = useState("");
+  const searchParams = useSearchParams();
+  // Lazy initializer, not an effect + setState — lets an email/WhatsApp
+  // notification link (?number=...) pre-fill the box instead of dropping
+  // the customer on an empty search.
+  const [value, setValue] = useState(() => searchParams.get("number") ?? "");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<TrackedShipmentResult[]>([]);
   const [searched, setSearched] = useState(false);
   const [downloading, setDownloading] = useState<DownloadState>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!value.trim()) return;
+  const runSearch = useCallback(async (input: string) => {
+    if (!input.trim()) return;
     setLoading(true);
     setSearched(true);
-    const tracked = await trackShipments(value);
+    const tracked = await trackShipments(input);
     setResults(tracked);
     setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const number = searchParams.get("number");
+    // Deliberate fetch-on-mount-from-URL, not a case the "don't setState in
+    // an effect" rule is meant to catch — there's no React state this can
+    // be derived from during render; it depends on the URL at mount time.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (number) runSearch(number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await runSearch(value);
   }
 
   async function handleDownload(trackingNumber: string, kind: "excel" | "pdf" | "pod") {

@@ -7,6 +7,7 @@ import { getSupabasePublicClient } from "@/lib/supabase/publicClient";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { autoSyncIfStale } from "@/lib/actions/dhlSync";
+import { notifyStatusChange, notifyNewUpdate } from "@/lib/notify";
 import type { Shipment, PublicShipment, ShipmentStatus, ShipmentEvent } from "@/lib/supabase/types";
 
 const BUCKET = "packing-lists";
@@ -218,6 +219,7 @@ export interface ShipmentInput {
   carrier_id: string | null;
   customer_name: string | null;
   customer_reference: string | null;
+  customer_email: string | null;
   carrier_reference_no: string | null;
   recipient_postal_code: string | null;
   destination_country: string | null;
@@ -253,6 +255,7 @@ export async function createShipment(input: ShipmentInput): Promise<string> {
       carrier_id: input.carrier_id,
       customer_name: input.customer_name?.trim() || null,
       customer_reference: input.customer_reference?.trim() || null,
+      customer_email: input.customer_email?.trim() || null,
       carrier_reference_no: input.carrier_reference_no?.trim() || null,
       recipient_postal_code: input.recipient_postal_code?.trim() || null,
       destination_country: input.destination_country?.trim() || null,
@@ -284,6 +287,10 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
   await requireAdminAction();
   if (!input.tracking_number.trim()) throw new Error("Tracking number is required.");
   const supabase = getSupabaseAdminClient();
+
+  const { data: existing } = await supabase.from("shipments").select("status").eq("id", id).maybeSingle();
+  const statusChanged = existing && existing.status !== input.status;
+
   const { error } = await supabase
     .from("shipments")
     .update({
@@ -291,6 +298,7 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
       carrier_id: input.carrier_id,
       customer_name: input.customer_name?.trim() || null,
       customer_reference: input.customer_reference?.trim() || null,
+      customer_email: input.customer_email?.trim() || null,
       carrier_reference_no: input.carrier_reference_no?.trim() || null,
       recipient_postal_code: input.recipient_postal_code?.trim() || null,
       destination_country: input.destination_country?.trim() || null,
@@ -314,6 +322,16 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
     .eq("id", id);
 
   if (error) throw new Error(error.message);
+
+  const customerEmail = input.customer_email?.trim();
+  if (statusChanged && customerEmail) {
+    await notifyStatusChange({
+      customerEmail,
+      trackingNumber: input.tracking_number.trim(),
+      newStatus: input.status,
+    });
+  }
+
   revalidateShipmentPaths();
 }
 
@@ -372,6 +390,20 @@ export async function addShipmentEvent(
   });
 
   if (error) throw new Error(error.message);
+
+  const { data: shipment } = await supabase
+    .from("shipments")
+    .select("tracking_number, customer_email")
+    .eq("id", shipmentId)
+    .maybeSingle();
+  if (shipment?.customer_email) {
+    await notifyNewUpdate({
+      customerEmail: shipment.customer_email,
+      trackingNumber: shipment.tracking_number,
+      description: description.trim(),
+    });
+  }
+
   revalidateShipmentPaths();
 }
 

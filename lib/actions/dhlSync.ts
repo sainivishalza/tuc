@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { fetchDhlTracking } from "@/lib/dhl";
+import { notifySyncUpdates } from "@/lib/notify";
 
 const STALE_AFTER_MS = 30 * 60 * 1000; // 30 minutes
 
@@ -35,6 +36,12 @@ async function syncDhlShipment(shipmentId: string, trackingNumber: string): Prom
 
   const supabase = getSupabaseAdminClient();
 
+  const { data: before } = await supabase
+    .from("shipments")
+    .select("tracking_number, status, customer_email")
+    .eq("id", shipmentId)
+    .maybeSingle();
+
   const update: Record<string, unknown> = {
     last_api_sync_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -64,6 +71,17 @@ async function syncDhlShipment(shipmentId: string, trackingNumber: string): Prom
       .select("id");
     if (insertError) return { ok: false, message: insertError.message };
     newEventCount = inserted?.length ?? 0;
+  }
+
+  const statusChanged = Boolean(result.status && before && before.status !== result.status);
+  if ((statusChanged || newEventCount > 0) && before?.customer_email) {
+    await notifySyncUpdates({
+      customerEmail: before.customer_email,
+      trackingNumber: before.tracking_number,
+      newStatus: statusChanged ? result.status : null,
+      newEventCount,
+      latestDescription: result.events[0]?.description ?? null,
+    });
   }
 
   return {
