@@ -415,7 +415,17 @@ async function excelBufferToRows(buffer: ArrayBuffer): Promise<string[][]> {
   worksheet.eachRow((row) => {
     const cells: string[] = [];
     row.eachCell({ includeEmpty: true }, (cell) => {
-      cells.push(cell.text ?? "");
+      // ExcelJS's `.text` getter throws on certain merged-cell layouts
+      // (e.g. a photo column merged across rows) rather than returning an
+      // empty string — a malformed merge shouldn't take down the whole
+      // packing list upload over one unreadable cell.
+      let text = "";
+      try {
+        text = cell.text ?? "";
+      } catch {
+        text = "";
+      }
+      cells.push(text);
     });
     rows.push(cells);
   });
@@ -496,8 +506,16 @@ export async function uploadPackingList(shipmentId: string, file: File): Promise
   if (fetchError || !shipment) throw new Error("Shipment not found.");
 
   const arrayBuffer = await file.arrayBuffer();
-  const rows = await excelBufferToRows(arrayBuffer);
-  const pdfBuffer = await rowsToPdfBuffer(rows, `Packing List — ${shipment.tracking_number}`);
+  let rows: string[][];
+  let pdfBuffer: Buffer;
+  try {
+    rows = await excelBufferToRows(arrayBuffer);
+    pdfBuffer = await rowsToPdfBuffer(rows, `Packing List — ${shipment.tracking_number}`);
+  } catch {
+    throw new Error(
+      "Couldn't read this Excel file — it may use a layout (merged cells, embedded objects) our converter doesn't handle. Try simplifying the sheet and re-uploading."
+    );
+  }
 
   const excelPath = `${shipmentId}/packing-list.xlsx`;
   const pdfPath = `${shipmentId}/packing-list.pdf`;
