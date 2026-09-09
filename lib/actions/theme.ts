@@ -101,7 +101,7 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
     !HEX_COLOR_RE.test(input.surface_color) ||
     !HEX_COLOR_RE.test(input.background_color)
   ) {
-    return { ok: false, message: "Colors must be a valid hex code like #059669." };
+    return { ok: false, message: "Colors must be a valid hex code like #00c2cb." };
   }
 
   const supabase = getSupabaseAdminClient();

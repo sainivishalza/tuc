@@ -28,13 +28,13 @@ export default function ServiceIllustration({
           <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
             {variant === "navy" ? (
               <>
-                <stop offset="0%" stopColor="#059669" />
-                <stop offset="100%" stopColor="#022c22" />
+                <stop offset="0%" stopColor="var(--brand-navy-light)" />
+                <stop offset="100%" stopColor="var(--brand-navy)" />
               </>
             ) : (
               <>
-                <stop offset="0%" stopColor="#34d399" />
-                <stop offset="100%" stopColor="#064e3b" />
+                <stop offset="0%" stopColor="var(--brand-blue)" />
+                <stop offset="100%" stopColor="var(--brand-blue-dark)" />
               </>
             )}
           </linearGradient>
