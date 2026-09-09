@@ -10,6 +10,46 @@ const LOGO_BUCKET = "site-assets";
 const LOGO_PATH = "logo";
 const MAX_LOGO_BYTES = 2 * 1024 * 1024; // 2MB
 
+/** `file.type` is just the browser-declared Content-Type of that form
+ * part — trusting it alone means an attacker can label any content as
+ * "image/png" and have it stored and served as such. Checking the file's
+ * actual magic bytes catches a raster format mismatch; this only covers
+ * PNG/JPEG/WebP since SVG has no binary signature (handled separately by
+ * sanitizeSvg below). */
+function matchesDeclaredImageType(bytes: Uint8Array, declaredType: string): boolean {
+  const startsWith = (sig: number[]) => sig.every((b, i) => bytes[i] === b);
+  switch (declaredType) {
+    case "image/png":
+      return startsWith([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    case "image/jpeg":
+      return startsWith([0xff, 0xd8, 0xff]);
+    case "image/webp":
+      return (
+        startsWith([0x52, 0x49, 0x46, 0x46]) &&
+        bytes[8] === 0x57 &&
+        bytes[9] === 0x45 &&
+        bytes[10] === 0x42 &&
+        bytes[11] === 0x50
+      );
+    default:
+      return false;
+  }
+}
+
+/** SVG is XML text, not a binary format with a magic-byte signature it
+ * can be checked against — and unlike a raster image, it can carry
+ * executable content (`<script>`, event-handler attributes, javascript:
+ * URIs) that a browser will run if the file is ever opened directly
+ * rather than rendered inside an `<img>`. Strip that content rather than
+ * rejecting SVG outright, since it's a normal, requested logo format. */
+function sanitizeSvg(svgText: string): string {
+  return svgText
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/\son\w+\s*=\s*"(?:[^"\\]|\\.)*"/gi, "")
+    .replace(/\son\w+\s*=\s*'(?:[^'\\]|\\.)*'/gi, "")
+    .replace(/(href|xlink:href|src)\s*=\s*("javascript:[^"]*"|'javascript:[^']*')/gi, '$1="#"');
+}
+
 const DEFAULT_THEME: SiteTheme = {
   id: "default",
   primary_color: "#2f3a56",
@@ -143,16 +183,35 @@ export async function uploadSiteLogo(formData: FormData): Promise<ThemeSaveResul
   if (!(file instanceof File) || file.size === 0) {
     return { ok: false, message: "No file selected." };
   }
-  if (!file.type.startsWith("image/")) {
+  // An explicit allowlist rather than `startsWith("image/")` — the
+  // declared type also picks which validation path (magic-byte check vs.
+  // SVG sanitization) a file goes through below, so it needs to be one of
+  // exactly these four, not anything an attacker can freely label.
+  const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+xml"];
+  if (!ALLOWED_TYPES.includes(file.type)) {
     return { ok: false, message: "Logo must be an image file (PNG, JPG, SVG, or WebP)." };
   }
   if (file.size > MAX_LOGO_BYTES) {
     return { ok: false, message: "Logo must be smaller than 2MB." };
   }
 
-  const ext = file.type === "image/svg+xml" ? "svg" : file.type.split("/")[1] || "png";
-  const path = `${LOGO_PATH}.${ext}`;
   const arrayBuffer = await file.arrayBuffer();
+  let uploadBuffer: ArrayBuffer | string = arrayBuffer;
+
+  if (file.type === "image/svg+xml") {
+    // No magic-byte signature to check — sanitize instead (see
+    // sanitizeSvg's own comment for why this matters).
+    uploadBuffer = sanitizeSvg(new TextDecoder().decode(arrayBuffer));
+  } else if (!matchesDeclaredImageType(new Uint8Array(arrayBuffer), file.type)) {
+    // `file.type` is just the browser-declared Content-Type of that form
+    // part, not verified content — reject anything whose actual bytes
+    // don't match what it claims to be, rather than trusting the label
+    // and serving it from a public URL as-is.
+    return { ok: false, message: "That file doesn't look like a valid image. Try a different file." };
+  }
+
+  const ext = file.type === "image/svg+xml" ? "svg" : file.type.split("/")[1];
+  const path = `${LOGO_PATH}.${ext}`;
 
   const supabase = getSupabaseAdminClient();
 
@@ -161,7 +220,7 @@ export async function uploadSiteLogo(formData: FormData): Promise<ThemeSaveResul
   // sitting alongside the new one.
   await supabase.storage.from(LOGO_BUCKET).remove(["logo.png", "logo.jpg", "logo.jpeg", "logo.svg", "logo.webp"]);
 
-  const { error: uploadError } = await supabase.storage.from(LOGO_BUCKET).upload(path, arrayBuffer, {
+  const { error: uploadError } = await supabase.storage.from(LOGO_BUCKET).upload(path, uploadBuffer, {
     contentType: file.type,
     upsert: true,
   });
