@@ -20,7 +20,7 @@ export async function login(_prevState: LoginState, formData: FormData): Promise
   // closest to this server), which the client cannot control.
   const ip = headersList.get("x-forwarded-for")?.split(",").pop()?.trim() ?? "unknown";
 
-  const limit = checkRateLimit(ip);
+  const limit = await checkRateLimit(ip);
   if (!limit.allowed) {
     const minutes = Math.ceil((limit.retryAfterMs ?? 0) / 60000);
     return { error: `Too many attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.` };
@@ -38,11 +38,11 @@ export async function login(_prevState: LoginState, formData: FormData): Promise
   }
 
   if (!password || !safeCompare(password, expectedPassword)) {
-    recordFailedAttempt(ip);
+    await recordFailedAttempt(ip);
     return { error: "Incorrect password." };
   }
 
-  clearRateLimit(ip);
+  await clearRateLimit(ip);
 
   const token = createSessionToken(sessionSecret);
   (await cookies()).set(ADMIN_COOKIE_NAME, token, {

@@ -16,6 +16,7 @@ import { trackCtaClick } from "@/lib/analytics";
 import { submitQuoteRequest } from "@/lib/actions/quoteRequests";
 import { usePathname } from "next/navigation";
 import { CategoryBadge } from "./categoryVisuals";
+import TurnstileWidget from "./TurnstileWidget";
 
 const productCategories = [
   { id: "electronics", label: "Electronics" },
@@ -47,7 +48,9 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const pathname = usePathname() ?? "/";
+  const captchaConfigured = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
   // Lets the free Smart Sourcing Match, Landed Cost, and Readiness Quiz
   // sections above hand off their detected category/description without
@@ -83,6 +86,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
       quantity,
       timeline: selectedTimeline,
       message,
+      turnstileToken,
     });
     setSubmitting(false);
     if (!result.success) {
@@ -301,6 +305,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                       />
                     </div>
                   </div>
+                  <TurnstileWidget onVerify={setTurnstileToken} />
                 </div>
               )}
 
@@ -330,7 +335,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    disabled={submitting}
+                    disabled={submitting || (captchaConfigured && !turnstileToken)}
                     className="brand-gradient-animated flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <Send size={16} />

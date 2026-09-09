@@ -26,9 +26,9 @@ async function checkTrackingRateLimit(): Promise<{ allowed: boolean; retryAfterM
   const headersList = await headers();
   const ip = headersList.get("x-forwarded-for")?.split(",").pop()?.trim() ?? "unknown";
   const key = `track:${ip}`;
-  const limit = checkRateLimit(key);
+  const limit = await checkRateLimit(key);
   if (limit.allowed) {
-    recordFailedAttempt(key, { maxAttempts: 15, windowMs: 5 * 60 * 1000 });
+    await recordFailedAttempt(key, { maxAttempts: 15, windowMs: 5 * 60 * 1000 });
   }
   return limit;
 }

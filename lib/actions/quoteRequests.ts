@@ -7,6 +7,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { notifyNewQuoteRequest } from "@/lib/notify";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import type { QuoteRequest } from "@/lib/supabase/types";
 
 export interface QuoteRequestInput {
@@ -17,6 +18,9 @@ export interface QuoteRequestInput {
   quantity: string;
   timeline: string;
   message: string;
+  /** Empty string when Turnstile isn't configured (NEXT_PUBLIC_TURNSTILE_SITE_KEY
+   * unset) or not yet solved — verifyTurnstileToken handles both cases. */
+  turnstileToken: string;
 }
 
 export async function submitQuoteRequest(
@@ -35,7 +39,7 @@ export async function submitQuoteRequest(
   const ip = headersList.get("x-forwarded-for")?.split(",").pop()?.trim() ?? "unknown";
   const rateLimitKey = `quote:${ip}`;
 
-  const limit = checkRateLimit(rateLimitKey);
+  const limit = await checkRateLimit(rateLimitKey);
   if (!limit.allowed) {
     const minutes = Math.ceil((limit.retryAfterMs ?? 0) / 60000);
     return {
@@ -43,7 +47,12 @@ export async function submitQuoteRequest(
       error: `Too many requests. Please try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`,
     };
   }
-  recordFailedAttempt(rateLimitKey, { maxAttempts: 5, windowMs: 15 * 60 * 1000 });
+  await recordFailedAttempt(rateLimitKey, { maxAttempts: 5, windowMs: 15 * 60 * 1000 });
+
+  const captchaOk = await verifyTurnstileToken(input.turnstileToken, ip);
+  if (!captchaOk) {
+    return { success: false, error: "Verification failed — please try again." };
+  }
 
   const supabase = getSupabasePublicClient();
   const { error } = await supabase.from("quote_requests").insert({

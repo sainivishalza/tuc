@@ -3,7 +3,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { safeCompare } from "@/lib/adminAuth";
 
-export const PORTAL_COOKIE_NAME = "portal_session";
+// See ADMIN_COOKIE_NAME in lib/adminAuth.ts for why this is conditional
+// and what __Host- actually guarantees.
+export const PORTAL_COOKIE_NAME =
+  process.env.NODE_ENV === "production" ? "__Host-portal_session" : "portal_session";
 
 const LOGIN_LINK_TTL_MS = 15 * 60 * 1000; // 15 minutes — long enough to open an email, short enough to limit a leaked-link window
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
