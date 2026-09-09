@@ -16,7 +16,7 @@
      that want to stand out from their neighbors (see .section-alt below)
      — derived rather than a separate admin field, so it always stays in
      the same family as whatever background color is actually set. */
-  --surface-2: color-mix(in srgb, var(--background) 92%, var(--brand-navy) 8%);
+  --surface-2: color-mix(in srgb, var(--background) 82%, var(--brand-navy) 18%);
   /* Two more section tones, tinted from the brand colors rather than
      gray — a light design built from white + one gray reads as flat and
      lifeless; real color variety (a soft blue wash, a soft amber wash)
@@ -48,6 +48,14 @@
      color picker, not two easily-mismatched ones. */
   --accent-dark: color-mix(in srgb, var(--accent) 75%, black);
   --accent-glow: color-mix(in srgb, var(--accent) 35%, transparent);
+  /* Light/dark steps off brand-navy and brand-blue — used for the glossy
+     service-icon tiles (see ServiceIllustration.tsx) so those gradients
+     always stay in sync with whatever the admin picks, instead of being
+     hardcoded to whatever palette shipped first (which is exactly how
+     the icon tiles ended up stuck on leftover emerald green through
+     three unrelated redesigns). */
+  --brand-navy-light: color-mix(in srgb, var(--brand-navy) 55%, white);
+  --brand-blue-dark: color-mix(in srgb, var(--brand-blue) 70%, black);
 
   /* Overridden per-request from the site_theme table (see app/layout.tsx) — 1
      is the default/unscaled size; Tailwind's rem-based text utilities all

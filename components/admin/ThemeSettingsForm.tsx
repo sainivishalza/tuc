@@ -119,7 +119,7 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
       !isValidHex(surfaceColor) ||
       !isValidHex(backgroundColor)
     ) {
-      setError("Colors must be a valid hex code like #059669.");
+      setError("Colors must be a valid hex code like #00c2cb.");
       return;
     }
 
