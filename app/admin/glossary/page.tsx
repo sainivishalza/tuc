@@ -41,7 +41,7 @@ export default async function GlossaryAdminPage() {
                 <Badge tone={statusTones[t.status]}>{t.status}</Badge>
                 <Badge>{t.locale}</Badge>
               </div>
-              <p className="mt-1.5 truncate font-display text-sm font-semibold text-gray-900">{t.term}</p>
+              <p className="mt-1.5 truncate font-admin-display text-sm font-semibold text-gray-900">{t.term}</p>
               <p className="truncate text-xs text-gray-400">#{t.slug}</p>
             </div>
             <div className="flex shrink-0 items-center gap-2">

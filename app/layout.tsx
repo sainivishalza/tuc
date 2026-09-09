@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Inter, Poppins, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Poppins, Playfair_Display, Plus_Jakarta_Sans, IBM_Plex_Sans } from "next/font/google";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import { getSiteTheme } from "@/lib/actions/theme";
 import type { FontChoice, TextScale, CornerStyle } from "@/lib/supabase/types";
@@ -29,6 +29,14 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["600", "700"],
   variable: "--font-jakarta",
+  display: "swap",
+});
+
+// Admin-only display face — see .font-admin-display in globals.css.
+const plex = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-plex",
   display: "swap",
 });
 
@@ -99,7 +107,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${poppins.variable} ${playfair.variable} ${jakarta.variable}`}
+      className={`${inter.variable} ${poppins.variable} ${playfair.variable} ${jakarta.variable} ${plex.variable}`}
     >
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeStyle }} />

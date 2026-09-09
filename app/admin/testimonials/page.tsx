@@ -46,7 +46,7 @@ export default async function TestimonialsAdminPage() {
         }}
       >
         <Card>
-          <h2 className="font-display text-sm font-semibold text-gray-900">Add a testimonial</h2>
+          <h2 className="font-admin-display text-sm font-semibold text-gray-900">Add a testimonial</h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <input name="name" placeholder="Client name *" required className={inputClass} />
             <input name="company" placeholder="Company" className={inputClass} />
@@ -85,7 +85,7 @@ export default async function TestimonialsAdminPage() {
           <Card key={t.id}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="font-display text-sm font-semibold text-gray-900">
+                <p className="font-admin-display text-sm font-semibold text-gray-900">
                   {t.name} {t.company ? `— ${t.company}` : ""}
                 </p>
                 <p className="text-xs text-gray-500">

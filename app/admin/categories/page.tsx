@@ -41,7 +41,7 @@ export default async function CategoryPagesAdminPage() {
                 <Badge tone={statusTones[cat.status]}>{cat.status}</Badge>
                 <Badge>{cat.locale}</Badge>
               </div>
-              <p className="mt-1.5 truncate font-display text-sm font-semibold text-gray-900">{cat.name}</p>
+              <p className="mt-1.5 truncate font-admin-display text-sm font-semibold text-gray-900">{cat.name}</p>
               <p className="truncate text-xs text-gray-400">/sourcing/{cat.slug}</p>
             </div>
             <div className="flex shrink-0 items-center gap-2">

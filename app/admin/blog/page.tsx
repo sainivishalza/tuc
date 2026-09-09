@@ -41,7 +41,7 @@ export default async function BlogAdminPage() {
                 <Badge tone={statusTones[post.status]}>{post.status}</Badge>
                 <Badge>{post.locale}</Badge>
               </div>
-              <p className="mt-1.5 truncate font-display text-sm font-semibold text-gray-900">{post.title}</p>
+              <p className="mt-1.5 truncate font-admin-display text-sm font-semibold text-gray-900">{post.title}</p>
               <p className="truncate text-xs text-gray-400">/{post.slug}</p>
             </div>
             <div className="flex shrink-0 items-center gap-2">

@@ -25,10 +25,10 @@ export default function AdminShell({
       <aside className="shrink-0 border-b border-gray-800 bg-brand-950 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:border-b-0 lg:border-r">
         <div className="flex h-full flex-col px-4 py-5 lg:px-5 lg:py-6">
           <Link href="/admin" className="flex items-center gap-2.5 px-1">
-            <span className="gradient-brand flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-display text-sm font-semibold text-white">
+            <span className="gradient-brand flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-admin-display text-sm font-semibold text-white">
               U
             </span>
-            <span className="font-display text-sm font-semibold text-white">
+            <span className="font-admin-display text-sm font-semibold text-white">
               The Unique Choice
               <span className="ml-1.5 text-[10px] font-medium uppercase tracking-wider text-white/40">
                 Admin

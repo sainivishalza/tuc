@@ -12,15 +12,15 @@ const MAX_LOGO_BYTES = 2 * 1024 * 1024; // 2MB
 
 const DEFAULT_THEME: SiteTheme = {
   id: "default",
-  primary_color: "#0b192c",
-  accent_color: "#d97706",
-  secondary_color: "#2563eb",
+  primary_color: "#2f3a56",
+  accent_color: "#00c2cb",
+  secondary_color: "#00c2cb",
   surface_color: "#ffffff",
-  background_color: "#eef2f6",
+  background_color: "#f4f6f8",
   font_choice: "inter",
   text_scale: "medium",
   corner_style: "rounded",
-  tinted_sections: true,
+  tinted_sections: false,
   logo_url: null,
   updated_at: "",
 };
