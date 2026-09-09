@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
@@ -8,15 +9,36 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { autoSyncIfStale } from "@/lib/actions/dhlSync";
 import { notifyStatusChange, notifyNewUpdate } from "@/lib/notify";
+import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import type { Shipment, PublicShipment, ShipmentStatus, ShipmentEvent } from "@/lib/supabase/types";
 
 const BUCKET = "packing-lists";
 
 // ---------- Public tracking ----------
 
+/** Shared by both public lookup entry points below (single and batch) so
+ * an attacker can't dodge the limit by alternating between them. Tracking
+ * numbers are looked up by exact match only (no enumeration via wildcards),
+ * but without a throttle a script could still brute-force the sequential
+ * numeric suffix these tracking numbers use — this bounds that to a few
+ * hundred guesses per 5 minutes per IP instead of unlimited. */
+async function checkTrackingRateLimit(): Promise<{ allowed: boolean; retryAfterMs?: number }> {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for")?.split(",").pop()?.trim() ?? "unknown";
+  const key = `track:${ip}`;
+  const limit = checkRateLimit(key);
+  if (limit.allowed) {
+    recordFailedAttempt(key, { maxAttempts: 15, windowMs: 5 * 60 * 1000 });
+  }
+  return limit;
+}
+
 export async function trackShipment(trackingNumber: string): Promise<PublicShipment | null> {
   const cleaned = trackingNumber.trim();
   if (!cleaned) return null;
+
+  const { allowed } = await checkTrackingRateLimit();
+  if (!allowed) return null;
 
   const supabase = getSupabasePublicClient();
   const { data, error } = await supabase.rpc("get_public_shipment", { p_tracking_number: cleaned });
@@ -58,6 +80,11 @@ export async function trackShipments(rawInput: string): Promise<TrackedShipmentR
     .slice(0, MAX_BATCH_TRACKING_NUMBERS);
 
   if (trackingNumbers.length === 0) return [];
+
+  const { allowed } = await checkTrackingRateLimit();
+  if (!allowed) {
+    return trackingNumbers.map((trackingNumber) => ({ trackingNumber, shipment: null, events: [] }));
+  }
 
   const supabase = getSupabasePublicClient();
   const fetchShipments = () =>
@@ -133,6 +160,9 @@ export async function getPackingListUrl(
   const cleaned = trackingNumber.trim();
   if (!cleaned) return null;
 
+  const { allowed } = await checkTrackingRateLimit();
+  if (!allowed) return null;
+
   const supabase = getSupabaseAdminClient();
   const { data: shipment, error } = await supabase
     .from("shipments")
@@ -157,6 +187,9 @@ export async function getPackingListUrl(
 export async function getProofOfDeliveryUrl(trackingNumber: string): Promise<string | null> {
   const cleaned = trackingNumber.trim();
   if (!cleaned) return null;
+
+  const { allowed } = await checkTrackingRateLimit();
+  if (!allowed) return null;
 
   const supabase = getSupabaseAdminClient();
   const { data: shipment, error } = await supabase

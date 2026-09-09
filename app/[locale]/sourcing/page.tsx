@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { jsonLdHtml } from "@/lib/jsonLd";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { locales, getDictionary, type Locale } from "@/lib/i18n";
@@ -57,7 +58,7 @@ export default async function SourcingIndexPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
       <Header dict={dict} locale={locale} />
       <main>

@@ -1,10 +1,12 @@
 "use server";
 
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { getSupabasePublicClient } from "@/lib/supabase/publicClient";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { notifyNewQuoteRequest } from "@/lib/notify";
+import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import type { QuoteRequest } from "@/lib/supabase/types";
 
 export interface QuoteRequestInput {
@@ -23,6 +25,25 @@ export async function submitQuoteRequest(
   if (!input.name.trim() || !input.email.trim()) {
     return { success: false, error: "Name and email are required." };
   }
+
+  // Same x-forwarded-for reasoning as the admin login / portal-link rate
+  // limits — the last hop is appended by our own reverse proxy and can't
+  // be spoofed by the client. Without this, the form had no limit at all:
+  // scriptable, unlimited submissions each firing a real email through
+  // Resend and filling the admin's quote-requests table.
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for")?.split(",").pop()?.trim() ?? "unknown";
+  const rateLimitKey = `quote:${ip}`;
+
+  const limit = checkRateLimit(rateLimitKey);
+  if (!limit.allowed) {
+    const minutes = Math.ceil((limit.retryAfterMs ?? 0) / 60000);
+    return {
+      success: false,
+      error: `Too many requests. Please try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
+  }
+  recordFailedAttempt(rateLimitKey, { maxAttempts: 5, windowMs: 15 * 60 * 1000 });
 
   const supabase = getSupabasePublicClient();
   const { error } = await supabase.from("quote_requests").insert({
