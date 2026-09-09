@@ -1,14 +1,19 @@
 export type FontChoice = "inter" | "poppins" | "playfair";
 export type TextScale = "small" | "medium" | "large";
+export type CornerStyle = "sharp" | "rounded" | "soft";
 
 export interface SiteTheme {
   id: string;
   primary_color: string;
   accent_color: string;
+  secondary_color: string;
   surface_color: string;
   background_color: string;
   font_choice: FontChoice;
   text_scale: TextScale;
+  corner_style: CornerStyle;
+  tinted_sections: boolean;
+  logo_url: string | null;
   updated_at: string;
 }
 

@@ -17,19 +17,32 @@
      — derived rather than a separate admin field, so it always stays in
      the same family as whatever background color is actually set. */
   --surface-2: color-mix(in srgb, var(--background) 92%, var(--brand-navy) 8%);
+  /* Two more section tones, tinted from the brand colors rather than
+     gray — a light design built from white + one gray reads as flat and
+     lifeless; real color variety (a soft blue wash, a soft amber wash)
+     is what makes a light page feel considered instead of empty. Kept
+     subtle (94-95% white) so body text and cards on top never lose
+     contrast — these are backgrounds, not brand moments. */
+  --surface-tint-blue: color-mix(in srgb, var(--brand-blue) 6%, white);
+  --surface-tint-amber: color-mix(in srgb, var(--accent) 7%, white);
   --foreground: #0f172a;
-  /* Steel slate, not a light gray — subtitles and secondary copy read as
-     deliberately weighted rather than washed-out on a corporate site. */
-  --muted: #334155;
+  /* Charcoal slate, not a light gray — subtitles and card copy read as
+     deliberately weighted rather than washed-out on a corporate site.
+     15.8:1 contrast for --foreground, 7.1:1 for --muted, both WCAG AAA
+     at body text size. */
+  --muted: #475569;
   --border: #e2e8f0;
 
-  /* Global trade / enterprise palette — deep navy for structure and trust
-     (headers, footers, hero), amber reserved for conversion moments
-     (buttons, CTAs) so it keeps its "pop" instead of being diluted across
-     every accent-colored detail on the page. A deeper, burnt amber rather
-     than a bright/candy one — reads as premium rather than "on sale". */
+  /* Light-first palette: white/near-white pages throughout (header, hero,
+     footer all included) rather than solid dark blocks — a vivid blue
+     carries the "trust" signal as an accent (text, icons, links, logo,
+     the one deliberate dark CTA card) instead of as a background color,
+     and amber stays reserved for buttons so it keeps its "pop". Navy is
+     kept only for that one dark accent card and small text/icon touches —
+     never a large background — since stacking solid dark sections is what
+     read as heavy/dated in the first place. */
   --brand-navy: #0b192c;
-  --brand-blue: #1e3e62;
+  --brand-blue: #2563eb;
   --accent: #d97706;
   /* Derived from --accent rather than asked of the admin separately — one
      color picker, not two easily-mismatched ones. */
@@ -43,7 +56,23 @@
 
   --glass-bg: rgba(255, 255, 255, 0.9);
   --glass-border: rgba(15, 23, 42, 0.08);
-  --glass-shadow: 0 16px 40px -14px rgba(11, 25, 44, 0.16);
+  /* A resting card should barely announce itself — most of the "lift"
+     comes from the hover shadow below, not from sitting on the page. */
+  --glass-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --glass-shadow-hover: 0 12px 20px -3px rgba(15, 23, 42, 0.08);
+
+  /* Corner roundness — feeds Tailwind's own rounded-lg/xl/2xl/3xl utility
+     classes via the @theme inline block below, so every card/button/badge
+     site-wide picks up the admin's pick with no per-component changes.
+     Values here match Tailwind's stock defaults so "rounded" (the
+     default) looks exactly like it always has; rounded-full (pills,
+     avatars) is deliberately left alone by this system — "sharp" should
+     still have pill-shaped buttons, not square ones. Overridden
+     per-request from site_theme.corner_style (see app/layout.tsx). */
+  --corner-radius-lg: 0.5rem;
+  --corner-radius-xl: 0.75rem;
+  --corner-radius-2xl: 1rem;
+  --corner-radius-3xl: 1.5rem;
 
   --color-brand-50: #ecfdf5;
   --color-brand-100: #d1fae5;
@@ -62,6 +91,8 @@
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-tint-blue: var(--surface-tint-blue);
+  --color-tint-amber: var(--surface-tint-amber);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
@@ -79,11 +110,17 @@
   --color-brand-800: var(--color-brand-800);
   --color-brand-900: var(--color-brand-900);
   --color-brand-950: var(--color-brand-950);
+  --radius-lg: var(--corner-radius-lg);
+  --radius-xl: var(--corner-radius-xl);
+  --radius-2xl: var(--corner-radius-2xl);
+  --radius-3xl: var(--corner-radius-3xl);
   --font-sans: var(--font-selected, var(--font-inter));
-  /* Headings always use the serif display face regardless of the admin's
-     body-font pick — a serif/sans pairing is what actually reads as
-     "premium" rather than a single typeface used everywhere. */
-  --font-display: var(--font-playfair);
+  /* Headings always use a fixed display face regardless of the admin's
+     body-font pick — a distinct heading/body pairing reads as more
+     considered than a single typeface used everywhere. A geometric sans
+     (Plus Jakarta Sans) rather than a serif, to match a modern
+     institutional-trade register instead of an editorial one. */
+  --font-display: var(--font-jakarta);
 }
 
 * {
@@ -106,7 +143,8 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-jakarta), sans-serif;
+  font-weight: 700;
 }
 
 .eyebrow {
@@ -176,13 +214,13 @@ body {
   border: 1px solid var(--border);
   box-shadow: var(--glass-shadow);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .glass-strong:hover {
   transform: translateY(-3px);
-  box-shadow:
-    var(--glass-shadow),
-    0 8px 30px -6px color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: #cbd5e1;
+  box-shadow: var(--glass-shadow-hover);
 }
 
 .card-hover {
@@ -229,9 +267,28 @@ body {
 }
 
 /* Alternates with the plain page background to give consecutive sections
-   visual separation without every card needing its own border. */
+   visual separation without every card needing its own border. Three
+   flavors rather than one gray, so a long page reads as a considered
+   sequence of moments instead of a single repeating stripe. */
 .section-alt {
   background: var(--surface-2);
+}
+.section-tint-blue {
+  background: var(--surface-tint-blue);
+}
+.section-tint-amber {
+  background: var(--surface-tint-amber);
+}
+
+/* Hero-only wash — soft blue and amber glows blending into the base
+   background, so the very first thing a visitor sees has some life to
+   it instead of a flat gray field. The .blob elements inside Hero add
+   the sharper accent glows on top of this. */
+.gradient-hero-light {
+  background:
+    radial-gradient(ellipse 900px 560px at 10% -15%, color-mix(in srgb, var(--brand-blue) 9%, transparent), transparent),
+    radial-gradient(ellipse 800px 560px at 100% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent),
+    var(--background);
 }
 
 .stat-bar {
