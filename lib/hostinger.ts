@@ -3,7 +3,8 @@
 // CSS/JS files — so an edge that cached a page before a deploy keeps
 // serving it with links to files that no longer exist. This purges that
 // edge cache so every node picks up the current build.
-const HOSTINGER_WEBSITE_UID = "u428186913:theuniquechoice.com";
+const HOSTINGER_USERNAME = "u428186913";
+const HOSTINGER_DOMAIN = "theuniquechoice.com";
 
 export async function purgeHostingerCache(): Promise<{ ok: boolean; message: string }> {
   const token = process.env.HOSTINGER_API_TOKEN;
@@ -13,7 +14,7 @@ export async function purgeHostingerCache(): Promise<{ ok: boolean; message: str
 
   try {
     const res = await fetch(
-      `https://developers.hostinger.com/api/agency-hosting/v1/websites/${encodeURIComponent(HOSTINGER_WEBSITE_UID)}/cache`,
+      `https://developers.hostinger.com/api/hosting/v1/accounts/${encodeURIComponent(HOSTINGER_USERNAME)}/websites/${encodeURIComponent(HOSTINGER_DOMAIN)}/cache/clear`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
