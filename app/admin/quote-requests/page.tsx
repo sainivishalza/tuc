@@ -32,7 +32,7 @@ export default async function QuoteRequestsPage() {
           <Card key={r.id}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="font-display text-sm font-semibold text-gray-900">{r.name}</p>
+                <p className="font-admin-display text-sm font-semibold text-gray-900">{r.name}</p>
                 <p className="text-xs text-gray-500">
                   {r.email}
                   {r.whatsapp ? ` · ${r.whatsapp}` : ""}

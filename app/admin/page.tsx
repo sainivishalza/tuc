@@ -47,7 +47,7 @@ function FeatureCard({ title, description, href, status, icon: Icon }: AdminFeat
         </Badge>
       </div>
       <div>
-        <h2 className="font-display text-sm font-semibold text-gray-900">{title}</h2>
+        <h2 className="font-admin-display text-sm font-semibold text-gray-900">{title}</h2>
         <p className="mt-1.5 text-sm text-gray-500">{description}</p>
       </div>
     </div>

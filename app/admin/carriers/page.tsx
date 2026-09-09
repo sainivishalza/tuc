@@ -31,7 +31,7 @@ export default async function CarriersAdminPage() {
         }}
       >
         <Card>
-          <h2 className="font-display text-sm font-semibold text-gray-900">Add a carrier</h2>
+          <h2 className="font-admin-display text-sm font-semibold text-gray-900">Add a carrier</h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <input name="name" placeholder="Carrier name (e.g. DDU56)" required className={`sm:col-span-2 ${inputClass}`} />
             <input name="website_url" placeholder="Their tracking site URL (optional)" className={`sm:col-span-2 ${inputClass}`} />
@@ -62,7 +62,7 @@ export default async function CarriersAdminPage() {
           <Card key={carrier.id} className="flex items-center justify-between gap-4 p-4">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="truncate font-display text-sm font-semibold text-gray-900">
+                <p className="truncate font-admin-display text-sm font-semibold text-gray-900">
                   {carrier.name}
                 </p>
                 <Badge tone={carrier.api_provider === "dhl" ? "success" : "neutral"}>

@@ -164,7 +164,7 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
               <img src={logoUrl} alt="Current logo" className="h-full w-full object-contain" />
             ) : (
               <span
-                className="flex h-full w-full items-center justify-center font-display text-lg font-semibold text-white"
+                className="flex h-full w-full items-center justify-center font-admin-display text-lg font-semibold text-white"
                 style={{ background: `linear-gradient(135deg, ${accentColor}, ${primaryColor})` }}
               >
                 U
@@ -209,21 +209,21 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
         <ColorField
           label="Primary color"
           sublabel="The one dark accent card near the bottom of the homepage"
-          placeholder="#0b192c"
+          placeholder="#2f3a56"
           value={primaryColor}
           onChange={setPrimaryColor}
         />
         <ColorField
           label="Accent color"
           sublabel="Buttons and CTAs — the color that should always pop"
-          placeholder="#d97706"
+          placeholder="#00c2cb"
           value={accentColor}
           onChange={setAccentColor}
         />
         <ColorField
           label="Secondary color"
           sublabel="Logo, links, the 3D hero graphic"
-          placeholder="#2563eb"
+          placeholder="#00c2cb"
           value={secondaryColor}
           onChange={setSecondaryColor}
         />
@@ -237,7 +237,7 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
         <ColorField
           label="Body background"
           sublabel="Behind cards — keep this different from the card color above, or cards stop standing out"
-          placeholder="#eef2f6"
+          placeholder="#f4f6f8"
           value={backgroundColor}
           onChange={setBackgroundColor}
         />

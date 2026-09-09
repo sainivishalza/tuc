@@ -24,7 +24,7 @@ export default function PurgeCacheButton() {
   return (
     <Card className="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h2 className="font-display text-sm font-semibold text-gray-900">Site cache</h2>
+        <h2 className="font-admin-display text-sm font-semibold text-gray-900">Site cache</h2>
         <p className="mt-1 text-sm text-gray-500">
           The CDN also purges automatically on every deploy. Use this if the live site ever looks stale
           (missing styles, old content) between deploys.

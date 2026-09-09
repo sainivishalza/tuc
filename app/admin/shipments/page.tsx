@@ -87,7 +87,7 @@ export default async function ShipmentsAdminPage() {
                   </span>
                 )}
               </div>
-              <p className="mt-1.5 truncate font-display text-sm font-semibold text-gray-900">
+              <p className="mt-1.5 truncate font-admin-display text-sm font-semibold text-gray-900">
                 {s.tracking_number}
                 {s.customer_name && (
                   <span className="ml-2 font-normal text-gray-400">— {s.customer_name}</span>

@@ -24,7 +24,7 @@ function StatCard({
       </div>
       <div>
         <p className="text-xs text-gray-500">{label}</p>
-        <p className="font-display text-xl font-bold text-gray-900">{value}</p>
+        <p className="font-admin-display text-xl font-bold text-gray-900">{value}</p>
       </div>
     </Card>
   );
@@ -76,7 +76,7 @@ export default async function AnalyticsAdminPage() {
 
       {topSources.length > 0 && (
         <Card>
-          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <h2 className="mb-4 font-admin-display text-sm font-semibold uppercase tracking-wider text-gray-500">
             Traffic Sources (by visitor session)
           </h2>
           <div className="space-y-2">
@@ -89,7 +89,7 @@ export default async function AnalyticsAdminPage() {
 
       {topPages.length > 0 && (
         <Card>
-          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <h2 className="mb-4 font-admin-display text-sm font-semibold uppercase tracking-wider text-gray-500">
             Page Views
           </h2>
           <div className="space-y-2">
@@ -102,7 +102,7 @@ export default async function AnalyticsAdminPage() {
 
       {topCtas.length > 0 && (
         <Card>
-          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <h2 className="mb-4 font-admin-display text-sm font-semibold uppercase tracking-wider text-gray-500">
             CTA Clicks
           </h2>
           <div className="space-y-2">
@@ -115,7 +115,7 @@ export default async function AnalyticsAdminPage() {
 
       {recentEvents.length > 0 && (
         <Card>
-          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <h2 className="mb-4 font-admin-display text-sm font-semibold uppercase tracking-wider text-gray-500">
             Recent Events (last 20)
           </h2>
           <div className="space-y-1">

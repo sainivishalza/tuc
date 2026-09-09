@@ -10,7 +10,7 @@
      are admin-editable (see app/admin/theme) and overridden per-request
      from the site_theme table (see app/layout.tsx) — these are just the
      fallback defaults. */
-  --background: #eef2f6;
+  --background: #f4f6f8;
   --surface: #ffffff;
   /* A subtly darker/cooler step down from --background, for sections
      that want to stand out from their neighbors (see .section-alt below)
@@ -41,9 +41,9 @@
      kept only for that one dark accent card and small text/icon touches —
      never a large background — since stacking solid dark sections is what
      read as heavy/dated in the first place. */
-  --brand-navy: #0b192c;
-  --brand-blue: #2563eb;
-  --accent: #d97706;
+  --brand-navy: #2f3a56;
+  --brand-blue: #00c2cb;
+  --accent: #00c2cb;
   /* Derived from --accent rather than asked of the admin separately — one
      color picker, not two easily-mismatched ones. */
   --accent-dark: color-mix(in srgb, var(--accent) 75%, black);
@@ -74,17 +74,23 @@
   --corner-radius-2xl: 1rem;
   --corner-radius-3xl: 1.5rem;
 
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-200: #a7f3d0;
-  --color-brand-300: #6ee7b7;
-  --color-brand-400: #34d399;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  --color-brand-800: #065f46;
-  --color-brand-900: #064e3b;
-  --color-brand-950: #022c22;
+  /* Slate-blue scale for the admin panel's own chrome (sidebar, primary
+     buttons, file inputs) — kept separate from the public site's
+     admin-editable theme colors on purpose, since the admin panel is
+     Claude's own tool, not a customer-facing surface the theme editor
+     needs to reach. --color-brand-900 is the exact requested slate blue
+     (#2F3A56); the rest of the scale is derived around it. */
+  --color-brand-50: #f3f4f8;
+  --color-brand-100: #e6e9f0;
+  --color-brand-200: #d3d8e5;
+  --color-brand-300: #b0b9cf;
+  --color-brand-400: #8b98b8;
+  --color-brand-500: #6b7ba0;
+  --color-brand-600: #56678f;
+  --color-brand-700: #48577d;
+  --color-brand-800: #3b4868;
+  --color-brand-900: #2f3a56;
+  --color-brand-950: #242c42;
 }
 
 @theme inline {
@@ -145,6 +151,16 @@ body {
 .font-display {
   font-family: var(--font-jakarta), sans-serif;
   font-weight: 700;
+}
+
+/* Admin panel gets its own display face — IBM Plex Sans, a technical
+   grotesk built for data/dashboard products — so Claude's own tool reads
+   as distinct from the customer-facing site rather than sharing its
+   Jakarta headings. Scoped to admin-only components (AdminShell,
+   PageHeader), never applied to public pages. */
+.font-admin-display {
+  font-family: var(--font-plex), sans-serif;
+  font-weight: 600;
 }
 
 .eyebrow {
