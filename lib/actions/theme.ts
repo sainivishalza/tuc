@@ -10,6 +10,7 @@ const DEFAULT_THEME: SiteTheme = {
   id: "default",
   primary_color: "#0b192c",
   accent_color: "#d97706",
+  secondary_color: "#2563eb",
   surface_color: "#ffffff",
   background_color: "#eef2f6",
   font_choice: "inter",
@@ -42,6 +43,9 @@ function sanitizeTheme(row: SiteTheme | null): SiteTheme {
     ...row,
     primary_color: HEX_COLOR_RE.test(row.primary_color) ? row.primary_color : DEFAULT_THEME.primary_color,
     accent_color: HEX_COLOR_RE.test(row.accent_color) ? row.accent_color : DEFAULT_THEME.accent_color,
+    secondary_color: HEX_COLOR_RE.test(row.secondary_color)
+      ? row.secondary_color
+      : DEFAULT_THEME.secondary_color,
     surface_color: HEX_COLOR_RE.test(row.surface_color) ? row.surface_color : DEFAULT_THEME.surface_color,
     background_color: HEX_COLOR_RE.test(row.background_color)
       ? row.background_color
@@ -61,6 +65,7 @@ export async function getSiteTheme(): Promise<SiteTheme> {
 export interface ThemeInput {
   primary_color: string;
   accent_color: string;
+  secondary_color: string;
   surface_color: string;
   background_color: string;
   font_choice: SiteTheme["font_choice"];
@@ -78,6 +83,7 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
   if (
     !HEX_COLOR_RE.test(input.primary_color) ||
     !HEX_COLOR_RE.test(input.accent_color) ||
+    !HEX_COLOR_RE.test(input.secondary_color) ||
     !HEX_COLOR_RE.test(input.surface_color) ||
     !HEX_COLOR_RE.test(input.background_color)
   ) {
@@ -89,6 +95,7 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
     id: "default",
     primary_color: input.primary_color,
     accent_color: input.accent_color,
+    secondary_color: input.secondary_color,
     surface_color: input.surface_color,
     background_color: input.background_color,
     font_choice: input.font_choice,

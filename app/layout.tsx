@@ -72,6 +72,7 @@ export default async function RootLayout({
   const themeStyle = `:root {
     --brand-navy: ${theme.primary_color};
     --accent: ${theme.accent_color};
+    --brand-blue: ${theme.secondary_color};
     --surface: ${theme.surface_color};
     --background: ${theme.background_color};
     --font-selected: ${FONT_VAR_BY_CHOICE[theme.font_choice]};

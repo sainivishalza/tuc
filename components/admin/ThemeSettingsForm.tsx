@@ -30,6 +30,7 @@ function isValidHex(value: string): boolean {
 export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
   const [primaryColor, setPrimaryColor] = useState(initial.primary_color);
   const [accentColor, setAccentColor] = useState(initial.accent_color);
+  const [secondaryColor, setSecondaryColor] = useState(initial.secondary_color);
   const [surfaceColor, setSurfaceColor] = useState(initial.surface_color);
   const [backgroundColor, setBackgroundColor] = useState(initial.background_color);
   const [fontChoice, setFontChoice] = useState<FontChoice>(initial.font_choice);
@@ -48,6 +49,7 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
     if (
       !isValidHex(primaryColor) ||
       !isValidHex(accentColor) ||
+      !isValidHex(secondaryColor) ||
       !isValidHex(surfaceColor) ||
       !isValidHex(backgroundColor)
     ) {
@@ -60,6 +62,7 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
       const result = await updateSiteTheme({
         primary_color: primaryColor,
         accent_color: accentColor,
+        secondary_color: secondaryColor,
         surface_color: surfaceColor,
         background_color: backgroundColor,
         font_choice: fontChoice,
@@ -82,17 +85,24 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ColorField
           label="Primary color"
-          sublabel="Hero, dark gradients"
-          placeholder="#064e3b"
+          sublabel="The one dark accent card near the bottom of the homepage"
+          placeholder="#0b192c"
           value={primaryColor}
           onChange={setPrimaryColor}
         />
         <ColorField
           label="Accent color"
-          sublabel="Buttons, links, highlights"
-          placeholder="#059669"
+          sublabel="Buttons and CTAs — the color that should always pop"
+          placeholder="#d97706"
           value={accentColor}
           onChange={setAccentColor}
+        />
+        <ColorField
+          label="Secondary color"
+          sublabel="Logo, links, the 3D hero graphic"
+          placeholder="#2563eb"
+          value={secondaryColor}
+          onChange={setSecondaryColor}
         />
         <ColorField
           label="Card background"
@@ -172,7 +182,9 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
               Your Trusted Sourcing Partner
             </p>
             <p className="mt-2 text-gray-600" style={{ fontSize: SIZE_PREVIEW_REM[textScale] }}>
-              This is how body text and paragraphs will look across the site.
+              This is how body text, paragraphs, and{" "}
+              <span style={{ color: secondaryColor, fontWeight: 600 }}>links</span> will look across the
+              site.
             </p>
             <button
               type="button"
