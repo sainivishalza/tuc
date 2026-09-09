@@ -15,6 +15,8 @@ const DEFAULT_THEME: SiteTheme = {
   background_color: "#eef2f6",
   font_choice: "inter",
   text_scale: "medium",
+  corner_style: "rounded",
+  tinted_sections: true,
   updated_at: "",
 };
 
@@ -54,6 +56,10 @@ function sanitizeTheme(row: SiteTheme | null): SiteTheme {
       ? row.font_choice
       : DEFAULT_THEME.font_choice,
     text_scale: ["small", "medium", "large"].includes(row.text_scale) ? row.text_scale : DEFAULT_THEME.text_scale,
+    corner_style: ["sharp", "rounded", "soft"].includes(row.corner_style)
+      ? row.corner_style
+      : DEFAULT_THEME.corner_style,
+    tinted_sections: typeof row.tinted_sections === "boolean" ? row.tinted_sections : DEFAULT_THEME.tinted_sections,
   };
 }
 
@@ -70,6 +76,8 @@ export interface ThemeInput {
   background_color: string;
   font_choice: SiteTheme["font_choice"];
   text_scale: SiteTheme["text_scale"];
+  corner_style: SiteTheme["corner_style"];
+  tinted_sections: boolean;
 }
 
 export interface ThemeSaveResult {
@@ -100,6 +108,8 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
     background_color: input.background_color,
     font_choice: input.font_choice,
     text_scale: input.text_scale,
+    corner_style: input.corner_style,
+    tinted_sections: input.tinted_sections,
     updated_at: new Date().toISOString(),
   });
 

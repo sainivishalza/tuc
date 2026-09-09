@@ -61,6 +61,19 @@
   --glass-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
   --glass-shadow-hover: 0 12px 20px -3px rgba(15, 23, 42, 0.08);
 
+  /* Corner roundness — feeds Tailwind's own rounded-lg/xl/2xl/3xl utility
+     classes via the @theme inline block below, so every card/button/badge
+     site-wide picks up the admin's pick with no per-component changes.
+     Values here match Tailwind's stock defaults so "rounded" (the
+     default) looks exactly like it always has; rounded-full (pills,
+     avatars) is deliberately left alone by this system — "sharp" should
+     still have pill-shaped buttons, not square ones. Overridden
+     per-request from site_theme.corner_style (see app/layout.tsx). */
+  --corner-radius-lg: 0.5rem;
+  --corner-radius-xl: 0.75rem;
+  --corner-radius-2xl: 1rem;
+  --corner-radius-3xl: 1.5rem;
+
   --color-brand-50: #ecfdf5;
   --color-brand-100: #d1fae5;
   --color-brand-200: #a7f3d0;
@@ -97,6 +110,10 @@
   --color-brand-800: var(--color-brand-800);
   --color-brand-900: var(--color-brand-900);
   --color-brand-950: var(--color-brand-950);
+  --radius-lg: var(--corner-radius-lg);
+  --radius-xl: var(--corner-radius-xl);
+  --radius-2xl: var(--corner-radius-2xl);
+  --radius-3xl: var(--corner-radius-3xl);
   --font-sans: var(--font-selected, var(--font-inter));
   /* Headings always use a fixed display face regardless of the admin's
      body-font pick — a distinct heading/body pairing reads as more

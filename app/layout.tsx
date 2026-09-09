@@ -3,7 +3,7 @@ import Script from "next/script";
 import { Inter, Poppins, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import { getSiteTheme } from "@/lib/actions/theme";
-import type { FontChoice, TextScale } from "@/lib/supabase/types";
+import type { FontChoice, TextScale, CornerStyle } from "@/lib/supabase/types";
 import "./globals.css";
 
 const inter = Inter({
@@ -44,6 +44,12 @@ const TEXT_SCALE_VALUE: Record<TextScale, number> = {
   large: 1.075,
 };
 
+const CORNER_RADIUS_VALUE: Record<CornerStyle, { lg: string; xl: string; xl2: string; xl3: string }> = {
+  sharp: { lg: "0.125rem", xl: "0.25rem", xl2: "0.375rem", xl3: "0.5rem" },
+  rounded: { lg: "0.5rem", xl: "0.75rem", xl2: "1rem", xl3: "1.5rem" },
+  soft: { lg: "1rem", xl: "1.25rem", xl2: "1.75rem", xl3: "2.25rem" },
+};
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -69,6 +75,7 @@ export default async function RootLayout({
   // component changes and no risk of breaking the static-generated pages —
   // this is cached (see lib/actions/theme.ts) and only recomputed when an
   // admin actually saves new settings.
+  const radius = CORNER_RADIUS_VALUE[theme.corner_style];
   const themeStyle = `:root {
     --brand-navy: ${theme.primary_color};
     --accent: ${theme.accent_color};
@@ -77,6 +84,16 @@ export default async function RootLayout({
     --background: ${theme.background_color};
     --font-selected: ${FONT_VAR_BY_CHOICE[theme.font_choice]};
     --text-scale: ${TEXT_SCALE_VALUE[theme.text_scale]};
+    --corner-radius-lg: ${radius.lg};
+    --corner-radius-xl: ${radius.xl};
+    --corner-radius-2xl: ${radius.xl2};
+    --corner-radius-3xl: ${radius.xl3};
+  }
+  ${
+    !theme.tinted_sections
+      ? `.section-tint-blue, .section-tint-amber { background: var(--surface-2); }
+  .gradient-hero-light { background: var(--background); }`
+      : ""
   }`;
 
   return (
