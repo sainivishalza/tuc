@@ -13,6 +13,7 @@ export interface SiteTheme {
   text_scale: TextScale;
   corner_style: CornerStyle;
   tinted_sections: boolean;
+  logo_url: string | null;
   updated_at: string;
 }
 

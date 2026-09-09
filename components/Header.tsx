@@ -1,33 +1,20 @@
-"use client";
-
-import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { getSiteTheme } from "@/lib/actions/theme";
+import HeaderMobileMenu from "./HeaderMobileMenu";
 import LanguageSwitcher from "./LanguageSwitcher";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { whatsappLink } from "@/lib/whatsapp";
+import { MessageCircle } from "lucide-react";
 
-export default function Header({
+export default async function Header({
   dict,
   locale,
 }: {
   dict: Dictionary;
   locale: Locale;
 }) {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, [open]);
+  const theme = await getSiteTheme();
 
   const links = [
     { href: `/${locale}#services`, label: dict.nav.services },
@@ -42,12 +29,21 @@ export default function Header({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-white/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-white/85 backdrop-blur-md relative">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
         <Link href={`/${locale}`} className="flex items-center gap-2.5">
-          <span className="brand-gradient flex h-9 w-9 items-center justify-center rounded-lg font-display text-base font-semibold text-white">
-            U
-          </span>
+          {theme.logo_url ? (
+            // Fixed-size box regardless of the uploaded image's own
+            // dimensions/aspect ratio — object-contain scales it to fit
+            // without stretching or disturbing the header layout.
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
+              <img src={theme.logo_url} alt="" className="h-full w-full object-contain" />
+            </span>
+          ) : (
+            <span className="brand-gradient flex h-9 w-9 items-center justify-center rounded-lg font-display text-base font-semibold text-white">
+              U
+            </span>
+          )}
           <span className="font-display text-base font-semibold tracking-tight text-foreground sm:text-lg">
             <span className="text-brand-blue">The Unique</span> Choice
           </span>
@@ -79,41 +75,8 @@ export default function Header({
           </a>
         </div>
 
-        <button
-          className="flex items-center justify-center rounded-full p-2 text-foreground lg:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <HeaderMobileMenu links={links} locale={locale} dict={dict} />
       </div>
-
-      {open && (
-        <div ref={menuRef} className="flex flex-col gap-1 border-t border-border bg-white p-4 lg:hidden">
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 transition hover:bg-surface-2 hover:text-foreground"
-            >
-              {l.label}
-            </a>
-          ))}
-          <div className="mt-1 flex items-center justify-between gap-3 px-3 pt-2">
-            <LanguageSwitcher locale={locale} />
-          </div>
-          <a
-            href={whatsappLink(dict.contact.whatsappMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="brand-gradient-animated mt-2 flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-white"
-          >
-            <MessageCircle size={16} />
-            {dict.nav.chatWhatsapp}
-          </a>
-        </div>
-      )}
     </header>
   );
 }

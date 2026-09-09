@@ -6,6 +6,10 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import type { SiteTheme } from "@/lib/supabase/types";
 
+const LOGO_BUCKET = "site-assets";
+const LOGO_PATH = "logo";
+const MAX_LOGO_BYTES = 2 * 1024 * 1024; // 2MB
+
 const DEFAULT_THEME: SiteTheme = {
   id: "default",
   primary_color: "#0b192c",
@@ -17,6 +21,7 @@ const DEFAULT_THEME: SiteTheme = {
   text_scale: "medium",
   corner_style: "rounded",
   tinted_sections: true,
+  logo_url: null,
   updated_at: "",
 };
 
@@ -60,6 +65,7 @@ function sanitizeTheme(row: SiteTheme | null): SiteTheme {
       ? row.corner_style
       : DEFAULT_THEME.corner_style,
     tinted_sections: typeof row.tinted_sections === "boolean" ? row.tinted_sections : DEFAULT_THEME.tinted_sections,
+    logo_url: typeof row.logo_url === "string" && row.logo_url.length > 0 ? row.logo_url : null,
   };
 }
 
@@ -121,4 +127,71 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
   // new theme is live within moments, not instantly on this exact request.
   revalidateTag("site-theme", "max");
   return { ok: true, message: "Saved — give it a few seconds, then refresh the site to see it applied everywhere." };
+}
+
+/**
+ * Uploaded to a fixed path (not the original filename) so a re-upload
+ * overwrites in place — no orphaned old files piling up in the bucket, and
+ * no need to track/delete a previous path before writing the new one.
+ * A cache-busting query param is appended to the stored URL since the path
+ * never changes, otherwise browsers/CDNs would keep serving the old image.
+ */
+export async function uploadSiteLogo(formData: FormData): Promise<ThemeSaveResult> {
+  await requireAdminAction();
+
+  const file = formData.get("logo");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, message: "No file selected." };
+  }
+  if (!file.type.startsWith("image/")) {
+    return { ok: false, message: "Logo must be an image file (PNG, JPG, SVG, or WebP)." };
+  }
+  if (file.size > MAX_LOGO_BYTES) {
+    return { ok: false, message: "Logo must be smaller than 2MB." };
+  }
+
+  const ext = file.type === "image/svg+xml" ? "svg" : file.type.split("/")[1] || "png";
+  const path = `${LOGO_PATH}.${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+
+  const supabase = getSupabaseAdminClient();
+
+  // Clear any previously uploaded logo with a different extension so
+  // switching file types (e.g. png -> svg) doesn't leave a stale copy
+  // sitting alongside the new one.
+  await supabase.storage.from(LOGO_BUCKET).remove(["logo.png", "logo.jpg", "logo.jpeg", "logo.svg", "logo.webp"]);
+
+  const { error: uploadError } = await supabase.storage.from(LOGO_BUCKET).upload(path, arrayBuffer, {
+    contentType: file.type,
+    upsert: true,
+  });
+  if (uploadError) return { ok: false, message: uploadError.message };
+
+  const { data: publicUrl } = supabase.storage.from(LOGO_BUCKET).getPublicUrl(path);
+  const logoUrl = `${publicUrl.publicUrl}?v=${Date.now()}`;
+
+  const { error: updateError } = await supabase
+    .from("site_theme")
+    .update({ logo_url: logoUrl, updated_at: new Date().toISOString() })
+    .eq("id", "default");
+  if (updateError) return { ok: false, message: updateError.message };
+
+  revalidateTag("site-theme", "max");
+  return { ok: true, message: "Logo uploaded — give it a few seconds, then refresh to see it everywhere." };
+}
+
+export async function removeSiteLogo(): Promise<ThemeSaveResult> {
+  await requireAdminAction();
+
+  const supabase = getSupabaseAdminClient();
+  await supabase.storage.from(LOGO_BUCKET).remove(["logo.png", "logo.jpg", "logo.jpeg", "logo.svg", "logo.webp"]);
+
+  const { error } = await supabase
+    .from("site_theme")
+    .update({ logo_url: null, updated_at: new Date().toISOString() })
+    .eq("id", "default");
+  if (error) return { ok: false, message: error.message };
+
+  revalidateTag("site-theme", "max");
+  return { ok: true, message: "Logo removed — the default mark will show again." };
 }

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
+import { getSiteTheme } from "@/lib/actions/theme";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { whatsappLink } from "@/lib/whatsapp";
 
-export default function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+export default async function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const theme = await getSiteTheme();
   const year = new Date().getFullYear();
 
   return (
@@ -31,9 +33,15 @@ export default function Footer({ dict, locale }: { dict: Dictionary; locale: Loc
         <div className="grid gap-10 sm:grid-cols-[1.1fr_1fr_1fr_1fr]">
           <div className="max-w-sm">
             <Link href={`/${locale}`} className="flex items-center gap-2.5">
-              <span className="brand-gradient flex h-8 w-8 items-center justify-center rounded-lg font-display text-sm font-semibold text-white">
-                U
-              </span>
+              {theme.logo_url ? (
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
+                  <img src={theme.logo_url} alt="" className="h-full w-full object-contain" />
+                </span>
+              ) : (
+                <span className="brand-gradient flex h-8 w-8 items-center justify-center rounded-lg font-display text-sm font-semibold text-white">
+                  U
+                </span>
+              )}
               <span className="font-display text-base font-semibold text-foreground">
                 <span className="text-brand-blue">The Unique</span> Choice
               </span>

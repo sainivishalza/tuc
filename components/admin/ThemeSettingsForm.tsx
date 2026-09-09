@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { updateSiteTheme } from "@/lib/actions/theme";
+import { useRef, useState } from "react";
+import { updateSiteTheme, uploadSiteLogo, removeSiteLogo } from "@/lib/actions/theme";
 import type { SiteTheme, FontChoice, TextScale, CornerStyle } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
@@ -53,7 +53,59 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const [logoUrl, setLogoUrl] = useState(initial.logo_url);
+  const [logoBusy, setLogoBusy] = useState(false);
+  const [logoMessage, setLogoMessage] = useState("");
+  const [logoError, setLogoError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const selectedFont = FONT_OPTIONS.find((f) => f.value === fontChoice) ?? FONT_OPTIONS[0];
+
+  async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoError("");
+    setLogoMessage("");
+    setLogoBusy(true);
+    try {
+      const formData = new FormData();
+      formData.append("logo", file);
+      const result = await uploadSiteLogo(formData);
+      if (result.ok) {
+        setLogoMessage(result.message);
+        // Re-read the object URL rather than trusting local file preview,
+        // since the server appends a cache-busting ?v= we need for the
+        // <img> tags in Header/Footer to pick up the new file immediately.
+        setLogoUrl(URL.createObjectURL(file));
+      } else {
+        setLogoError(result.message);
+      }
+    } catch (err) {
+      setLogoError(err instanceof Error ? err.message : "Failed to upload logo.");
+    } finally {
+      setLogoBusy(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleLogoRemove() {
+    setLogoError("");
+    setLogoMessage("");
+    setLogoBusy(true);
+    try {
+      const result = await removeSiteLogo();
+      if (result.ok) {
+        setLogoMessage(result.message);
+        setLogoUrl(null);
+      } else {
+        setLogoError(result.message);
+      }
+    } catch (err) {
+      setLogoError(err instanceof Error ? err.message : "Failed to remove logo.");
+    } finally {
+      setLogoBusy(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -98,6 +150,61 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <div className="rounded-xl border border-gray-200 p-4">
+        <label className={labelClass}>Logo</label>
+        <p className="mb-3 text-[11px] text-gray-400">
+          Replaces the &quot;U&quot; mark in the header, footer, and the browser tab icon. Any size or
+          shape works — it&apos;s automatically scaled to fit without disturbing the layout. PNG, JPG,
+          SVG, or WebP, up to 2MB.
+        </p>
+        <div className="flex items-center gap-4">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-white">
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="Current logo" className="h-full w-full object-contain" />
+            ) : (
+              <span
+                className="flex h-full w-full items-center justify-center font-display text-lg font-semibold text-white"
+                style={{ background: `linear-gradient(135deg, ${accentColor}, ${primaryColor})` }}
+              >
+                U
+              </span>
+            )}
+          </span>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                disabled={logoBusy}
+                onClick={() => fileInputRef.current?.click()}
+                className="w-fit"
+              >
+                {logoBusy ? "Working..." : logoUrl ? "Replace logo" : "Upload logo"}
+              </Button>
+              {logoUrl && (
+                <button
+                  type="button"
+                  disabled={logoBusy}
+                  onClick={handleLogoRemove}
+                  className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-gray-400 disabled:opacity-50"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              onChange={handleLogoChange}
+              className="hidden"
+            />
+          </div>
+        </div>
+        {logoError && <p className="mt-2 text-sm text-red-500">{logoError}</p>}
+        {logoMessage && <p className="mt-2 text-sm text-emerald-600">{logoMessage}</p>}
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ColorField
           label="Primary color"
