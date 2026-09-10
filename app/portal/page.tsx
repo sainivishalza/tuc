@@ -85,19 +85,44 @@ export default async function PortalPage() {
           ) : (
             <div className="mt-4 space-y-3">
               {quoteRequests.map((q) => (
-                <div key={q.id} className="glass-strong flex flex-wrap items-center justify-between gap-3 rounded-2xl p-5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                      <FileText size={18} />
+                <div key={q.id} className="glass-strong rounded-2xl p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                        <FileText size={18} />
+                      </div>
+                      <div>
+                        <p className="font-display text-sm font-semibold">{q.product || "General inquiry"}</p>
+                        <p className="text-xs text-muted">{new Date(q.created_at).toLocaleDateString()}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-display text-sm font-semibold">{q.product || "General inquiry"}</p>
-                      <p className="text-xs text-muted">{new Date(q.created_at).toLocaleDateString()}</p>
-                    </div>
+                    <span className="rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-foreground">
+                      {QUOTE_STATUS_LABELS[q.status] ?? q.status}
+                    </span>
                   </div>
-                  <span className="rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-foreground">
-                    {QUOTE_STATUS_LABELS[q.status] ?? q.status}
-                  </span>
+
+                  {q.items && q.items.length > 0 && (
+                    <div className="mt-4 overflow-x-auto rounded-xl border border-border">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="bg-surface-2 text-left text-muted">
+                            <th className="px-3 py-2 font-semibold">Product</th>
+                            <th className="px-3 py-2 font-semibold">Quantity</th>
+                            <th className="px-3 py-2 font-semibold">Notes</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {q.items.map((item, i) => (
+                            <tr key={i} className="border-t border-border">
+                              <td className="px-3 py-2">{item.product}</td>
+                              <td className="px-3 py-2">{item.quantity || "—"}</td>
+                              <td className="px-3 py-2">{item.notes || "—"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
