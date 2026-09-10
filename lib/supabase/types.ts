@@ -52,7 +52,8 @@ export type BlogBodyBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; text: string }
   | { type: "list"; items: string[] }
-  | { type: "related"; heading: string; items: { title: string; href: string }[] };
+  | { type: "related"; heading: string; items: { title: string; href: string }[] }
+  | { type: "image"; url: string; alt: string; caption?: string };
 
 export interface BlogFaqItem {
   q: string;

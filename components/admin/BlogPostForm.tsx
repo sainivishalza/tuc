@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { locales } from "@/lib/i18n";
-import { createBlogPost, updateBlogPost } from "@/lib/actions/blogPosts";
+import { createBlogPost, updateBlogPost, uploadBlogImage } from "@/lib/actions/blogPosts";
 import type { BlogPost } from "@/lib/supabase/types";
-import { Button, inputClass, labelClass } from "@/components/admin/ui";
+import { Button, fileInputClass, inputClass, labelClass } from "@/components/admin/ui";
 
 const BODY_PLACEHOLDER = `[
   { "type": "paragraph", "text": "Opening paragraph..." },
@@ -48,6 +48,59 @@ export default function BlogPostForm({
   const [publishedAt, setPublishedAt] = useState(initial?.published_at ?? "");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [imageAlt, setImageAlt] = useState("");
+  const [imageCaption, setImageCaption] = useState("");
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState("");
+
+  async function handleInsertImage() {
+    setImageError("");
+    const file = imageInputRef.current?.files?.[0];
+    if (!file) {
+      setImageError("Choose an image file first.");
+      return;
+    }
+    if (!imageAlt.trim()) {
+      setImageError("Alt text is required — it describes the image for accessibility and SEO.");
+      return;
+    }
+
+    let body;
+    try {
+      body = JSON.parse(bodyText);
+      if (!Array.isArray(body)) throw new Error();
+    } catch {
+      setImageError("Body isn't valid JSON right now — fix it before adding an image.");
+      return;
+    }
+
+    setImageUploading(true);
+    try {
+      const fd = new FormData();
+      fd.set("image", file);
+      const result = await uploadBlogImage(fd);
+      if (!result.ok || !result.url) {
+        setImageError(result.message);
+        return;
+      }
+      body.push({
+        type: "image",
+        url: result.url,
+        alt: imageAlt.trim(),
+        ...(imageCaption.trim() ? { caption: imageCaption.trim() } : {}),
+      });
+      setBodyText(JSON.stringify(body, null, 2));
+      if (imageInputRef.current) imageInputRef.current.value = "";
+      setImageAlt("");
+      setImageCaption("");
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setImageUploading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -152,6 +205,37 @@ export default function BlogPostForm({
         />
       </div>
 
+      <div className="rounded-xl border border-dashed border-gray-300 p-3">
+        <label className={labelClass}>Add an image to the body</label>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className={`${fileInputClass} sm:w-56`}
+          />
+          <input
+            value={imageAlt}
+            onChange={(e) => setImageAlt(e.target.value)}
+            placeholder="Alt text (required)"
+            className={inputClass}
+          />
+          <input
+            value={imageCaption}
+            onChange={(e) => setImageCaption(e.target.value)}
+            placeholder="Caption (optional)"
+            className={inputClass}
+          />
+          <Button type="button" variant="secondary" size="sm" onClick={handleInsertImage} disabled={imageUploading} className="shrink-0">
+            {imageUploading ? "Uploading..." : "Upload & insert"}
+          </Button>
+        </div>
+        {imageError && <p className="mt-1.5 text-xs text-red-500">{imageError}</p>}
+        <p className="mt-1.5 text-[11px] text-gray-400">
+          Uploads the file to storage and appends an image block to the end of the Body JSON below — move it in the JSON if it belongs elsewhere in the article.
+        </p>
+      </div>
+
       <div>
         <label className={labelClass}>Body (JSON array of blocks) *</label>
         <textarea
@@ -162,8 +246,10 @@ export default function BlogPostForm({
           className={`resize-y font-mono text-xs ${inputClass}`}
         />
         <p className="mt-1 text-[11px] text-gray-400">
-          Each block: {"{ type: \"paragraph\"|\"heading\", text }"}, {"{ type: \"list\", items: [...] }"}, or
-          {" "}{"{ type: \"related\", heading, items: [{ title, href }] }"} for internal links to other articles.
+          Each block: {"{ type: \"paragraph\"|\"heading\", text }"}, {"{ type: \"list\", items: [...] }"},
+          {" "}{"{ type: \"related\", heading, items: [{ title, href }] }"} for internal links to other articles, or
+          {" "}{"{ type: \"image\", url, alt, caption? }"} — use the uploader above instead of hand-writing this
+          one; it fills in a validated URL for you.
         </p>
       </div>
 
