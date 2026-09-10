@@ -15,6 +15,7 @@ import { whatsappLink } from "@/lib/whatsapp";
 import { trackCtaClick } from "@/lib/analytics";
 import { submitQuoteRequest } from "@/lib/actions/quoteRequests";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { CategoryBadge } from "./categoryVisuals";
 import TurnstileWidget from "./TurnstileWidget";
 
@@ -50,6 +51,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
   const [whatsapp, setWhatsapp] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const pathname = usePathname() ?? "/";
+  const locale = pathname.split("/")[1] || "en";
   const captchaConfigured = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
   // Lets the free Smart Sourcing Match, Landed Cost, and Readiness Quiz
@@ -195,6 +197,12 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                       </button>
                     ))}
                   </div>
+                  <Link
+                    href={`/${locale}/bulk-quote`}
+                    className="inline-block text-sm font-medium text-accent hover:opacity-80"
+                  >
+                    {dict.bulkQuote.linkText}
+                  </Link>
                 </div>
               )}
 

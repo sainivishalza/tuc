@@ -204,6 +204,37 @@
     "founderTitle": "Founder, The Unique Choice",
     "founderBio": "Vishal Saini founded The Unique Choice after years of firsthand experience navigating factories, trade shows, and shipping routes across mainland China and Hong Kong. He works directly with every client to make sure sourcing feels less like a gamble and more like a partnership."
   },
+  "security": {
+    "badge": "Your Data, Protected",
+    "title": "Trust & Security",
+    "subtitle": "We handle real deposits, real product photos, and real shipment details for every order — so we treat the platform itself as seriously as the sourcing.",
+    "practices": [
+      {
+        "title": "Encrypted everywhere",
+        "desc": "Every page loads over HTTPS, enforced site-wide — your browser refuses to fall back to an unencrypted connection, even on a repeat visit."
+      },
+      {
+        "title": "Your shipments, and only yours",
+        "desc": "Each customer's tracking portal only ever shows that customer's own shipments — access is enforced at the database level, not just hidden in the interface."
+      },
+      {
+        "title": "Bot and abuse protection",
+        "desc": "Every form on this site is rate-limited and CAPTCHA-protected, so automated spam and brute-force attempts get blocked before they reach a human."
+      },
+      {
+        "title": "Validated file uploads",
+        "desc": "Any file we accept — a logo, a packing list — is checked against its real file type before it's stored, not just trusted based on its name."
+      },
+      {
+        "title": "Hardened admin access",
+        "desc": "Our admin panel uses locked-down session cookies and automatic lockouts after repeated failed logins."
+      },
+      {
+        "title": "Independently reviewed",
+        "desc": "We run our own security reviews against this platform and fix what we find — this isn't a one-time setup we forgot about."
+      }
+    ]
+  },
   "contactPage": {
     "badge": "Contact Us",
     "title": "Let's Talk About Your Next Order",
@@ -293,6 +324,12 @@
     },
     "guarantee": "100% Free · No Obligation · Response Within 24 Hours"
   },
+  "bulkQuote": {
+    "badge": "For Repeat & Multi-Product Orders",
+    "title": "Bulk Quote Request",
+    "subtitle": "Sourcing more than one product at once? Upload a list instead of submitting them one by one — we'll quote the whole order together.",
+    "linkText": "Sourcing multiple products? Upload a bulk list instead →"
+  },
   "categories": {
     "badge": "Product Categories",
     "title": "What We Source",
@@ -329,6 +366,15 @@
     "title": "Sourcing Guides & Tips",
     "subtitle": "Learn how to source from China with confidence. Expert advice from our team.",
     "readMore": "Read More"
+  },
+  "caseStudies": {
+    "badge": "Client Success Stories",
+    "title": "Case Studies",
+    "subtitle": "Real sourcing projects, real numbers — see how we've helped clients cut costs and ship with confidence.",
+    "readMore": "View Case Study",
+    "emptyState": "New case studies are on the way — check back soon.",
+    "challengeLabel": "The Challenge",
+    "solutionLabel": "Our Solution"
   },
   "glossary": {
     "badge": "Reference",

@@ -17,6 +17,12 @@ export interface SiteTheme {
   updated_at: string;
 }
 
+export interface QuoteLineItem {
+  product: string;
+  quantity: string;
+  notes: string;
+}
+
 export interface QuoteRequest {
   id: string;
   name: string;
@@ -26,6 +32,7 @@ export interface QuoteRequest {
   quantity: string | null;
   timeline: string | null;
   message: string | null;
+  items: QuoteLineItem[] | null;
   status: "new" | "contacted" | "closed";
   created_at: string;
 }
@@ -65,6 +72,28 @@ export interface BlogPost {
   author_title: string;
   author_bio: string;
   read_time: string | null;
+  status: "draft" | "published";
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CaseStudyResult {
+  label: string;
+  value: string;
+}
+
+export interface CaseStudy {
+  id: string;
+  slug: string;
+  locale: string;
+  client_name: string;
+  industry: string;
+  title: string;
+  summary: string;
+  challenge: string;
+  solution: string;
+  results: CaseStudyResult[];
   status: "draft" | "published";
   published_at: string | null;
   created_at: string;
