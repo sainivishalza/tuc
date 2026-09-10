@@ -2,7 +2,15 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export const ADMIN_COOKIE_NAME = "admin_session";
+// The __Host- prefix is a browser-enforced guarantee: a cookie named
+// this way is only ever accepted/sent if it also has Secure, Path=/, and
+// no Domain attribute — which rules out it ever being set by a
+// subdomain, a MITM on a non-HTTPS connection, or a misconfigured
+// Domain= leaking it wider than intended. Only applied in production —
+// browsers refuse to set a __Host- cookie at all without Secure, which
+// local http://localhost dev/testing doesn't have.
+export const ADMIN_COOKIE_NAME =
+  process.env.NODE_ENV === "production" ? "__Host-admin_session" : "admin_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours
 
 function sign(payload: string, secret: string): string {

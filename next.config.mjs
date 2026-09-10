@@ -26,7 +26,11 @@ const nextConfig = {
     // object-src/base-uri, which don't depend on inline content.
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://plausible.io",
+      // https://challenges.cloudflare.com serves the Turnstile widget
+      // script (quote form + portal login, see components/TurnstileWidget.tsx)
+      // — renders nothing and is never fetched at all when
+      // NEXT_PUBLIC_TURNSTILE_SITE_KEY isn't set.
+      "script-src 'self' 'unsafe-inline' https://plausible.io https://challenges.cloudflare.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https://*.supabase.co",
       "font-src 'self' data:",
@@ -34,7 +38,9 @@ const nextConfig = {
       // events directly from the browser via the Supabase JS client using
       // the public anon key (RLS-scoped, insert-only) — that request goes
       // straight to Supabase's REST API, not through this app's server.
-      "connect-src 'self' https://plausible.io https://*.supabase.co",
+      "connect-src 'self' https://plausible.io https://*.supabase.co https://challenges.cloudflare.com",
+      // Turnstile's actual challenge renders inside an iframe.
+      "frame-src https://challenges.cloudflare.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

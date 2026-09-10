@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { sendEmail } from "@/lib/email";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import { createLoginLinkToken } from "@/lib/portalAuth";
 import type { Shipment, QuoteRequest } from "@/lib/supabase/types";
 
@@ -50,12 +51,18 @@ export async function requestPortalLink(
   const ip = headersList.get("x-forwarded-for")?.split(",").pop()?.trim() ?? "unknown";
   const rateLimitKey = `portal:${ip}`;
 
-  const limit = checkRateLimit(rateLimitKey);
+  const limit = await checkRateLimit(rateLimitKey);
   if (!limit.allowed) {
     const minutes = Math.ceil((limit.retryAfterMs ?? 0) / 60000);
     return { error: `Too many attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.` };
   }
-  recordFailedAttempt(rateLimitKey);
+  await recordFailedAttempt(rateLimitKey);
+
+  const turnstileToken = String(formData.get("turnstileToken") ?? "");
+  const captchaOk = await verifyTurnstileToken(turnstileToken, ip);
+  if (!captchaOk) {
+    return { error: "Verification failed — please try again." };
+  }
 
   const secret = process.env.PORTAL_SESSION_SECRET;
   if (!secret) {
