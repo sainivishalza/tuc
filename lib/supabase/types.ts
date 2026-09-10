@@ -100,6 +100,32 @@ export interface CaseStudy {
   updated_at: string;
 }
 
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  source: "newsletter" | "guide_download";
+  locale: string;
+  created_at: string;
+}
+
+export interface ShippingRoute {
+  id: string;
+  slug: string;
+  locale: string;
+  destination_name: string;
+  tagline: string;
+  intro: string;
+  sea_transit: string;
+  air_transit: string;
+  express_transit: string;
+  highlights: string[];
+  faq: BlogFaqItem[];
+  status: "draft" | "published";
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CategoryPage {
   id: string;
   slug: string;

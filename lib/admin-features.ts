@@ -11,6 +11,8 @@ import {
   Truck,
   Building2,
   Palette,
+  Mail,
+  Ship,
 } from "lucide-react";
 
 export interface AdminFeature {
@@ -76,6 +78,14 @@ export const adminFeatures: AdminFeature[] = [
     icon: Trophy,
   },
   {
+    title: "Shipping Routes",
+    description:
+      "Templated \"Shipping from China to [Country]\" landing pages with transit times and customs notes, stored in the database — create, edit, and publish per locale without a code deploy.",
+    href: "/admin/shipping-routes",
+    status: "live",
+    icon: Ship,
+  },
+  {
     title: "Category Pages",
     description:
       "Templated \"Sourcing [Category] from China\" landing pages targeting category-specific search intent, stored in the database — create, edit, and publish per locale without a code deploy.",
@@ -106,6 +116,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/carriers",
     status: "live",
     icon: Building2,
+  },
+  {
+    title: "Newsletter & Guide Leads",
+    description:
+      "Emails captured from the footer newsletter signup and the downloadable sourcing guide.",
+    href: "/admin/newsletter",
+    status: "live",
+    icon: Mail,
   },
   {
     title: "Theme Settings",

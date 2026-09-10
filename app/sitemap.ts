@@ -3,14 +3,16 @@ import { locales } from "@/lib/i18n";
 import { getAllPublishedSlugs } from "@/lib/actions/blogPosts";
 import { getAllPublishedCategorySlugs } from "@/lib/actions/categoryPages";
 import { getAllPublishedCaseStudySlugs } from "@/lib/actions/caseStudies";
+import { getAllPublishedRouteSlugs } from "@/lib/actions/shippingRoutes";
 
 const BASE_URL = "https://theuniquechoice.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ["", "/about", "/contact", "/blog", "/sourcing", "/glossary", "/case-studies", "/security", "/bulk-quote"];
+  const staticPaths = ["", "/about", "/contact", "/blog", "/sourcing", "/glossary", "/case-studies", "/security", "/bulk-quote", "/guide", "/shipping"];
   const publishedSlugs = await getAllPublishedSlugs();
   const publishedCategorySlugs = await getAllPublishedCategorySlugs();
   const publishedCaseStudySlugs = await getAllPublishedCaseStudySlugs();
+  const publishedRouteSlugs = await getAllPublishedRouteSlugs();
 
   const staticEntries = locales.flatMap((locale) =>
     staticPaths.map((path) => ({
@@ -34,5 +36,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }));
 
-  return [...staticEntries, ...blogEntries, ...categoryEntries, ...caseStudyEntries];
+  const routeEntries = publishedRouteSlugs.map(({ locale, slug }) => ({
+    url: `${BASE_URL}/${locale}/shipping/${slug}`,
+    lastModified: new Date(),
+  }));
+
+  return [...staticEntries, ...blogEntries, ...categoryEntries, ...caseStudyEntries, ...routeEntries];
 }

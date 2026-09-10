@@ -3,6 +3,7 @@ import { MessageCircle } from "lucide-react";
 import { getSiteTheme } from "@/lib/actions/theme";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { whatsappLink } from "@/lib/whatsapp";
+import NewsletterForm from "./NewsletterForm";
 
 export default async function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const theme = await getSiteTheme();
@@ -53,6 +54,7 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
                 </span>
               </Link>
               <p className="mt-3 text-sm text-white/60">{dict.footer.tagline}</p>
+              <NewsletterForm dict={dict} locale={locale} />
             </div>
 
             <div>
@@ -105,6 +107,11 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
               </h4>
               <ul className="mt-3 flex flex-col gap-2 text-sm text-white/70">
                 <li>
+                  <Link href={`/${locale}/guide`} className="hover:text-white">
+                    {dict.guide.navLabel}
+                  </Link>
+                </li>
+                <li>
                   <Link href={`/${locale}/case-studies`} className="hover:text-white">
                     {dict.caseStudies.title}
                   </Link>
@@ -122,6 +129,11 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
                 <li>
                   <Link href={`/${locale}/glossary`} className="hover:text-white">
                     {dict.glossary.title}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/${locale}/shipping`} className="hover:text-white">
+                    {dict.shipping.title}
                   </Link>
                 </li>
                 <li>
