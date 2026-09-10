@@ -82,6 +82,11 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
                   </Link>
                 </li>
                 <li>
+                  <Link href={`/${locale}/security`} className="hover:text-white">
+                    {dict.security.title}
+                  </Link>
+                </li>
+                <li>
                   <a href={`/${locale}#services`} className="hover:text-white">
                     {dict.nav.services}
                   </a>

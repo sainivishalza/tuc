@@ -1,6 +1,6 @@
 import "server-only";
 import { sendEmail } from "@/lib/email";
-import type { ShipmentStatus } from "@/lib/supabase/types";
+import type { ShipmentStatus, QuoteLineItem } from "@/lib/supabase/types";
 import { STATUS_LABELS } from "@/lib/shipmentStatus";
 
 const SITE_URL = "https://theuniquechoice.com";
@@ -146,6 +146,74 @@ export async function notifyNewQuoteRequest(params: {
   await sendAndLog({
     to,
     subject: `New quote request from ${params.name}`,
+    html,
+  });
+}
+
+/** Best-effort — never throws. Same lead-alert purpose as
+ * notifyNewQuoteRequest, for the bulk (multi-line-item) form instead of
+ * the single-product wizard. */
+export async function notifyNewBulkQuoteRequest(params: {
+  name: string;
+  email: string;
+  whatsapp: string | null;
+  timeline: string | null;
+  message: string | null;
+  items: QuoteLineItem[];
+}): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] new bulk quote request received but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const row = (label: string, value: string | null) =>
+    value ? `<p style="font-size: 14px; margin: 0 0 8px;"><strong>${label}:</strong> ${escapeHtml(value)}</p>` : "";
+
+  const itemsTable = `
+    <table style="width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid #e5e7eb;">Product</th>
+          <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid #e5e7eb;">Quantity</th>
+          <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid #e5e7eb;">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${params.items
+          .map(
+            (item) => `
+        <tr>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #f3f4f6;">${escapeHtml(item.product)}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #f3f4f6;">${escapeHtml(item.quantity)}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #f3f4f6;">${escapeHtml(item.notes)}</td>
+        </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 560px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Bulk Lead
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 16px;">${escapeHtml(params.name)} submitted a bulk request (${params.items.length} items)</h1>
+      ${row("Email", params.email)}
+      ${row("WhatsApp", params.whatsapp)}
+      ${row("Timeline", params.timeline)}
+      ${row("Message", params.message)}
+      ${itemsTable}
+      <a href="${SITE_URL}/admin/quote-requests" style="display: inline-block; margin-top: 12px; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View in admin panel
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({
+    to,
+    subject: `New bulk quote request from ${params.name} (${params.items.length} items)`,
     html,
   });
 }

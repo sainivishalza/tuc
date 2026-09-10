@@ -7,7 +7,7 @@ import { getAllPublishedCaseStudySlugs } from "@/lib/actions/caseStudies";
 const BASE_URL = "https://theuniquechoice.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ["", "/about", "/contact", "/blog", "/sourcing", "/glossary", "/case-studies"];
+  const staticPaths = ["", "/about", "/contact", "/blog", "/sourcing", "/glossary", "/case-studies", "/security", "/bulk-quote"];
   const publishedSlugs = await getAllPublishedSlugs();
   const publishedCategorySlugs = await getAllPublishedCategorySlugs();
   const publishedCaseStudySlugs = await getAllPublishedCaseStudySlugs();

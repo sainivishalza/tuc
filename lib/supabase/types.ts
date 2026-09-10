@@ -17,6 +17,12 @@ export interface SiteTheme {
   updated_at: string;
 }
 
+export interface QuoteLineItem {
+  product: string;
+  quantity: string;
+  notes: string;
+}
+
 export interface QuoteRequest {
   id: string;
   name: string;
@@ -26,6 +32,7 @@ export interface QuoteRequest {
   quantity: string | null;
   timeline: string | null;
   message: string | null;
+  items: QuoteLineItem[] | null;
   status: "new" | "contacted" | "closed";
   created_at: string;
 }

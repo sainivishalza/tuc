@@ -52,6 +52,29 @@ export default async function QuoteRequestsPage() {
               <p><span className="font-semibold text-gray-800">Timeline:</span> {r.timeline || "—"}</p>
             </div>
 
+            {r.items && r.items.length > 0 && (
+              <div className="mt-3 overflow-x-auto rounded-lg border border-gray-100">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-gray-50 text-left text-gray-500">
+                      <th className="px-3 py-2 font-semibold">Product</th>
+                      <th className="px-3 py-2 font-semibold">Quantity</th>
+                      <th className="px-3 py-2 font-semibold">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {r.items.map((item, i) => (
+                      <tr key={i} className="border-t border-gray-100 text-gray-600">
+                        <td className="px-3 py-2">{item.product}</td>
+                        <td className="px-3 py-2">{item.quantity || "—"}</td>
+                        <td className="px-3 py-2">{item.notes || "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
             {r.message && (
               <p className="mt-3 rounded-lg bg-gray-50 p-3 text-xs text-gray-600">{r.message}</p>
             )}
