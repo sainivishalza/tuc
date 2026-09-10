@@ -6,10 +6,18 @@ import { getSiteTheme } from "@/lib/actions/theme";
 import type { FontChoice, TextScale, CornerStyle } from "@/lib/supabase/types";
 import "./globals.css";
 
+// Only one of inter/poppins/playfair is ever active at a time (the
+// admin's font_choice pick, applied via --font-selected below) but
+// next/font requires each font to be instantiated at module scope, so we
+// can't know here which one that'll be. Preloading all three would fetch
+// every candidate on every page load; preload: false lets the browser
+// fetch only the one the rendered CSS actually calls for, discovered
+// during stylesheet parsing instead of eagerly ahead of it.
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  preload: false,
 });
 
 const poppins = Poppins({
@@ -17,14 +25,18 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
   display: "swap",
+  preload: false,
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   display: "swap",
+  preload: false,
 });
 
+// Used unconditionally for .font-display headings on every page, so this
+// one is worth preloading.
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["600", "700"],
@@ -32,12 +44,14 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-// Admin-only display face — see .font-admin-display in globals.css.
+// Admin-only display face — see .font-admin-display in globals.css. Never
+// rendered on the public site, so it shouldn't preload there either.
 const plex = IBM_Plex_Sans({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
   variable: "--font-plex",
   display: "swap",
+  preload: false,
 });
 
 const FONT_VAR_BY_CHOICE: Record<FontChoice, string> = {

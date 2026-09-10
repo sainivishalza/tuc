@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import AnimatedStats from "@/components/AnimatedStats";
 import TrustBadges from "@/components/TrustBadges";
-import Services from "@/components/Services";
+import LazyServices from "@/components/LazyServices";
 import ProductCategories from "@/components/ProductCategories";
 import HowItWorks from "@/components/HowItWorks";
 import LazyPlanMatchQuiz from "@/components/LazyPlanMatchQuiz";
@@ -99,7 +99,7 @@ export default async function LocalePage({
         <Hero dict={dict} locale={locale} />
         <AnimatedStats dict={dict} />
         <TrustBadges dict={dict} />
-        <Services dict={dict} />
+        <LazyServices dict={dict} />
         <ProductCategories dict={dict} locale={locale} />
         <HowItWorks dict={dict} />
         <LazyPlanMatchQuiz dict={dict} />
