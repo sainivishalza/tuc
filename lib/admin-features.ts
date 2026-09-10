@@ -13,6 +13,7 @@ import {
   Palette,
   Mail,
   Ship,
+  ShieldCheck,
 } from "lucide-react";
 
 export interface AdminFeature {
@@ -76,6 +77,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/case-studies",
     status: "live",
     icon: Trophy,
+  },
+  {
+    title: "Suppliers",
+    description:
+      "Supplier registrations with submitted business license, visiting card, and company photo — review and approve to list them on the public Verified Suppliers page.",
+    href: "/admin/suppliers",
+    status: "live",
+    icon: ShieldCheck,
   },
   {
     title: "Shipping Routes",

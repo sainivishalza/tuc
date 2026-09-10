@@ -504,6 +504,21 @@
     "airLabel": "空运",
     "expressLabel": "快递"
   },
+  "suppliers": {
+    "navLabel": "认证供应商",
+    "directory": {
+      "badge": "认证供应商",
+      "title": "我们已认证的供应商",
+      "subtitle": "每家供应商在上榜前都已提交营业执照、联系方式和公司照片供我们审核。",
+      "emptyState": "更多认证供应商正在添加中，敬请期待。",
+      "verifiedLabel": "已认证"
+    },
+    "register": {
+      "badge": "供应商专区",
+      "title": "申请成为认证供应商",
+      "subtitle": "提交您的企业信息和相关文件以供审核。审核通过后，您的公司将出现在我们的公开认证供应商页面上——为评估您的买家提供信任信号。"
+    }
+  },
   "tools": {
     "categories": {
       "electronics": {

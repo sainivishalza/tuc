@@ -504,6 +504,21 @@
     "airLabel": "Air Freight",
     "expressLabel": "Express Courier"
   },
+  "suppliers": {
+    "navLabel": "Verified Suppliers",
+    "directory": {
+      "badge": "Verified Suppliers",
+      "title": "Suppliers We've Verified",
+      "subtitle": "Every supplier here has submitted a business license, contact details, and company photos for our review before being listed.",
+      "emptyState": "New verified suppliers are being added — check back soon.",
+      "verifiedLabel": "Verified"
+    },
+    "register": {
+      "badge": "For Suppliers",
+      "title": "Get Listed as a Verified Supplier",
+      "subtitle": "Submit your business details and documents for review. Once approved, your company appears on our public Verified Suppliers page — a trust signal for buyers evaluating you."
+    }
+  },
   "tools": {
     "categories": {
       "electronics": {
