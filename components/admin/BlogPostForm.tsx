@@ -162,8 +162,10 @@ export default function BlogPostForm({
           className={`resize-y font-mono text-xs ${inputClass}`}
         />
         <p className="mt-1 text-[11px] text-gray-400">
-          Each block: {"{ type: \"paragraph\"|\"heading\", text }"}, {"{ type: \"list\", items: [...] }"}, or
-          {" "}{"{ type: \"related\", heading, items: [{ title, href }] }"} for internal links to other articles.
+          Each block: {"{ type: \"paragraph\"|\"heading\", text }"}, {"{ type: \"list\", items: [...] }"},
+          {" "}{"{ type: \"related\", heading, items: [{ title, href }] }"} for internal links to other articles, or
+          {" "}{"{ type: \"image\", url, alt, caption? }"} — upload the file elsewhere first (e.g. the site-assets
+          bucket) and paste its public URL here.
         </p>
       </div>
 

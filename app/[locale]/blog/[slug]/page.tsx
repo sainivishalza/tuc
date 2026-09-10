@@ -197,6 +197,22 @@ export default async function BlogPostPage({
                   </div>
                 );
               }
+              if (block.type === "image") {
+                return (
+                  <figure key={i} className="mt-6">
+                    <img
+                      src={block.url}
+                      alt={block.alt}
+                      className="w-full rounded-2xl border border-border"
+                    />
+                    {block.caption && (
+                      <figcaption className="mt-2 text-center text-xs text-muted">
+                        {block.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+              }
               return (
                 <p
                   key={i}
