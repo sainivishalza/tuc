@@ -6,6 +6,75 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import type { BlogPost, BlogBodyBlock } from "@/lib/supabase/types";
 
+const IMAGE_BUCKET = "site-assets";
+const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
+
+/** Same reasoning as theme.ts's logo upload and suppliers.ts's document
+ * upload — `file.type` is just the browser-declared Content-Type, not
+ * verified content. Checking magic bytes catches a mismatch before it's
+ * stored and served publicly from the blog's image bucket. */
+function matchesDeclaredImageType(bytes: Uint8Array, declaredType: string): boolean {
+  const startsWith = (sig: number[]) => sig.every((b, i) => bytes[i] === b);
+  switch (declaredType) {
+    case "image/png":
+      return startsWith([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    case "image/jpeg":
+      return startsWith([0xff, 0xd8, 0xff]);
+    case "image/webp":
+      return (
+        startsWith([0x52, 0x49, 0x46, 0x46]) &&
+        bytes[8] === 0x57 &&
+        bytes[9] === 0x45 &&
+        bytes[10] === 0x42 &&
+        bytes[11] === 0x50
+      );
+    default:
+      return false;
+  }
+}
+
+export interface BlogImageUploadResult {
+  ok: boolean;
+  url?: string;
+  message: string;
+}
+
+/** Uploads a body-block image to its own path (not a fixed one, unlike the
+ * site logo) since a post can hold several images across its lifetime and
+ * old ones stay referenced by already-published body content. */
+export async function uploadBlogImage(formData: FormData): Promise<BlogImageUploadResult> {
+  await requireAdminAction();
+
+  const file = formData.get("image");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, message: "No file selected." };
+  }
+  if (!IMAGE_TYPES.includes(file.type)) {
+    return { ok: false, message: "Image must be PNG, JPEG, or WebP." };
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return { ok: false, message: "Image must be smaller than 5MB." };
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  if (!matchesDeclaredImageType(new Uint8Array(arrayBuffer), file.type)) {
+    return { ok: false, message: "That file doesn't look like a valid image. Try a different file." };
+  }
+
+  const ext = file.type.split("/")[1];
+  const path = `blog/${crypto.randomUUID()}.${ext}`;
+
+  const supabase = getSupabaseAdminClient();
+  const { error: uploadError } = await supabase.storage.from(IMAGE_BUCKET).upload(path, arrayBuffer, {
+    contentType: file.type,
+  });
+  if (uploadError) return { ok: false, message: uploadError.message };
+
+  const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path);
+  return { ok: true, url: data.publicUrl, message: "Uploaded." };
+}
+
 export async function getPublishedPosts(locale: string): Promise<BlogPost[]> {
   const supabase = getSupabasePublicClient();
   const { data, error } = await supabase
