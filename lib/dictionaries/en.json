@@ -483,6 +483,42 @@
     "companyLabel": "Company",
     "resourcesLabel": "Resources"
   },
+  "newsletter": {
+    "label": "Get sourcing tips in your inbox",
+    "placeholder": "you@company.com",
+    "button": "Subscribe",
+    "success": "You're subscribed — check your inbox to confirm."
+  },
+  "guide": {
+    "badge": "Free Download",
+    "title": "The Complete Guide to Sourcing from China & Hong Kong",
+    "subtitle": "MOQs, lead times, and certifications by product category, plain-language Incoterms, the core shipping documents, the Chinese factory calendar, and a standard payment schedule — one PDF, no fluff.",
+    "linkText": "Get the free sourcing guide (PDF) →",
+    "navLabel": "Free Sourcing Guide"
+  },
+  "shipping": {
+    "badge": "Shipping Routes",
+    "title": "Shipping from China & Hong Kong",
+    "subtitle": "Typical transit times and customs considerations by destination — sea, air, and express, so you can plan a realistic timeline before you order.",
+    "seaLabel": "Sea Freight",
+    "airLabel": "Air Freight",
+    "expressLabel": "Express Courier"
+  },
+  "suppliers": {
+    "navLabel": "Verified Suppliers",
+    "directory": {
+      "badge": "Verified Suppliers",
+      "title": "Suppliers We've Verified",
+      "subtitle": "Every supplier here has submitted a business license, contact details, and company photos for our review before being listed.",
+      "emptyState": "New verified suppliers are being added — check back soon.",
+      "verifiedLabel": "Verified"
+    },
+    "register": {
+      "badge": "For Suppliers",
+      "title": "Get Listed as a Verified Supplier",
+      "subtitle": "Submit your business details and documents for review. Once approved, your company appears on our public Verified Suppliers page — a trust signal for buyers evaluating you."
+    }
+  },
   "tools": {
     "categories": {
       "electronics": {

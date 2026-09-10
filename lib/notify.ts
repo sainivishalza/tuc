@@ -285,6 +285,43 @@ export async function notifyDailyDigest(params: {
   });
 }
 
+/** Best-effort — never throws. A new supplier registration sits in
+ * "pending" until an admin reviews it, so this is what actually makes
+ * that review happen promptly instead of a submission quietly waiting
+ * unnoticed in the admin panel. */
+export async function notifyNewSupplierRegistration(params: {
+  companyName: string;
+  contactName: string;
+  email: string;
+}): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] new supplier registration received but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Supplier Registration
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 16px;">${escapeHtml(params.companyName)} wants to be listed as a verified supplier</h1>
+      <p style="font-size: 14px; margin: 0 0 8px;"><strong>Contact:</strong> ${escapeHtml(params.contactName)}</p>
+      <p style="font-size: 14px; margin: 0 0 8px;"><strong>Email:</strong> ${escapeHtml(params.email)}</p>
+      <p style="font-size: 14px; margin: 12px 0 0;">Review their submitted documents before approving — nothing shows on the public site until you do.</p>
+      <a href="${SITE_URL}/admin/suppliers" style="display: inline-block; margin-top: 20px; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Review in admin panel
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({
+    to,
+    subject: `New supplier registration: ${params.companyName}`,
+    html,
+  });
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
