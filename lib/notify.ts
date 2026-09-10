@@ -1,6 +1,6 @@
 import "server-only";
 import { sendEmail } from "@/lib/email";
-import type { ShipmentStatus, QuoteLineItem } from "@/lib/supabase/types";
+import type { ShipmentStatus, QuoteLineItem, QuoteRequest } from "@/lib/supabase/types";
 import { STATUS_LABELS } from "@/lib/shipmentStatus";
 
 const SITE_URL = "https://theuniquechoice.com";
@@ -214,6 +214,73 @@ export async function notifyNewBulkQuoteRequest(params: {
   await sendAndLog({
     to,
     subject: `New bulk quote request from ${params.name} (${params.items.length} items)`,
+    html,
+  });
+}
+
+/** Best-effort — never throws. Triggered by the /api/cron/digest route
+ * (see that file for how it's scheduled) rather than a user action, so
+ * unlike the other notify* functions here there's no request to attach
+ * this to — it always sends once triggered, including a "nothing new"
+ * result, since that confirms the cron actually ran rather than silently
+ * not firing. */
+export async function notifyDailyDigest(params: {
+  newRequests: QuoteRequest[];
+  openCount: number;
+}): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] daily digest ready to send but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const rowsHtml =
+    params.newRequests.length > 0
+      ? params.newRequests
+          .map(
+            (r) => `
+        <tr>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #f3f4f6;">${escapeHtml(r.name)}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #f3f4f6;">${escapeHtml(r.email)}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #f3f4f6;">${escapeHtml(r.product ?? "—")}</td>
+        </tr>`
+          )
+          .join("")
+      : `<tr><td colspan="3" style="padding: 12px 8px; color: #9ca3af;">No new requests in the last 24 hours.</td></tr>`;
+
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 560px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — Daily Digest
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 8px;">${params.newRequests.length} new request${params.newRequests.length === 1 ? "" : "s"} in the last 24 hours</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">
+        <strong>${params.openCount}</strong> total request${params.openCount === 1 ? "" : "s"} still marked "new" and waiting on a reply.
+      </p>
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid #e5e7eb;">Name</th>
+            <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid #e5e7eb;">Email</th>
+            <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid #e5e7eb;">Product</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+      <a href="${SITE_URL}/admin/quote-requests" style="display: inline-block; margin-top: 16px; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View in admin panel
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({
+    to,
+    subject:
+      params.newRequests.length > 0
+        ? `Daily digest: ${params.newRequests.length} new request${params.newRequests.length === 1 ? "" : "s"}`
+        : "Daily digest: no new requests",
     html,
   });
 }
