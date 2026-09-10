@@ -23,6 +23,7 @@ export default async function Header({
     { href: `/${locale}#why-us`, label: dict.nav.whyUs },
     { href: `/${locale}#faq`, label: dict.nav.faq },
     { href: `/${locale}/sourcing`, label: dict.categories.title },
+    { href: `/${locale}/case-studies`, label: dict.caseStudies.title },
     { href: `/${locale}/blog`, label: dict.nav.blog },
     { href: `/${locale}/track`, label: dict.nav.trackShipment },
     { href: "/portal/login", label: "Client Login" },

@@ -5,6 +5,7 @@ import {
   MessageSquareText,
   Star,
   Newspaper,
+  Trophy,
   LayoutGrid,
   BookOpen,
   Truck,
@@ -65,6 +66,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/blog",
     status: "live",
     icon: Newspaper,
+  },
+  {
+    title: "Case Studies",
+    description:
+      "Real client project write-ups — challenge, solution, and verified outcome numbers — stored in the database. Create, edit, and publish per locale without a code deploy.",
+    href: "/admin/case-studies",
+    status: "live",
+    icon: Trophy,
   },
   {
     title: "Category Pages",

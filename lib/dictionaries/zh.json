@@ -386,6 +386,15 @@
     "subtitle": "学习如何自信地从中国采购。来自我们团队的专业建议。",
     "readMore": "阅读更多"
   },
+  "caseStudies": {
+    "badge": "客户成功案例",
+    "title": "案例研究",
+    "subtitle": "真实的采购项目，真实的数据——看看我们如何帮助客户降低成本并放心发货。",
+    "readMore": "查看案例",
+    "emptyState": "更多案例研究即将上线，敬请期待。",
+    "challengeLabel": "面临的挑战",
+    "solutionLabel": "解决方案"
+  },
   "stats": {
     "items": [
       {

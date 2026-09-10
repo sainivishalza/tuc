@@ -330,6 +330,15 @@
     "subtitle": "Learn how to source from China with confidence. Expert advice from our team.",
     "readMore": "Read More"
   },
+  "caseStudies": {
+    "badge": "Client Success Stories",
+    "title": "Case Studies",
+    "subtitle": "Real sourcing projects, real numbers — see how we've helped clients cut costs and ship with confidence.",
+    "readMore": "View Case Study",
+    "emptyState": "New case studies are on the way — check back soon.",
+    "challengeLabel": "The Challenge",
+    "solutionLabel": "Our Solution"
+  },
   "glossary": {
     "badge": "Reference",
     "title": "Sourcing & Shipping Glossary",

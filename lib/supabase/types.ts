@@ -71,6 +71,28 @@ export interface BlogPost {
   updated_at: string;
 }
 
+export interface CaseStudyResult {
+  label: string;
+  value: string;
+}
+
+export interface CaseStudy {
+  id: string;
+  slug: string;
+  locale: string;
+  client_name: string;
+  industry: string;
+  title: string;
+  summary: string;
+  challenge: string;
+  solution: string;
+  results: CaseStudyResult[];
+  status: "draft" | "published";
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CategoryPage {
   id: string;
   slug: string;
