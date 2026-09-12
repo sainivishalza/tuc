@@ -17,13 +17,18 @@ export default function WhyUs({ dict }: { dict: Dictionary }) {
           subtitle={dict.whyUs.subtitle}
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* A plain two-column list, not another bordered tile grid — by
+            this point in the page (Services, Categories, and Trust Badges
+            all use the same icon-tile-grid shape), a fifth repeat of it
+            would flatten the page's rhythm. Whitespace does the
+            separating instead of card chrome. */}
+        <div className="mt-14 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-2">
           {dict.whyUs.items.map((item, i) => {
             const Icon = icons[i % icons.length];
             return (
               <Reveal key={item.title} delay={(i % 3) * 0.08}>
-                <div className="glass flex h-full items-start gap-4 rounded-2xl p-6">
-                  <ServiceIllustration icon={Icon} size={48} />
+                <div className="flex items-start gap-4">
+                  <ServiceIllustration icon={Icon} size={44} />
                   <div>
                     <h3 className="font-display text-base font-semibold">{item.title}</h3>
                     <p className="mt-1 text-xs leading-relaxed text-muted sm:text-sm">{item.desc}</p>

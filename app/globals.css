@@ -740,6 +740,22 @@ body {
   text-decoration-color: transparent;
 }
 
+/* A trailing icon (an arrow closing out "Continue", "View Our
+   Services") nudges forward on hover — a small, answers-your-cursor
+   motion rather than another ambient effect. Only ever matches an
+   icon that's the LAST child, so a button whose icon comes first
+   (e.g. the WhatsApp message icon before the label) is untouched. */
+.btn-primary svg:last-child,
+.btn-secondary svg:last-child,
+.btn-secondary-inverse svg:last-child {
+  transition: transform 0.2s ease;
+}
+.btn-primary:hover:not(:disabled) svg:last-child,
+.btn-secondary:hover:not(:disabled) svg:last-child,
+.btn-secondary-inverse:hover:not(:disabled) svg:last-child {
+  transform: translateX(3px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
