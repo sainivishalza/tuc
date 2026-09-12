@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MessageCircle, ArrowRight, PackageCheck, Globe2, ShieldCheck, Truck } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { whatsappLink } from "@/lib/whatsapp";
+import { AnimatedNumber } from "./AnimatedStats";
 
 export default function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
@@ -50,14 +51,41 @@ export default function Hero({ dict, locale }: { dict: Dictionary; locale: Local
 
         {/* Right column — a nested ledger panel, one step lighter than the
             hero ground, replacing the old horizontal glass stat-bar with a
-            vertical "briefing" list. */}
-        <div className="hero-stagger">
-          <div className="border border-white/10 bg-brand-blue/60 p-6 sm:p-7">
+            vertical "briefing" list. A dashed route line + two port nodes
+            sit behind the panel, drawn from empty margin so it never
+            crosses body text in any locale — the one on-subject graphic
+            in a hero that was otherwise pure typography. */}
+        <div className="relative hero-stagger">
+          <svg
+            aria-hidden
+            viewBox="0 0 400 460"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute -inset-x-6 -inset-y-10 hidden overflow-visible lg:block"
+          >
+            <path
+              d="M -10 430 C 90 380, 140 300, 200 230 S 320 90, 410 40"
+              fill="none"
+              stroke="color-mix(in srgb, var(--accent) 45%, transparent)"
+              strokeWidth="1.5"
+              strokeDasharray="5 7"
+              strokeLinecap="round"
+            />
+            <circle cx="-10" cy="430" r="4.5" fill="var(--accent)" />
+            <circle cx="410" cy="40" r="4.5" fill="var(--accent)" />
+          </svg>
+
+          <div className="relative border border-white/10 bg-brand-blue/60 p-6 sm:p-7">
             <p className="eyebrow text-xs text-white/50">At a glance</p>
             <dl className="mt-4 flex flex-col divide-y divide-white/10">
-              <Stat icon={<PackageCheck size={18} />} value="10" label={dict.hero.stat1Label} />
-              <Stat icon={<Globe2 size={18} />} value="3" label={dict.hero.stat2Label} />
-              <Stat icon={<ShieldCheck size={18} />} value="< 24h" label={dict.hero.stat3Label} />
+              <Stat icon={<PackageCheck size={18} />} label={dict.hero.stat1Label}>
+                <AnimatedNumber target={10} className="kpi-value text-white" />
+              </Stat>
+              <Stat icon={<Globe2 size={18} />} label={dict.hero.stat2Label}>
+                <AnimatedNumber target={3} className="kpi-value text-white" />
+              </Stat>
+              <Stat icon={<ShieldCheck size={18} />} label={dict.hero.stat3Label}>
+                <span className="kpi-value text-white">&lt; 24h</span>
+              </Stat>
             </dl>
           </div>
         </div>
@@ -68,11 +96,11 @@ export default function Hero({ dict, locale }: { dict: Dictionary; locale: Local
 
 function Stat({
   icon,
-  value,
+  children,
   label,
 }: {
   icon: React.ReactNode;
-  value: string;
+  children: React.ReactNode;
   label: string;
 }) {
   return (
@@ -81,7 +109,7 @@ function Stat({
         <span className="text-accent">{icon}</span>
         <dt className="kpi-label text-white/70">{label}</dt>
       </div>
-      <dd className="kpi-value text-white">{value}</dd>
+      <dd>{children}</dd>
     </div>
   );
 }

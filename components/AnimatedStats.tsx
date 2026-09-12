@@ -41,7 +41,18 @@ function useInView(ref: React.RefObject<Element | null>) {
   return { isInView, visibleOnMount };
 }
 
-function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
+// Exported so Hero's own stat panel can reuse the same count-up rather
+// than sitting as the one static, un-animated set of numbers on the
+// page while a less prominent mid-page stats block already animates.
+export function AnimatedNumber({
+  target,
+  suffix = "",
+  className = "kpi-value text-foreground",
+}: {
+  target: number;
+  suffix?: string;
+  className?: string;
+}) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const { isInView, visibleOnMount } = useInView(ref);
@@ -74,7 +85,7 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
   const displayCount = visibleOnMount && isInView ? target : count;
 
   return (
-    <span ref={ref} className="kpi-value text-foreground">
+    <span ref={ref} className={className}>
       {displayCount.toLocaleString()}{suffix}
     </span>
   );
