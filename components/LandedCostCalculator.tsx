@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Calculator, ArrowRight, Tag } from "lucide-react";
 import Reveal from "./Reveal";
-import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n";
@@ -14,7 +13,16 @@ function formatUsd(value: number): string {
   return value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 }
 
-export default function LandedCostCalculator({ dict }: { dict: Dictionary }) {
+export default function LandedCostCalculator({
+  dict,
+  onNavigate,
+}: {
+  dict: Dictionary;
+  /** Switches the parent Free Tools tab group to another tool's tab —
+   * used by "Estimate Selling Price" now that this tool lives in a tab
+   * panel instead of its own scrollable section. */
+  onNavigate?: (toolId: string) => void;
+}) {
   const t = dict.tools.landedCostCalculator;
   const categories = getCategoryProfiles(dict.tools.categories);
   const destinations = getDestinations(dict.tools.destinations);
@@ -81,16 +89,13 @@ export default function LandedCostCalculator({ dict }: { dict: Dictionary }) {
     trackCtaClick("Landed Cost Estimate Selling Price", pathname);
     const costPerUnit = (result.total.low + result.total.high) / 2 / qty;
     window.dispatchEvent(new CustomEvent("tuc:landed-cost-computed", { detail: { costPerUnit, quantity: qty } }));
-    document.getElementById("selling-price")?.scrollIntoView({ behavior: "smooth" });
+    if (onNavigate) onNavigate("selling-price");
+    else document.getElementById("selling-price")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section id="landed-cost" className="relative px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
-
-        <Reveal delay={0.15} className="mt-10">
-          <div className="glass-strong rounded-2xl p-6 sm:p-8">
+    <Reveal delay={0.05}>
+      <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium">{t.categoryLabel}</label>
@@ -237,9 +242,7 @@ export default function LandedCostCalculator({ dict }: { dict: Dictionary }) {
                 </div>
               </Reveal>
             )}
-          </div>
-        </Reveal>
       </div>
-    </section>
+    </Reveal>
   );
 }

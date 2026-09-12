@@ -3,13 +3,21 @@
 import { useState } from "react";
 import { Boxes, ArrowRight, ArrowDownToLine } from "lucide-react";
 import Reveal from "./Reveal";
-import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n";
 import { calculateCbm, type CbmResult } from "@/lib/cbmCalculator";
 
-export default function CbmCalculator({ dict }: { dict: Dictionary }) {
+export default function CbmCalculator({
+  dict,
+  onNavigate,
+}: {
+  dict: Dictionary;
+  /** Switches the parent Free Tools tab group to another tool's tab —
+   * used by "Use Weight in Landed Cost Calculator" now that this tool
+   * lives in a tab panel instead of its own scrollable section. */
+  onNavigate?: (toolId: string) => void;
+}) {
   const t = dict.tools.cbmCalculator;
   const [length, setLength] = useState("40");
   const [width, setWidth] = useState("30");
@@ -34,7 +42,8 @@ export default function CbmCalculator({ dict }: { dict: Dictionary }) {
   const handleUseInLandedCost = () => {
     if (!result) return;
     window.dispatchEvent(new CustomEvent("tuc:cbm-computed", { detail: { weightKg: result.totalWeightKg } }));
-    document.getElementById("landed-cost")?.scrollIntoView({ behavior: "smooth" });
+    if (onNavigate) onNavigate("landed-cost");
+    else document.getElementById("landed-cost")?.scrollIntoView({ behavior: "smooth" });
   };
 
   function recommendationText(r: CbmResult): string {
@@ -76,12 +85,8 @@ export default function CbmCalculator({ dict }: { dict: Dictionary }) {
   };
 
   return (
-    <section id="cbm-calculator" className="section-tint-amber relative px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
-
-        <Reveal delay={0.15} className="mt-10">
-          <div className="glass-strong rounded-2xl p-6 sm:p-8">
+    <Reveal delay={0.05}>
+      <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               <div>
                 <label className="mb-2 block text-sm font-medium">{t.lengthLabel}</label>
@@ -196,9 +201,7 @@ export default function CbmCalculator({ dict }: { dict: Dictionary }) {
                 </div>
               </Reveal>
             )}
-          </div>
-        </Reveal>
       </div>
-    </section>
+    </Reveal>
   );
 }

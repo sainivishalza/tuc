@@ -582,6 +582,19 @@
       "ecoFriendly": "Eco-friendly / sustainable materials",
       "childSafety": "Child safety compliance (ASTM/EN71)"
     },
+    "freeTools": {
+      "badge": "Free Tools",
+      "title": "Try Our Free Sourcing Tools",
+      "subtitle": "Six quick tools that answer the questions you'd normally ask an agent — no signup required.",
+      "tabs": {
+        "smartMatch": "Product Match",
+        "supplierCheck": "Supplier Check",
+        "cbm": "Shipping Space",
+        "landedCost": "Landed Cost",
+        "sellingPrice": "Selling Price",
+        "readiness": "Readiness Quiz"
+      }
+    },
     "productMatcher": {
       "badge": "Free · Instant Match",
       "title": "Not Sure Where to Start? Describe It.",

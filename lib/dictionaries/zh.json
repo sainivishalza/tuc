@@ -582,6 +582,19 @@
       "ecoFriendly": "环保/可持续材料",
       "childSafety": "儿童安全合规(ASTM/EN71)"
     },
+    "freeTools": {
+      "badge": "免费工具",
+      "title": "试用我们的免费寻源工具",
+      "subtitle": "六款快速工具,解答你通常需要询问代理的问题——无需注册。",
+      "tabs": {
+        "smartMatch": "产品匹配",
+        "supplierCheck": "供应商核查",
+        "cbm": "货物体积",
+        "landedCost": "到岸成本",
+        "sellingPrice": "售价测算",
+        "readiness": "准备度测试"
+      }
+    },
     "productMatcher": {
       "badge": "免费 · 即时匹配",
       "title": "不知道从哪开始?直接描述吧。",

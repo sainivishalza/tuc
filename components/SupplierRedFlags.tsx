@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ShieldAlert, ArrowRight, CheckCircle2, AlertTriangle, OctagonAlert } from "lucide-react";
 import Reveal from "./Reveal";
-import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n";
@@ -49,12 +48,8 @@ export default function SupplierRedFlags({ dict }: { dict: Dictionary }) {
   };
 
   return (
-    <section className="relative px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
-
-        <Reveal delay={0.15} className="mt-10">
-          <div className="glass-strong rounded-2xl p-6 sm:p-8">
+    <Reveal delay={0.05}>
+      <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="space-y-3">
               {redFlags.map((flag) => (
                 <label
@@ -114,9 +109,7 @@ export default function SupplierRedFlags({ dict }: { dict: Dictionary }) {
                 </div>
               </Reveal>
             )}
-          </div>
-        </Reveal>
       </div>
-    </section>
+    </Reveal>
   );
 }
