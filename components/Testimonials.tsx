@@ -6,6 +6,7 @@ import type { Testimonial } from "@/lib/supabase/types";
 import Reveal from "./Reveal";
 import { SectionHeading } from "./Services";
 import { whatsappLink } from "@/lib/whatsapp";
+import { countryFlagEmoji } from "@/lib/countries";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -38,6 +39,20 @@ function AvatarInitials({ name }: { name: string }) {
       {initials}
     </div>
   );
+}
+
+// A real company logo replaces the initials circle once staff upload
+// one for that client — falls back to initials otherwise, never a
+// placeholder or blank spot.
+function ClientAvatar({ name, logoUrl }: { name: string; logoUrl: string | null }) {
+  if (logoUrl) {
+    return (
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-white">
+        <img src={logoUrl} alt="" className="h-full w-full object-contain p-1" />
+      </span>
+    );
+  }
+  return <AvatarInitials name={name} />;
 }
 
 export default function Testimonials({
@@ -74,10 +89,15 @@ export default function Testimonials({
                     {t.quote}
                   </p>
                   <div className="mt-auto flex items-center gap-3 pt-4">
-                    <AvatarInitials name={t.name} />
+                    <ClientAvatar name={t.name} logoUrl={t.logo_url} />
                     <div>
                       <p className="font-display text-sm font-semibold">
                         {t.name}
+                        {countryFlagEmoji(t.country_code) && (
+                          <span aria-hidden className="ml-1.5">
+                            {countryFlagEmoji(t.country_code)}
+                          </span>
+                        )}
                       </p>
                       <p className="text-xs text-muted">{t.company}</p>
                     </div>
