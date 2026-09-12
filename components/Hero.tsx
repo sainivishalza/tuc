@@ -25,14 +25,14 @@ export default function Hero({ dict, locale }: { dict: Dictionary; locale: Local
               href={whatsappLink(dict.contact.whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold sm:w-auto"
+              className="btn-primary w-full sm:w-auto"
             >
               <MessageCircle size={18} />
               {dict.hero.ctaWhatsapp}
             </a>
             <a
               href="#services"
-              className="btn-secondary-inverse flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold sm:w-auto"
+              className="btn-secondary-inverse w-full sm:w-auto"
             >
               {dict.hero.ctaServices}
               <ArrowRight size={16} />
@@ -77,11 +77,11 @@ function Stat({
 }) {
   return (
     <div className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <span className="text-accent">{icon}</span>
-        <dt className="text-sm text-white/70">{label}</dt>
+        <dt className="kpi-label text-white/70">{label}</dt>
       </div>
-      <dd className="font-display text-2xl font-bold tracking-tight text-white">{value}</dd>
+      <dd className="kpi-value text-white">{value}</dd>
     </div>
   );
 }

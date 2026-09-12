@@ -48,7 +48,7 @@ export default function Services({ dict }: { dict: Dictionary }) {
                 delay={(i % 3) * 0.08}
                 className={isLastOrphan ? "lg:col-start-2" : undefined}
               >
-                <TiltCard className="glass-strong group flex h-full flex-col gap-5 rounded-2xl border p-7 transition hover:shadow-xl">
+                <TiltCard className="glass-strong card group flex h-full flex-col gap-5">
                   <div className="flex items-start justify-between">
                     <ServiceIllustration icon={Icon} variant={i % 2 === 0 ? "blue" : "navy"} />
                     <span className="section-number text-2xl">

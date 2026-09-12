@@ -101,16 +101,17 @@ export default async function Header({
           <div className="hidden shrink-0 items-center gap-4 lg:flex">
             <a
               href={accountLink.href}
-              className="whitespace-nowrap text-[13px] font-medium text-foreground/70 transition hover:text-foreground"
+              className="group relative whitespace-nowrap text-[13px] font-medium text-foreground/70 transition hover:text-foreground"
             >
               {accountLink.label}
+              <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-accent transition-all duration-300 group-hover:w-full" />
             </a>
             <LanguageSwitcher locale={locale} />
             <a
               href={whatsappLink(dict.contact.whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold"
+              className="btn-primary btn-sm whitespace-nowrap"
             >
               <MessageCircle size={16} />
               {dict.nav.chatWhatsapp}

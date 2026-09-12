@@ -50,6 +50,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string }>({});
   const pathname = usePathname() ?? "/";
   const locale = pathname.split("/")[1] || "en";
   const captchaConfigured = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
@@ -73,11 +74,20 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
 
   const totalSteps = 3;
 
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const handleSubmit = async () => {
-    if (!name.trim() || !email.trim()) {
-      setError("Please enter your name and email.");
+    const nextFieldErrors: { name?: string; email?: string } = {};
+    if (!name.trim()) nextFieldErrors.name = "Enter your name.";
+    if (!email.trim()) nextFieldErrors.email = "Enter your email address.";
+    else if (!EMAIL_RE.test(email.trim())) nextFieldErrors.email = "Enter a valid email address.";
+
+    setFieldErrors(nextFieldErrors);
+    if (Object.keys(nextFieldErrors).length > 0) {
+      setError("Fix the highlighted field before continuing.");
       return;
     }
+
     setSubmitting(true);
     setError("");
     const result = await submitQuoteRequest({
@@ -217,10 +227,11 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                   </p>
                   <div className="space-y-4">
                     <div>
-                      <label className="mb-2 block text-sm font-medium">
+                      <label htmlFor="quote-quantity" className="mb-2 block text-sm font-medium">
                         Estimated Quantity
                       </label>
                       <input
+                        id="quote-quantity"
                         type="text"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
@@ -249,10 +260,11 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                       </div>
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium">
+                      <label htmlFor="quote-message" className="mb-2 block text-sm font-medium">
                         Additional Details
                       </label>
                       <textarea
+                        id="quote-message"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Any specific requirements, certifications, or notes..."
@@ -275,36 +287,59 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                   </p>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-2 block text-sm font-medium">
+                      <label htmlFor="quote-name" className="mb-2 block text-sm font-medium">
                         Your Name *
                       </label>
                       <input
+                        id="quote-name"
                         type="text"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          if (fieldErrors.name) setFieldErrors((f) => ({ ...f, name: undefined }));
+                        }}
                         placeholder="John Smith"
                         required
+                        aria-invalid={fieldErrors.name ? "true" : undefined}
+                        aria-describedby={fieldErrors.name ? "quote-name-error" : undefined}
                         className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                       />
+                      {fieldErrors.name && (
+                        <p id="quote-name-error" className="field-error-message">
+                          {fieldErrors.name}
+                        </p>
+                      )}
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium">
+                      <label htmlFor="quote-email" className="mb-2 block text-sm font-medium">
                         Email Address *
                       </label>
                       <input
+                        id="quote-email"
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (fieldErrors.email) setFieldErrors((f) => ({ ...f, email: undefined }));
+                        }}
                         placeholder="john@company.com"
                         required
+                        aria-invalid={fieldErrors.email ? "true" : undefined}
+                        aria-describedby={fieldErrors.email ? "quote-email-error" : undefined}
                         className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                       />
+                      {fieldErrors.email && (
+                        <p id="quote-email-error" className="field-error-message">
+                          {fieldErrors.email}
+                        </p>
+                      )}
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="mb-2 block text-sm font-medium">
+                      <label htmlFor="quote-whatsapp" className="mb-2 block text-sm font-medium">
                         WhatsApp Number
                       </label>
                       <input
+                        id="quote-whatsapp"
                         type="tel"
                         value={whatsapp}
                         onChange={(e) => setWhatsapp(e.target.value)}
@@ -320,10 +355,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
               {/* Navigation Buttons */}
               <div className="mt-8 flex items-center justify-between">
                 {step > 1 ? (
-                  <button
-                    onClick={() => setStep(step - 1)}
-                    className="flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium transition hover:bg-surface-2"
-                  >
+                  <button onClick={() => setStep(step - 1)} className="btn-ghost">
                     <ArrowLeft size={16} />
                     Back
                   </button>
@@ -335,7 +367,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                   <button
                     onClick={() => canProceed() && setStep(step + 1)}
                     disabled={!canProceed()}
-                    className="brand-gradient flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+                    className="btn-primary"
                   >
                     Continue
                     <ArrowRight size={16} />
@@ -344,7 +376,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                   <button
                     onClick={handleSubmit}
                     disabled={submitting || (captchaConfigured && !turnstileToken)}
-                    className="brand-gradient-animated flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                    className="btn-primary"
                   >
                     <Send size={16} />
                     {submitting ? "Sending..." : dict.consultation.form.submit}
@@ -353,7 +385,9 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
               </div>
 
               {error && (
-                <p className="mt-4 text-center text-sm text-red-500">{error}</p>
+                <p className="mt-4 text-center text-sm text-[var(--color-error)]" role="alert">
+                  {error}
+                </p>
               )}
 
               <p className="mt-4 text-center text-xs text-muted">

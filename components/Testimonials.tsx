@@ -60,7 +60,7 @@ export default function Testimonials({
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {testimonials.map((t, i) => (
               <Reveal key={t.id} delay={i * 0.08}>
-                <div className="glass-strong relative flex h-full flex-col gap-1 overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/5">
+                <div className="glass-strong card relative flex h-full flex-col gap-1 overflow-hidden">
                   <span
                     aria-hidden
                     className="font-display pointer-events-none absolute -top-3 left-4 select-none text-7xl leading-none text-accent/10"

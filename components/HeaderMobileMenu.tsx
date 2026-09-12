@@ -32,9 +32,10 @@ export default function HeaderMobileMenu({
   return (
     <>
       <button
-        className="flex items-center justify-center rounded p-2 text-foreground lg:hidden"
+        className="flex items-center justify-center rounded p-2 text-foreground transition-colors hover:bg-surface-2 active:bg-border lg:hidden"
         onClick={() => setOpen((v) => !v)}
         aria-label="Toggle menu"
+        aria-expanded={open}
       >
         {open ? <X size={22} /> : <Menu size={22} />}
       </button>
@@ -61,7 +62,7 @@ export default function HeaderMobileMenu({
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary mt-2 flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold"
+            className="btn-primary btn-sm mt-2"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}

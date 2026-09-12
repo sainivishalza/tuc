@@ -27,7 +27,7 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold"
+            className="btn-primary btn-sm"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}

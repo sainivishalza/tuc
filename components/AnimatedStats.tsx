@@ -74,17 +74,20 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
   const displayCount = visibleOnMount && isInView ? target : count;
 
   return (
-    <span ref={ref} className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
+    <span ref={ref} className="kpi-value text-foreground">
       {displayCount.toLocaleString()}{suffix}
     </span>
   );
 }
 
+// Flat ink/amber icon tiles, alternating like ServiceIllustration's two
+// variants — no gradient fill, matching the editorial redesign's flat
+// treatment rather than the glossy tile this replaced.
 const statMeta = [
-  { icon: Users, value: 500, suffix: "+", color: "text-brand-600", bg: "from-brand-500/20 to-transparent" },
-  { icon: Globe, value: 15, suffix: "+", color: "text-brand-900", bg: "from-brand-900/15 to-transparent" },
-  { icon: Clock, value: 10, suffix: "+", color: "text-brand-600", bg: "from-brand-400/20 to-transparent" },
-  { icon: Package, value: 2000, suffix: "+", color: "text-brand-800", bg: "from-brand-800/15 to-transparent" },
+  { icon: Users, value: 500, suffix: "+", variant: "navy" as const },
+  { icon: Globe, value: 15, suffix: "+", variant: "accent" as const },
+  { icon: Clock, value: 10, suffix: "+", variant: "navy" as const },
+  { icon: Package, value: 2000, suffix: "+", variant: "accent" as const },
 ];
 
 export default function AnimatedStats({ dict }: { dict: Dictionary }) {
@@ -98,12 +101,19 @@ export default function AnimatedStats({ dict }: { dict: Dictionary }) {
       <div className="mx-auto max-w-5xl">
         <div className="glass-strong rounded-3xl p-8 sm:p-12">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {stats.map((stat, i) => {
+            {stats.map((stat) => {
               const Icon = stat.icon;
+              const isNavy = stat.variant === "navy";
               return (
                 <div key={stat.label} className="flex flex-col items-center text-center">
-                  <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.bg}`}>
-                    <Icon size={28} className={stat.color} />
+                  <div
+                    className={`mb-4 flex h-14 w-14 items-center justify-center border ${
+                      isNavy
+                        ? "border-brand-navy/25 bg-brand-navy text-white"
+                        : "border-accent/30 bg-transparent text-accent"
+                    }`}
+                  >
+                    <Icon size={26} strokeWidth={1.6} />
                   </div>
                   <AnimatedNumber target={stat.value} suffix={stat.suffix} />
                   <p className="mt-2 text-sm text-muted">{stat.label}</p>
