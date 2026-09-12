@@ -66,6 +66,12 @@ export interface Testimonial {
   rating: number;
   locale: string;
   status: "pending" | "approved" | "rejected";
+  /** ISO 3166-1 alpha-2 code (e.g. "IN", "US") — staff-entered, never
+   * guessed from the client's name. Null until set. */
+  country_code: string | null;
+  /** Public URL in the site-assets bucket, set only once staff upload a
+   * real logo — never a placeholder or generated mark. */
+  logo_url: string | null;
   created_at: string;
 }
 
