@@ -9,6 +9,8 @@ export interface SiteTheme {
   secondary_color: string;
   surface_color: string;
   background_color: string;
+  text_color: string;
+  muted_color: string;
   font_choice: FontChoice;
   text_scale: TextScale;
   corner_style: CornerStyle;
