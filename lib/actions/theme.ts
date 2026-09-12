@@ -57,6 +57,8 @@ const DEFAULT_THEME: SiteTheme = {
   secondary_color: "#16283f",
   surface_color: "#f7f8fa",
   background_color: "#edf0f4",
+  text_color: "#101826",
+  muted_color: "#47536b",
   font_choice: "publicsans",
   text_scale: "medium",
   corner_style: "sharp",
@@ -97,6 +99,8 @@ function sanitizeTheme(row: SiteTheme | null): SiteTheme {
     background_color: HEX_COLOR_RE.test(row.background_color)
       ? row.background_color
       : DEFAULT_THEME.background_color,
+    text_color: HEX_COLOR_RE.test(row.text_color) ? row.text_color : DEFAULT_THEME.text_color,
+    muted_color: HEX_COLOR_RE.test(row.muted_color) ? row.muted_color : DEFAULT_THEME.muted_color,
     font_choice: ["inter", "poppins", "playfair", "publicsans"].includes(row.font_choice)
       ? row.font_choice
       : DEFAULT_THEME.font_choice,
@@ -120,6 +124,8 @@ export interface ThemeInput {
   secondary_color: string;
   surface_color: string;
   background_color: string;
+  text_color: string;
+  muted_color: string;
   font_choice: SiteTheme["font_choice"];
   text_scale: SiteTheme["text_scale"];
   corner_style: SiteTheme["corner_style"];
@@ -139,7 +145,9 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
     !HEX_COLOR_RE.test(input.accent_color) ||
     !HEX_COLOR_RE.test(input.secondary_color) ||
     !HEX_COLOR_RE.test(input.surface_color) ||
-    !HEX_COLOR_RE.test(input.background_color)
+    !HEX_COLOR_RE.test(input.background_color) ||
+    !HEX_COLOR_RE.test(input.text_color) ||
+    !HEX_COLOR_RE.test(input.muted_color)
   ) {
     return { ok: false, message: "Colors must be a valid hex code like #00c2cb." };
   }
@@ -152,6 +160,8 @@ export async function updateSiteTheme(input: ThemeInput): Promise<ThemeSaveResul
     secondary_color: input.secondary_color,
     surface_color: input.surface_color,
     background_color: input.background_color,
+    text_color: input.text_color,
+    muted_color: input.muted_color,
     font_choice: input.font_choice,
     text_scale: input.text_scale,
     corner_style: input.corner_style,

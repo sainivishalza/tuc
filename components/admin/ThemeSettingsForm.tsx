@@ -46,6 +46,8 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
   const [secondaryColor, setSecondaryColor] = useState(initial.secondary_color);
   const [surfaceColor, setSurfaceColor] = useState(initial.surface_color);
   const [backgroundColor, setBackgroundColor] = useState(initial.background_color);
+  const [textColor, setTextColor] = useState(initial.text_color);
+  const [mutedColor, setMutedColor] = useState(initial.muted_color);
   const [fontChoice, setFontChoice] = useState<FontChoice>(initial.font_choice);
   const [textScale, setTextScale] = useState<TextScale>(initial.text_scale);
   const [cornerStyle, setCornerStyle] = useState<CornerStyle>(initial.corner_style);
@@ -118,7 +120,9 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
       !isValidHex(accentColor) ||
       !isValidHex(secondaryColor) ||
       !isValidHex(surfaceColor) ||
-      !isValidHex(backgroundColor)
+      !isValidHex(backgroundColor) ||
+      !isValidHex(textColor) ||
+      !isValidHex(mutedColor)
     ) {
       setError("Colors must be a valid hex code like #00c2cb.");
       return;
@@ -132,6 +136,8 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
         secondary_color: secondaryColor,
         surface_color: surfaceColor,
         background_color: backgroundColor,
+        text_color: textColor,
+        muted_color: mutedColor,
         font_choice: fontChoice,
         text_scale: textScale,
         corner_style: cornerStyle,
@@ -242,10 +248,31 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
           value={backgroundColor}
           onChange={setBackgroundColor}
         />
+        <ColorField
+          label="Text color"
+          sublabel="Headings and body copy across the whole site"
+          placeholder="#101826"
+          value={textColor}
+          onChange={setTextColor}
+        />
+        <ColorField
+          label="Muted text color"
+          sublabel="Subtitles, captions, and secondary copy — should read lighter than the text color above"
+          placeholder="#47536b"
+          value={mutedColor}
+          onChange={setMutedColor}
+        />
       </div>
       {surfaceColor.toLowerCase() === backgroundColor.toLowerCase() && (
         <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
           Card background and body background are the same color — cards will blend into the page instead of standing out.
+        </p>
+      )}
+      {(textColor.toLowerCase() === surfaceColor.toLowerCase() ||
+        textColor.toLowerCase() === backgroundColor.toLowerCase()) && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+          Text color matches a background color exactly — body copy will be unreadable. Pick a color with
+          real contrast against both backgrounds above.
         </p>
       )}
 
@@ -347,11 +374,11 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
           >
             <p
               className="font-bold"
-              style={{ color: primaryColor, fontSize: `calc(${SIZE_PREVIEW_REM[textScale]} * 1.75)` }}
+              style={{ color: textColor, fontSize: `calc(${SIZE_PREVIEW_REM[textScale]} * 1.75)` }}
             >
               Your Trusted Sourcing Partner
             </p>
-            <p className="mt-2 text-gray-600" style={{ fontSize: SIZE_PREVIEW_REM[textScale] }}>
+            <p className="mt-2" style={{ color: mutedColor, fontSize: SIZE_PREVIEW_REM[textScale] }}>
               This is how body text, paragraphs, and{" "}
               <span style={{ color: secondaryColor, fontWeight: 600 }}>links</span> will look across the
               site.

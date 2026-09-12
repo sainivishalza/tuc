@@ -119,6 +119,8 @@ export default async function RootLayout({
     --brand-blue: ${theme.secondary_color};
     --surface: ${theme.surface_color};
     --background: ${theme.background_color};
+    --foreground: ${theme.text_color};
+    --muted: ${theme.muted_color};
     --font-selected: ${FONT_VAR_BY_CHOICE[theme.font_choice]};
     --text-scale: ${TEXT_SCALE_VALUE[theme.text_scale]};
     --corner-radius-lg: ${radius.lg};
