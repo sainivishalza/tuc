@@ -80,11 +80,11 @@ export function SectionHeading({
 }) {
   return (
     <Reveal className="mx-auto max-w-2xl text-center">
-      <span className="eyebrow accent-text text-xs sm:text-sm">{badge}</span>
+      <span className="eyebrow accent-text mx-auto inline-block text-sm sm:text-base">{badge}</span>
       <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
         {title}
       </h2>
-      <div className="brand-gradient mx-auto mt-4 h-1 w-14 rounded-full" />
+      <div className="mx-auto mt-4 h-px w-14 bg-accent" />
       {subtitle && <p className="mt-5 text-sm text-muted sm:text-base">{subtitle}</p>}
     </Reveal>
   );

@@ -27,7 +27,7 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="brand-gradient-animated flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent/20 transition hover:scale-105"
+            className="btn-primary flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}
@@ -50,7 +50,7 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
                   </span>
                 )}
                 <span className="font-display text-base font-semibold text-white">
-                  <span className="text-brand-blue">The Unique</span> Choice
+                  <span className="text-accent">The Unique</span> Choice
                 </span>
               </Link>
               <p className="mt-3 text-sm text-white/60">{dict.footer.tagline}</p>

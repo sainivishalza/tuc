@@ -1,4 +1,4 @@
-export type FontChoice = "inter" | "poppins" | "playfair";
+export type FontChoice = "inter" | "poppins" | "playfair" | "publicsans";
 export type TextScale = "small" | "medium" | "large";
 export type CornerStyle = "sharp" | "rounded" | "soft";
 

@@ -32,7 +32,7 @@ export default function HeaderMobileMenu({
   return (
     <>
       <button
-        className="flex items-center justify-center rounded-full p-2 text-foreground lg:hidden"
+        className="flex items-center justify-center rounded p-2 text-foreground lg:hidden"
         onClick={() => setOpen((v) => !v)}
         aria-label="Toggle menu"
       >
@@ -42,26 +42,26 @@ export default function HeaderMobileMenu({
       {open && (
         <div
           ref={menuRef}
-          className="absolute left-0 top-full flex w-full flex-col gap-1 border-t border-border bg-white p-4 lg:hidden"
+          className="absolute left-0 top-full flex w-full flex-col gap-1 border-t border-white/10 bg-brand-navy p-4 lg:hidden"
         >
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 transition hover:bg-surface-2 hover:text-foreground"
+              className="rounded px-3 py-2.5 text-sm font-medium text-white/75 transition hover:bg-white/5 hover:text-white"
             >
               {l.label}
             </a>
           ))}
-          <div className="mt-1 flex items-center justify-between gap-3 px-3 pt-2">
+          <div className="mt-1 flex items-center justify-between gap-3 border-t border-white/10 px-3 pt-3">
             <LanguageSwitcher locale={locale} />
           </div>
           <a
             href={whatsappLink(dict.contact.whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="brand-gradient-animated mt-2 flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-white"
+            className="btn-primary mt-2 flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold"
           >
             <MessageCircle size={16} />
             {dict.nav.chatWhatsapp}

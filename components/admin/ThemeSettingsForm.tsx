@@ -6,6 +6,7 @@ import type { SiteTheme, FontChoice, TextScale, CornerStyle } from "@/lib/supaba
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
 const FONT_OPTIONS: { value: FontChoice; label: string; cssVar: string }[] = [
+  { value: "publicsans", label: "Public Sans — Institutional & Refined", cssVar: "var(--font-publicsans)" },
   { value: "inter", label: "Inter — Modern & Clean", cssVar: "var(--font-inter)" },
   { value: "poppins", label: "Poppins — Friendly & Bold", cssVar: "var(--font-poppins)" },
   { value: "playfair", label: "Playfair Display — Elegant & Editorial", cssVar: "var(--font-playfair)" },
@@ -208,36 +209,36 @@ export default function ThemeSettingsForm({ initial }: { initial: SiteTheme }) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ColorField
           label="Primary color"
-          sublabel="The one dark accent card near the bottom of the homepage"
-          placeholder="#2f3a56"
+          sublabel="The masthead, footer, and dark ledger panels"
+          placeholder="#0e1a2b"
           value={primaryColor}
           onChange={setPrimaryColor}
         />
         <ColorField
           label="Accent color"
           sublabel="Buttons and CTAs — the color that should always pop"
-          placeholder="#00c2cb"
+          placeholder="#c1791e"
           value={accentColor}
           onChange={setAccentColor}
         />
         <ColorField
           label="Secondary color"
-          sublabel="Logo, links, the 3D hero graphic"
-          placeholder="#00c2cb"
+          sublabel="Nested panels on dark sections, links"
+          placeholder="#16283f"
           value={secondaryColor}
           onChange={setSecondaryColor}
         />
         <ColorField
           label="Card background"
-          sublabel="Every white card, panel, and popup"
-          placeholder="#ffffff"
+          sublabel="Every card and panel surface"
+          placeholder="#f7f8fa"
           value={surfaceColor}
           onChange={setSurfaceColor}
         />
         <ColorField
           label="Body background"
           sublabel="Behind cards — keep this different from the card color above, or cards stop standing out"
-          placeholder="#f4f6f8"
+          placeholder="#edf0f4"
           value={backgroundColor}
           onChange={setBackgroundColor}
         />

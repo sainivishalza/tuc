@@ -12,7 +12,7 @@ export default function ContactCTA({ dict }: { dict: Dictionary }) {
   return (
     <section id="contact" className="section-tint-blue relative px-4 py-20 sm:px-6">
       <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-brand-navy text-white">
-        <div className="blob -top-20 left-1/3 h-72 w-72 bg-brand-blue/30" />
+        <div className="blob -top-20 left-1/3 h-72 w-72 bg-accent/25" />
         <div className="brand-gradient absolute inset-x-0 top-0 h-1" />
         <Reveal className="relative flex flex-col items-center gap-4 px-6 py-16 text-center sm:py-20">
           <span className="eyebrow text-xs text-accent sm:text-sm">{dict.contact.badge}</span>
