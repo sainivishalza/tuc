@@ -8,7 +8,7 @@ import { requireAdminAction } from "@/lib/adminAuth";
 import { notifyNewQuoteRequest, notifyNewBulkQuoteRequest } from "@/lib/notify";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
-import type { QuoteRequest, QuoteLineItem } from "@/lib/supabase/types";
+import type { QuoteRequest, QuoteLineItem, AdminClient, ClientNote } from "@/lib/supabase/types";
 
 export interface QuoteRequestInput {
   name: string;
@@ -165,6 +165,35 @@ export async function submitBulkQuoteRequest(
   return { success: true };
 }
 
+/** Lightweight count for the top bar's notification badge and the
+ * dashboard's "Active Quotes" KPI — a head-only count query rather than
+ * fetching every row just to measure them. */
+export async function getActiveQuoteCount(): Promise<number> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { count, error } = await supabase
+    .from("quote_requests")
+    .select("*", { count: "exact", head: true })
+    .in("status", ["new", "contacted"]);
+
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
+/** Sum of quoted_value on won (closed) quotes — the dashboard's Revenue
+ * KPI. Zero, not fabricated, until staff actually enter values. */
+export async function getWonRevenue(): Promise<number> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("quote_requests")
+    .select("quoted_value")
+    .eq("status", "closed");
+
+  if (error) throw new Error(error.message);
+  return (data as { quoted_value: number | null }[]).reduce((sum, r) => sum + (r.quoted_value ?? 0), 0);
+}
+
 export async function getQuoteRequests(): Promise<QuoteRequest[]> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
@@ -190,4 +219,85 @@ export async function updateQuoteRequestStatus(
 
   if (error) throw new Error(error.message);
   revalidatePath("/admin/quote-requests");
+  revalidatePath("/admin");
+  revalidatePath("/admin/clients");
+}
+
+export async function updateQuoteValue(id: string, value: number | null): Promise<void> {
+  await requireAdminAction();
+  if (value !== null && (Number.isNaN(value) || value < 0)) {
+    throw new Error("Value must be a positive number.");
+  }
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase
+    .from("quote_requests")
+    .update({ quoted_value: value })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/quote-requests");
+  revalidatePath("/admin");
+  revalidatePath("/admin/clients");
+}
+
+/** Bulk status update for the quote table's checkbox-select + bulk action bar. */
+export async function bulkUpdateQuoteStatus(ids: string[], status: QuoteRequest["status"]): Promise<void> {
+  await requireAdminAction();
+  if (ids.length === 0) return;
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("quote_requests").update({ status }).in("id", ids);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/quote-requests");
+  revalidatePath("/admin");
+  revalidatePath("/admin/clients");
+}
+
+export async function getQuoteRequestsByEmail(email: string): Promise<QuoteRequest[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("quote_requests")
+    .select("*")
+    .ilike("email", email)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data as QuoteRequest[];
+}
+
+export async function getClients(): Promise<AdminClient[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("admin_clients")
+    .select("*")
+    .order("last_quote_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data as AdminClient[];
+}
+
+export async function getClientNote(email: string): Promise<ClientNote | null> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("client_notes")
+    .select("*")
+    .eq("email", email.toLowerCase())
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return data as ClientNote | null;
+}
+
+export async function upsertClientNote(email: string, notes: string): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase
+    .from("client_notes")
+    .upsert({ email: email.toLowerCase(), notes, updated_at: new Date().toISOString() });
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/clients");
 }
