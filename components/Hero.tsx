@@ -12,7 +12,7 @@ export default function Hero({ dict, locale }: { dict: Dictionary; locale: Local
         <div className="hero-stagger">
           <span className="eyebrow eyebrow-ruled text-sm text-accent">{dict.hero.badge}</span>
 
-          <h1 className="font-display mt-5 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+          <h1 className="hero-title font-display mt-5 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
             {dict.hero.title} <span className="text-accent">{dict.hero.titleHighlight}</span>
           </h1>
 

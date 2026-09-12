@@ -148,7 +148,7 @@ export default function TrackingLookup({ dict }: { dict: Dictionary }) {
         <button
           type="submit"
           disabled={loading}
-          className="brand-gradient flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition hover:scale-105 disabled:opacity-60 sm:w-auto"
+          className="btn-primary w-full sm:w-auto"
         >
           <Search size={16} />
           {dict.tracking.button}

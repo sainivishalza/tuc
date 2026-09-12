@@ -224,12 +224,25 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-selected, var(--font-publicsans)), "Segoe UI", sans-serif;
-  /* Fine hairline ledger grid rather than a dot pattern or solid white —
-     a data-grid texture that reads as "trade publication," at low enough
-     opacity that it never competes with content on top of it. */
+}
+
+/* Fine hairline ledger grid — the site's signature data-grid texture,
+   reserved for exactly three moments (the hero, one mid-page section,
+   the footer) instead of running behind every section, so it reads as
+   a deliberate accent rather than wallpaper repeating the whole page
+   down. Light and dark variants share the same 44px grid; the dark one
+   is also baked directly into .gradient-hero-dark for the hero. */
+.grid-texture {
   background-image:
     linear-gradient(var(--border) 1px, transparent 1px),
     linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  background-position: center;
+}
+.grid-texture-dark {
+  background-image:
+    linear-gradient(color-mix(in srgb, white 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, white 4%, transparent) 1px, transparent 1px);
   background-size: 44px 44px;
   background-position: center;
 }
@@ -379,6 +392,13 @@ body {
   transform: scaleX(1);
 }
 
+/* Testimonial cards keep the shared lift-on-hover but skip the gold
+   top rule every other .glass-strong card draws — a pull-quote doesn't
+   need the same "exhibit" marker as a service or pricing tile. */
+.card-no-rule::before {
+  display: none;
+}
+
 /* Consistent padding and radius for the three named card types (service,
    pricing, testimonial) — layered on top of .glass-strong via a second
    class rather than baked into .glass-strong itself, since 30+ other
@@ -417,8 +437,8 @@ body {
   font-family: var(--font-fraunces), Georgia, serif;
   font-weight: 600;
   font-style: italic;
-  color: var(--accent);
-  opacity: 0.55;
+  color: var(--muted);
+  opacity: 0.7;
 }
 
 @keyframes gradient-shift {
@@ -562,6 +582,17 @@ body {
 .hero-stagger > *:nth-child(3) { animation-delay: 0.27s; }
 .hero-stagger > *:nth-child(4) { animation-delay: 0.38s; }
 .hero-stagger > *:nth-child(5) { animation-delay: 0.49s; }
+
+/* Hero headline — clamped on narrow screens so it can't grow past
+   ~2.25rem regardless of viewport width or the admin's text-scale
+   setting, keeping both CTAs on screen without scrolling. Overridden
+   by Tailwind's sm:/lg: text-size utilities at wider breakpoints,
+   since those apply at 640px+ and this media query stops at 639px. */
+@media (max-width: 639px) {
+  .hero-title {
+    font-size: clamp(2rem, 7vw, 2.25rem);
+  }
+}
 
 /* KPI figure — the large bold number in a stat tile (the hero's "At a
    glance" panel and anywhere else a headline figure appears). Serif and

@@ -35,9 +35,9 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
         </div>
       </div>
 
-      <div className="bg-brand-navy text-white/70">
+      <div className="grid-texture-dark bg-brand-navy text-white/70">
         <div className="px-4 py-12 sm:px-6">
-          <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-[1.1fr_1fr_1fr_1fr]">
+          <div className="mx-auto grid max-w-6xl gap-x-10 gap-y-12 sm:grid-cols-[1.1fr_1fr_1fr_1fr] sm:gap-y-10">
             <div className="max-w-sm">
               <Link href={`/${locale}`} className="flex items-center gap-2.5">
                 {theme.logo_url ? (
@@ -45,7 +45,7 @@ export default async function Footer({ dict, locale }: { dict: Dictionary; local
                     <img src={theme.logo_url} alt="" className="h-full w-full object-contain" />
                   </span>
                 ) : (
-                  <span className="brand-gradient flex h-8 w-8 items-center justify-center rounded-lg font-display text-sm font-semibold text-white">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-navy font-display text-sm font-semibold text-white">
                     U
                   </span>
                 )}

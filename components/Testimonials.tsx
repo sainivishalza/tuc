@@ -60,10 +60,10 @@ export default function Testimonials({
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {testimonials.map((t, i) => (
               <Reveal key={t.id} delay={i * 0.08}>
-                <div className="glass-strong card relative flex h-full flex-col gap-1 overflow-hidden">
+                <div className="glass-strong card card-no-rule relative flex h-full flex-col gap-1 overflow-hidden">
                   <span
                     aria-hidden
-                    className="font-display pointer-events-none absolute -top-3 left-4 select-none text-7xl leading-none text-accent/10"
+                    className="font-display pointer-events-none absolute -top-3 left-4 select-none text-7xl leading-none text-foreground/15"
                   >
                     &ldquo;
                   </span>
@@ -102,7 +102,7 @@ export default function Testimonials({
                 href={whatsappLink(dict.contact.whatsappMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="brand-gradient mt-2 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                className="btn-primary mt-2"
               >
                 <MessageCircle size={16} />
                 {dict.nav.chatWhatsapp}

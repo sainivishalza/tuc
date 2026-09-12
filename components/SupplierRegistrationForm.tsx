@@ -87,7 +87,7 @@ export default function SupplierRegistrationForm({ dict }: { dict: Dictionary })
           href={whatsappLink(dict.contact.whatsappMessage)}
           target="_blank"
           rel="noopener noreferrer"
-          className="brand-gradient mt-2 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+          className="btn-primary mt-2"
         >
           <MessageCircle size={16} />
           {dict.nav.chatWhatsapp}
@@ -157,7 +157,7 @@ export default function SupplierRegistrationForm({ dict }: { dict: Dictionary })
       <button
         type="submit"
         disabled={submitting || (captchaConfigured && !turnstileToken)}
-        className="brand-gradient-animated mt-6 flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+        className="btn-primary mt-6 w-full"
       >
         <Send size={16} />
         {submitting ? "Submitting..." : "Submit for Review"}

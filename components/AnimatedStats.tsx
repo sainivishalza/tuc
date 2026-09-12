@@ -80,14 +80,15 @@ function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: stri
   );
 }
 
-// Flat ink/amber icon tiles, alternating like ServiceIllustration's two
-// variants — no gradient fill, matching the editorial redesign's flat
-// treatment rather than the glossy tile this replaced.
+// Flat solid-navy icon tiles, matching ServiceIllustration's one
+// treatment — no gradient fill, and no alternating variant, so every
+// icon tile on the page (services, why-us, stats, trust badges) reads
+// as the same system.
 const statMeta = [
-  { icon: Users, value: 500, suffix: "+", variant: "navy" as const },
-  { icon: Globe, value: 15, suffix: "+", variant: "accent" as const },
-  { icon: Clock, value: 10, suffix: "+", variant: "navy" as const },
-  { icon: Package, value: 2000, suffix: "+", variant: "accent" as const },
+  { icon: Users, value: 500, suffix: "+" },
+  { icon: Globe, value: 15, suffix: "+" },
+  { icon: Clock, value: 10, suffix: "+" },
+  { icon: Package, value: 2000, suffix: "+" },
 ];
 
 export default function AnimatedStats({ dict }: { dict: Dictionary }) {
@@ -97,22 +98,15 @@ export default function AnimatedStats({ dict }: { dict: Dictionary }) {
   }));
 
   return (
-    <section className="relative px-4 py-20 sm:px-6">
+    <section className="grid-texture relative px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-5xl">
         <div className="glass-strong rounded-3xl p-8 sm:p-12">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {stats.map((stat) => {
               const Icon = stat.icon;
-              const isNavy = stat.variant === "navy";
               return (
                 <div key={stat.label} className="flex flex-col items-center text-center">
-                  <div
-                    className={`mb-4 flex h-14 w-14 items-center justify-center border ${
-                      isNavy
-                        ? "border-brand-navy/25 bg-brand-navy text-white"
-                        : "border-accent/30 bg-transparent text-accent"
-                    }`}
-                  >
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center border border-brand-navy/25 bg-brand-navy text-white">
                     <Icon size={26} strokeWidth={1.6} />
                   </div>
                   <AnimatedNumber target={stat.value} suffix={stat.suffix} />

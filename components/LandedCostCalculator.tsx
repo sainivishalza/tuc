@@ -171,7 +171,7 @@ export default function LandedCostCalculator({ dict }: { dict: Dictionary }) {
             <button
               onClick={handleCalculate}
               disabled={!canCalculate}
-              className="brand-gradient mt-6 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+              className="btn-primary mt-6"
             >
               <Calculator size={16} />
               {t.calculateButton}
@@ -228,7 +228,7 @@ export default function LandedCostCalculator({ dict }: { dict: Dictionary }) {
                     </button>
                     <button
                       onClick={handleGetQuote}
-                      className="brand-gradient-animated flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
+                      className="btn-primary"
                     >
                       {t.getExactQuote}
                       <ArrowRight size={16} />

@@ -23,7 +23,7 @@ export default function WhyUs({ dict }: { dict: Dictionary }) {
             return (
               <Reveal key={item.title} delay={(i % 3) * 0.08}>
                 <div className="glass flex h-full items-start gap-4 rounded-2xl p-6">
-                  <ServiceIllustration icon={Icon} variant={i % 2 === 0 ? "navy" : "blue"} size={48} />
+                  <ServiceIllustration icon={Icon} size={48} />
                   <div>
                     <h3 className="font-display text-base font-semibold">{item.title}</h3>
                     <p className="mt-1 text-xs leading-relaxed text-muted sm:text-sm">{item.desc}</p>

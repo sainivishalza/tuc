@@ -61,7 +61,7 @@ export default function DocumentChecklist({ dict, locale }: { dict: Dictionary; 
               </select>
               <button
                 onClick={handleGenerate}
-                className="brand-gradient flex shrink-0 items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
+                className="btn-primary shrink-0"
               >
                 <FileCheck2 size={16} />
                 {t.generateButton}
@@ -103,7 +103,7 @@ export default function DocumentChecklist({ dict, locale }: { dict: Dictionary; 
                   <a
                     href={`/${locale}#consultation`}
                     onClick={() => trackCtaClick("Document Checklist Get Quote", pathname)}
-                    className="brand-gradient-animated mt-5 flex w-fit items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
+                    className="btn-primary mt-5 w-fit"
                   >
                     {t.getQuote}
                     <ArrowRight size={16} />

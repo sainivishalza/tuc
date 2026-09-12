@@ -52,7 +52,7 @@ export default function PortalLoginForm() {
               <button
                 type="submit"
                 disabled={pending || (captchaConfigured && !turnstileToken)}
-                className="brand-gradient flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-md shadow-accent/20 transition hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                className="btn-primary w-full"
               >
                 {pending ? "Sending..." : "Send sign-in link"}
                 {!pending && <ArrowRight size={16} />}

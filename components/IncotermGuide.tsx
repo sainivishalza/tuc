@@ -128,7 +128,7 @@ export default function IncotermGuide({ dict, locale }: { dict: Dictionary; loca
                   <a
                     href={`/${locale}#consultation`}
                     onClick={() => trackCtaClick("Incoterm Guide Get Quote", pathname)}
-                    className="brand-gradient-animated flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
+                    className="btn-primary"
                   >
                     {t.getQuote.replace("{id}", result.id)}
                     <ArrowRight size={16} />
