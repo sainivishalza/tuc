@@ -20,14 +20,14 @@ export default function Pricing({ dict }: { dict: Dictionary }) {
           {dict.pricing.plans.map((plan, i) => (
             <Reveal key={plan.name} delay={i * 0.1}>
               <div
-                className={`glass-strong flex h-full flex-col rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 ${
+                className={`glass-strong card flex h-full flex-col ${
                   i === 1
                     ? "relative border-2 border-accent/50 shadow-lg shadow-accent/10"
                     : ""
                 }`}
               >
                 {i === 1 && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-bold text-white">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-bold text-brand-navy">
                     Most Popular
                   </span>
                 )}
@@ -61,11 +61,7 @@ export default function Pricing({ dict }: { dict: Dictionary }) {
                   href={whatsappLink(dict.contact.whatsappMessage)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`mt-6 flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition ${
-                    i === 1
-                      ? "brand-gradient text-white shadow-lg shadow-accent/20"
-                      : "border border-border text-foreground hover:bg-surface-2"
-                  }`}
+                  className={`mt-6 ${i === 1 ? "btn-primary" : "btn-secondary"}`}
                 >
                   <MessageCircle size={16} />
                   {dict.pricing.cta}

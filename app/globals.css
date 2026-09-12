@@ -83,6 +83,38 @@
   --corner-radius-2xl: 0.5rem;
   --corner-radius-3xl: 0.75rem;
 
+  /* One status color, outside the categorical navy/amber system on
+     purpose — a form error is state, not brand, so it needs to read as
+     unambiguously "wrong" regardless of the current accent color. A
+     desaturated brick red rather than a stock bright red, to stay in
+     the same quiet-editorial register as everything else. */
+  --color-error: #b3261e;
+  --color-error-bg: color-mix(in srgb, var(--color-error) 8%, transparent);
+
+  /* Button system tokens — sizing lives here, not hardcoded per usage
+     site, so every button on the site shares one scale. */
+  --btn-font-size: 0.9375rem;
+  --btn-font-size-sm: 0.8125rem;
+  --btn-padding-y: 0.875rem;
+  --btn-padding-x: 1.75rem;
+  --btn-padding-y-sm: 0.625rem;
+  --btn-padding-x-sm: 1.25rem;
+  --btn-gap: 0.5rem;
+
+  /* Card system tokens — one padding scale for every "ledger tile"
+     (service, pricing, testimonial) instead of each component picking
+     its own p-6/p-7/p-8. */
+  --card-padding: 1.75rem;
+  --card-padding-sm: 1.25rem;
+  --card-radius: var(--corner-radius-2xl);
+  --card-gap: 1rem;
+
+  /* KPI figure system — the large bold numbers in the hero's stat panel
+     and anywhere else a headline figure appears. */
+  --kpi-value-size: 2.75rem;
+  --kpi-value-size-sm: 2rem;
+  --kpi-label-size: 0.8125rem;
+
   /* Slate-blue scale for the admin panel's own chrome (sidebar, primary
      buttons, file inputs) — kept separate from the public site's
      admin-editable theme colors on purpose, since the admin panel is
@@ -159,6 +191,28 @@
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: var(--corner-radius-lg);
+}
+
+/* Form field error state — an invalid field gets the error border and
+   ring in place of the accent ones, plus a tinted background so it reads
+   as wrong even before the inline message below it is read. Applied via
+   aria-invalid rather than a separate class, so the error styling and
+   the accessibility signal can never drift out of sync with each other. */
+.site-shell input[aria-invalid="true"],
+.site-shell textarea[aria-invalid="true"],
+.site-shell select[aria-invalid="true"] {
+  border-color: var(--color-error);
+  background: var(--color-error-bg);
+}
+.site-shell input[aria-invalid="true"]:focus-visible,
+.site-shell textarea[aria-invalid="true"]:focus-visible,
+.site-shell select[aria-invalid="true"]:focus-visible {
+  outline-color: var(--color-error);
+}
+.field-error-message {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--color-error);
 }
 
 html {
@@ -320,6 +374,22 @@ body {
 }
 .glass-strong:hover::before {
   transform: scaleX(1);
+}
+
+/* Consistent padding and radius for the three named card types (service,
+   pricing, testimonial) — layered on top of .glass-strong via a second
+   class rather than baked into .glass-strong itself, since 30+ other
+   surfaces site-wide (dropdowns, form wrappers, icon tiles, inputs) also
+   use .glass-strong for just its border/hover treatment with their own
+   box model. */
+.card {
+  padding: var(--card-padding);
+  border-radius: var(--card-radius);
+}
+@media (max-width: 640px) {
+  .card {
+    padding: var(--card-padding-sm);
+  }
 }
 
 .card-hover {
@@ -490,34 +560,93 @@ body {
 .hero-stagger > *:nth-child(4) { animation-delay: 0.38s; }
 .hero-stagger > *:nth-child(5) { animation-delay: 0.49s; }
 
-/* Primary/secondary/tertiary button system. Pill-shaped (rounded-full in
-   markup) regardless of the admin's corner-style pick — see the comment
-   on --corner-radius above. Focus rings come from the global
-   :focus-visible rule; these only need to define color and hover/active
-   states. */
+/* KPI figure — the large bold number in a stat tile (the hero's "At a
+   glance" panel and anywhere else a headline figure appears). Serif and
+   heavy, matching how a financial page treats a headline number rather
+   than a small icon-badge counter. */
+.kpi-value {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: var(--kpi-value-size);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.kpi-label {
+  font-size: var(--kpi-label-size);
+}
+@media (max-width: 480px) {
+  .kpi-value {
+    font-size: var(--kpi-value-size-sm);
+  }
+}
+
+/* Primary/secondary/ghost button system. Each class is self-sufficient
+   (box model included, via the --btn-* tokens above) rather than a
+   modifier requiring a separate base class — matching how every other
+   shared class in this file works, and how these are already used
+   across ~20 components. Pill-shaped (rounded-full in markup) regardless
+   of the admin's corner-style pick — see the comment on --corner-radius
+   above. Focus rings come from the global :focus-visible rule (scoped to
+   .site-shell); these only need to define color and hover/active/disabled
+   states. Append .btn-sm for the compact header/mobile-nav contexts. */
+.btn-primary,
+.btn-secondary,
+.btn-secondary-inverse,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-gap);
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  font-size: var(--btn-font-size);
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+.btn-sm {
+  padding: var(--btn-padding-y-sm) var(--btn-padding-x-sm);
+  font-size: var(--btn-font-size-sm);
+}
+
 .btn-primary {
   background: var(--accent);
   color: var(--brand-navy);
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1.5px solid transparent;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--accent-dark);
   transform: translateY(-1px);
   box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--accent) 45%, transparent);
 }
-.btn-primary:active {
+.btn-primary:active:not(:disabled) {
   transform: translateY(0);
+  background: var(--accent-dark);
+  box-shadow: none;
+}
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .btn-secondary {
   background: transparent;
   color: var(--foreground);
   border: 1.5px solid var(--foreground);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: var(--foreground);
   color: var(--surface);
+}
+.btn-secondary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  color: var(--surface);
+}
+.btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 
 /* For use on the dark masthead/hero/footer ground — same shape, inverted
@@ -526,23 +655,45 @@ body {
   background: transparent;
   color: #fff;
   border: 1.5px solid color-mix(in srgb, white 45%, transparent);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
-.btn-secondary-inverse:hover {
+.btn-secondary-inverse:hover:not(:disabled) {
   background: color-mix(in srgb, white 12%, transparent);
   border-color: #fff;
 }
+.btn-secondary-inverse:active:not(:disabled) {
+  background: color-mix(in srgb, white 20%, transparent);
+}
+.btn-secondary-inverse:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
 
-.btn-tertiary {
-  color: var(--foreground);
+/* Text-only — no border, no fill, for the lowest-emphasis action in a
+   group (e.g. "Back" beside a primary "Continue"). Padding stays for a
+   consistent click target even though nothing is drawn around it. */
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid transparent;
+  padding-left: calc(var(--btn-padding-x) * 0.6);
+  padding-right: calc(var(--btn-padding-x) * 0.6);
   text-decoration: underline;
   text-decoration-color: transparent;
   text-underline-offset: 4px;
-  transition: text-decoration-color 0.2s ease, color 0.2s ease;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease, opacity 0.2s ease;
 }
-.btn-tertiary:hover {
-  color: var(--accent);
+.btn-ghost:hover:not(:disabled) {
+  color: var(--foreground);
   text-decoration-color: currentColor;
+}
+.btn-ghost:active:not(:disabled) {
+  color: var(--accent);
+}
+.btn-ghost:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+  text-decoration-color: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {

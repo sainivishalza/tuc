@@ -61,7 +61,7 @@ export default function NewsletterForm({ dict, locale }: { dict: Dictionary; loc
         <button
           type="submit"
           disabled={submitting || (captchaConfigured && showCaptcha && !turnstileToken)}
-          className="btn-primary shrink-0 rounded px-4 py-2 text-sm font-semibold disabled:opacity-60"
+          className="btn-primary btn-sm shrink-0"
         >
           {submitting ? "..." : dict.newsletter.button}
         </button>
