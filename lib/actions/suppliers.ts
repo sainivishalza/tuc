@@ -165,6 +165,19 @@ export async function getApprovedSuppliers(): Promise<
   return data as Supplier[];
 }
 
+/** Lightweight count for the top bar's notification badge. */
+export async function getPendingSupplierCount(): Promise<number> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { count, error } = await supabase
+    .from("suppliers")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "pending");
+
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
 export async function getAllSuppliers(): Promise<Supplier[]> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
@@ -209,6 +222,23 @@ export async function updateSupplierStatus(id: string, status: Supplier["status"
   revalidateSupplierPaths();
 }
 
+/** Quick inline rating from the directory grid, separate from the full
+ * edit form — a 1-5 star click shouldn't require a page navigation. */
+export async function updateSupplierRating(id: string, rating: number | null): Promise<void> {
+  await requireAdminAction();
+  if (rating !== null && (rating < 1 || rating > 5)) {
+    throw new Error("Rating must be between 1 and 5.");
+  }
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase
+    .from("suppliers")
+    .update({ rating, updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidateSupplierPaths();
+}
+
 export interface SupplierEditInput {
   company_name: string;
   contact_name: string;
@@ -216,6 +246,8 @@ export interface SupplierEditInput {
   phone: string;
   product_categories: string;
   business_address: string;
+  country: string;
+  rating: number | null;
   notes: string;
   admin_notes: string;
   status: Supplier["status"];
@@ -235,6 +267,8 @@ export async function updateSupplier(id: string, input: SupplierEditInput, formD
     phone: input.phone.trim() || null,
     product_categories: input.product_categories.trim() || null,
     business_address: input.business_address.trim() || null,
+    country: input.country.trim() || null,
+    rating: input.rating,
     notes: input.notes.trim() || null,
     admin_notes: input.admin_notes.trim() || null,
     status: input.status,

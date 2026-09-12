@@ -115,23 +115,23 @@
   --kpi-value-size-sm: 2rem;
   --kpi-label-size: 0.8125rem;
 
-  /* Slate-blue scale for the admin panel's own chrome (sidebar, primary
-     buttons, file inputs) — kept separate from the public site's
-     admin-editable theme colors on purpose, since the admin panel is
-     Claude's own tool, not a customer-facing surface the theme editor
-     needs to reach. --color-brand-900 is the exact requested slate blue
-     (#2F3A56); the rest of the scale is derived around it. */
-  --color-brand-50: #f3f4f8;
-  --color-brand-100: #e6e9f0;
-  --color-brand-200: #d3d8e5;
-  --color-brand-300: #b0b9cf;
-  --color-brand-400: #8b98b8;
-  --color-brand-500: #6b7ba0;
-  --color-brand-600: #56678f;
-  --color-brand-700: #48577d;
-  --color-brand-800: #3b4868;
-  --color-brand-900: #2f3a56;
-  --color-brand-950: #242c42;
+  /* Admin chrome scale — derived from the exact same --brand-navy the
+     public site uses (not a separately-maintained hex), so the admin
+     panel shares real brand tokens rather than an approximation. If the
+     public navy ever changes via the theme editor, admin chrome follows
+     automatically — that's the point of "the same color tokens," not a
+     coincidence to guard against. */
+  --color-brand-50: color-mix(in srgb, var(--brand-navy) 3%, white);
+  --color-brand-100: color-mix(in srgb, var(--brand-navy) 7%, white);
+  --color-brand-200: color-mix(in srgb, var(--brand-navy) 14%, white);
+  --color-brand-300: color-mix(in srgb, var(--brand-navy) 24%, white);
+  --color-brand-400: color-mix(in srgb, var(--brand-navy) 40%, white);
+  --color-brand-500: color-mix(in srgb, var(--brand-navy) 58%, white);
+  --color-brand-600: color-mix(in srgb, var(--brand-navy) 75%, white);
+  --color-brand-700: color-mix(in srgb, var(--brand-navy) 88%, white);
+  --color-brand-800: color-mix(in srgb, var(--brand-navy) 94%, white);
+  --color-brand-900: var(--brand-navy);
+  --color-brand-950: color-mix(in srgb, var(--brand-navy) 88%, black);
 }
 
 @theme inline {
@@ -250,9 +250,12 @@ body {
    as distinct from the customer-facing site rather than sharing its
    Jakarta headings. Scoped to admin-only components (AdminShell,
    PageHeader), never applied to public pages. */
+/* Now shares the public site's own display face rather than a distinct
+   admin typeface — the admin panel is a brand-consistent Linear/Vercel-
+   quality dashboard now, not a deliberately separate tool. */
 .font-admin-display {
-  font-family: var(--font-plex), sans-serif;
-  font-weight: 600;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 700;
 }
 
 /* A magazine-style kicker — italic serif set in title case rather than
@@ -578,6 +581,16 @@ body {
   .kpi-value {
     font-size: var(--kpi-value-size-sm);
   }
+}
+/* Same figure treatment at the admin dashboard's denser scale — a 44px
+   number reads right in a hero stat panel, not stacked four-across in a
+   compact KPI card row. */
+.kpi-value-compact {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: var(--kpi-value-size-sm);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
 }
 
 /* Primary/secondary/ghost button system. Each class is self-sufficient

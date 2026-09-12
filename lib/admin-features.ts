@@ -14,6 +14,7 @@ import {
   Mail,
   Ship,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 
 export interface AdminFeature {
@@ -77,6 +78,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/case-studies",
     status: "live",
     icon: Trophy,
+  },
+  {
+    title: "Clients",
+    description:
+      "Every person who's submitted a quote request, grouped by email — quote history, total won value, and internal notes in one place.",
+    href: "/admin/clients",
+    status: "live",
+    icon: Users,
   },
   {
     title: "Suppliers",

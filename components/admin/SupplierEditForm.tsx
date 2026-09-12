@@ -15,6 +15,8 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
   const [phone, setPhone] = useState(supplier.phone ?? "");
   const [productCategories, setProductCategories] = useState(supplier.product_categories ?? "");
   const [businessAddress, setBusinessAddress] = useState(supplier.business_address ?? "");
+  const [country, setCountry] = useState(supplier.country ?? "");
+  const [rating, setRating] = useState<number | null>(supplier.rating);
   const [notes, setNotes] = useState(supplier.notes ?? "");
   const [adminNotes, setAdminNotes] = useState(supplier.admin_notes ?? "");
   const [status, setStatus] = useState<Supplier["status"]>(supplier.status);
@@ -36,6 +38,8 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
           phone,
           product_categories: productCategories,
           business_address: businessAddress,
+          country,
+          rating,
           notes,
           admin_notes: adminNotes,
           status,
@@ -76,6 +80,25 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
         <div>
           <label className={labelClass}>Business Address</label>
           <input value={businessAddress} onChange={(e) => setBusinessAddress(e.target.value)} className={inputClass} />
+        </div>
+        <div>
+          <label className={labelClass}>Country</label>
+          <input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="China" className={inputClass} />
+        </div>
+        <div>
+          <label className={labelClass}>Rating (1-5, after working with them)</label>
+          <select
+            value={rating ?? ""}
+            onChange={(e) => setRating(e.target.value ? Number(e.target.value) : null)}
+            className={inputClass}
+          >
+            <option value="">Not yet rated</option>
+            {[1, 2, 3, 4, 5].map((n) => (
+              <option key={n} value={n}>
+                {n} star{n === 1 ? "" : "s"}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

@@ -210,6 +210,32 @@ export async function getProofOfDeliveryUrl(trackingNumber: string): Promise<str
 
 // ---------- Admin CRUD ----------
 
+/** Real counts for the dashboard's KPI cards — head-only queries rather
+ * than fetching every shipment row just to count them. "In transit"
+ * covers everything actually moving; "inspections pending" is production
+ * finished but QC not yet passed. */
+export async function getShipmentKpiCounts(): Promise<{ inTransit: number; inspectionsPending: number }> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+
+  const [inTransitRes, inspectionsRes] = await Promise.all([
+    supabase
+      .from("shipments")
+      .select("*", { count: "exact", head: true })
+      .in("status", ["ready_to_ship", "in_transit", "delayed"]),
+    supabase
+      .from("shipments")
+      .select("*", { count: "exact", head: true })
+      .not("milestone_production_started_at", "is", null)
+      .is("milestone_qc_passed_at", null),
+  ]);
+
+  if (inTransitRes.error) throw new Error(inTransitRes.error.message);
+  if (inspectionsRes.error) throw new Error(inspectionsRes.error.message);
+
+  return { inTransit: inTransitRes.count ?? 0, inspectionsPending: inspectionsRes.count ?? 0 };
+}
+
 export async function getAllShipments(): Promise<Shipment[]> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
@@ -233,6 +259,60 @@ export async function getShipmentById(id: string): Promise<Shipment | null> {
 
   if (error) throw new Error(error.message);
   return data as Shipment | null;
+}
+
+/** The milestone field each status implies has been reached — backfilled
+ * with now() only if not already set, so the Kanban board's "advance"
+ * action keeps the shipment's own milestone timeline accurate instead of
+ * just flipping a status label with nothing behind it. */
+const MILESTONE_FOR_STATUS: Partial<Record<ShipmentStatus, keyof Shipment>> = {
+  // Re-applying "not_shipped" (the Kanban board's Sourcing -> Sample
+  // Approved move, which has no status of its own) backfills this
+  // milestone without needing a status change.
+  not_shipped: "milestone_sample_approved_at",
+  in_production: "milestone_production_started_at",
+  // Reaching ready_to_ship is what implies QC passed — quality_check
+  // itself has no "entered inspection" milestone of its own in this
+  // schema, only the eventual pass/fail via leaving it.
+  ready_to_ship: "milestone_qc_passed_at",
+  in_transit: "milestone_shipped_at",
+  delivered: "milestone_delivered_at",
+};
+
+/** Status-only update for the Kanban board's per-card "advance" action —
+ * a lightweight alternative to updateShipment's full-form payload for the
+ * one-field change a drag/click between columns actually makes. */
+export async function updateShipmentStatus(id: string, status: ShipmentStatus): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+
+  const { data: existing } = await supabase
+    .from("shipments")
+    .select("status, customer_email, tracking_number, milestone_sample_approved_at")
+    .eq("id", id)
+    .maybeSingle();
+  if (!existing) throw new Error("Shipment not found.");
+  const statusChanged = existing.status !== status;
+
+  const update: Record<string, unknown> = { status, updated_at: new Date().toISOString() };
+  const milestoneField = MILESTONE_FOR_STATUS[status];
+  if (milestoneField && !existing[milestoneField as keyof typeof existing]) {
+    update[milestoneField] = new Date().toISOString();
+  }
+
+  const { error } = await supabase.from("shipments").update(update).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  if (statusChanged && existing.customer_email) {
+    await notifyStatusChange({
+      customerEmail: existing.customer_email,
+      trackingNumber: existing.tracking_number,
+      newStatus: status,
+    });
+  }
+
+  revalidateShipmentPaths();
+  revalidatePath("/admin");
 }
 
 export interface ShipmentInput {

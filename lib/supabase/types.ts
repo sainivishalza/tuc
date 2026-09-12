@@ -33,8 +33,29 @@ export interface QuoteRequest {
   timeline: string | null;
   message: string | null;
   items: QuoteLineItem[] | null;
-  status: "new" | "contacted" | "closed";
+  status: "new" | "contacted" | "closed" | "lost";
+  /** Staff-entered deal value once a quote is priced — null until then, never derived or estimated. */
+  quoted_value: number | null;
   created_at: string;
+}
+
+/** A live aggregation over quote_requests grouped by email — see the
+ * admin_clients view. Not a stored table: there is no persistent client
+ * record independent of quote history. */
+export interface AdminClient {
+  email: string;
+  name: string;
+  whatsapp: string | null;
+  quote_count: number;
+  total_won_value: number | null;
+  last_quote_at: string;
+  has_open_quote: boolean;
+}
+
+export interface ClientNote {
+  email: string;
+  notes: string;
+  updated_at: string;
 }
 
 export interface Testimonial {
@@ -135,6 +156,9 @@ export interface Supplier {
   phone: string | null;
   product_categories: string | null;
   business_address: string | null;
+  country: string | null;
+  /** 1-5, staff-entered after working with the supplier — null until rated. */
+  rating: number | null;
   notes: string | null;
   business_license_url: string | null;
   visiting_card_url: string | null;
