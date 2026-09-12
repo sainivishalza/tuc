@@ -135,7 +135,7 @@ export default async function PortalPage() {
             href={whatsappLink("Hi! I'm signed in to my client portal and have a question.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="brand-gradient flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+            className="btn-primary"
           >
             <MessageCircle size={16} />
             Message Us on WhatsApp

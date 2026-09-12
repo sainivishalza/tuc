@@ -50,7 +50,7 @@ export default function Pricing({ dict }: { dict: Dictionary }) {
                     <li key={feature} className="flex items-start gap-2 text-sm">
                       <Check
                         size={16}
-                        className="mt-0.5 shrink-0 text-accent"
+                        className="mt-0.5 shrink-0 text-muted"
                       />
                       <span className="text-foreground/80">{feature}</span>
                     </li>

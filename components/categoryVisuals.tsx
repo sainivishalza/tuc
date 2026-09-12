@@ -17,40 +17,18 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
   other: Sparkles,
 };
 
-export interface CategoryTint {
-  bg: string;
-  icon: string;
-}
-
-export const CATEGORY_TINTS: Record<string, CategoryTint> = {
-  electronics: { bg: "from-blue-500/15 to-blue-600/5", icon: "text-blue-400" },
-  home: { bg: "from-amber-500/15 to-amber-600/5", icon: "text-amber-400" },
-  fashion: { bg: "from-pink-500/15 to-pink-600/5", icon: "text-pink-400" },
-  building: { bg: "from-emerald-500/15 to-emerald-600/5", icon: "text-emerald-400" },
-  packaging: { bg: "from-purple-500/15 to-purple-600/5", icon: "text-purple-400" },
-  auto: { bg: "from-red-500/15 to-red-600/5", icon: "text-red-400" },
-  other: { bg: "from-slate-500/15 to-slate-600/5", icon: "text-slate-400" },
-};
-
-const DEFAULT_TINT: CategoryTint = { bg: "from-slate-500/15 to-slate-600/5", icon: "text-slate-400" };
-
-export function getCategoryTint(id: string): CategoryTint {
-  return CATEGORY_TINTS[id] ?? DEFAULT_TINT;
-}
-
-// Reads straight from the module-level record instead of through a
-// function call, same as ProductCategories' `icons[i % icons.length]` —
-// react-hooks' static-components check can prove this reference is stable
-// across renders, but not one returned from an opaque function call.
+// One consistent tile treatment for every category, everywhere it
+// appears — a cream tile with a navy outline icon — instead of a
+// different tint per category, which read as six unrelated colors
+// rather than one system.
 export function CategoryBadge({ id, size = 40 }: { id: string; size?: number }) {
   const Icon = CATEGORY_ICONS[id] ?? Sparkles;
-  const tint = CATEGORY_TINTS[id] ?? DEFAULT_TINT;
   return (
     <div
-      className={`flex items-center justify-center rounded-xl bg-gradient-to-br ${tint.bg}`}
+      className="flex items-center justify-center rounded-xl border border-brand-navy/20 bg-surface"
       style={{ height: size, width: size }}
     >
-      <Icon size={Math.round(size * 0.5)} className={tint.icon} />
+      <Icon size={Math.round(size * 0.5)} strokeWidth={1.6} className="text-brand-navy" />
     </div>
   );
 }

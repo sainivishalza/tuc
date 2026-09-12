@@ -68,7 +68,7 @@ export default function ProductMatcher({ dict }: { dict: Dictionary }) {
             <button
               onClick={handleAnalyze}
               disabled={description.trim().length < 6 || analyzing}
-              className="brand-gradient mt-4 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+              className="btn-primary mt-4"
             >
               {analyzing ? (
                 <>
@@ -146,10 +146,7 @@ export default function ProductMatcher({ dict }: { dict: Dictionary }) {
                     <strong className="text-foreground">{t.agentTip}</strong> {result.profile.tip}
                   </p>
 
-                  <button
-                    onClick={handleGetQuote}
-                    className="brand-gradient-animated mt-5 flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
-                  >
+                  <button onClick={handleGetQuote} className="btn-primary mt-5">
                     {t.getQuoteFor} {result.profile.label}
                     <ArrowRight size={16} />
                   </button>

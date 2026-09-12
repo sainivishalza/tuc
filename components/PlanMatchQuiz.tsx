@@ -9,8 +9,17 @@ import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n";
 import { matchPlan, type SupplierAnswer, type CustomAnswer, type ScaleAnswer } from "@/lib/planMatcher";
 
-const OPTION_CLASS =
-  "w-full rounded-xl border-2 border-border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 hover:border-accent/50";
+// Earlier-answered questions stay visible above the current one (see the
+// render below), so each option needs a persistent selected state, not
+// just a hover state — otherwise there's no way to tell which answer was
+// picked once the quiz has moved on. Same border-accent/bg-accent/10
+// treatment already used by the Quote Wizard's own category/timeline
+// pickers, for one consistent "selected option" language site-wide.
+function optionClass(selected: boolean) {
+  return `w-full rounded-xl border-2 px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ${
+    selected ? "border-accent bg-accent/10 text-accent" : "border-border hover:border-accent/50"
+  }`;
+}
 
 export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
   const t = dict.tools.planMatch;
@@ -43,10 +52,16 @@ export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
             {!plan && (
               <div className="space-y-3">
                 <h3 className="font-display text-base font-semibold">{t.q1}</h3>
-                <button className={OPTION_CLASS} onClick={() => setSupplier("have_supplier")}>
+                <button
+                  className={optionClass(supplier === "have_supplier")}
+                  onClick={() => setSupplier("have_supplier")}
+                >
                   {t.q1Options.have}
                 </button>
-                <button className={OPTION_CLASS} onClick={() => setSupplier("need_sourcing")}>
+                <button
+                  className={optionClass(supplier === "need_sourcing")}
+                  onClick={() => setSupplier("need_sourcing")}
+                >
                   {t.q1Options.need}
                 </button>
               </div>
@@ -55,10 +70,10 @@ export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
             {!plan && supplier && !custom && (
               <div className="mt-6 space-y-3 border-t border-border pt-6">
                 <h3 className="font-display text-base font-semibold">{t.q2}</h3>
-                <button className={OPTION_CLASS} onClick={() => setCustom("no")}>
+                <button className={optionClass(custom === "no")} onClick={() => setCustom("no")}>
                   {t.q2Options.no}
                 </button>
-                <button className={OPTION_CLASS} onClick={() => setCustom("yes")}>
+                <button className={optionClass(custom === "yes")} onClick={() => setCustom("yes")}>
                   {t.q2Options.yes}
                 </button>
               </div>
@@ -67,10 +82,13 @@ export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
             {!plan && supplier && custom && !scale && (
               <div className="mt-6 space-y-3 border-t border-border pt-6">
                 <h3 className="font-display text-base font-semibold">{t.q3}</h3>
-                <button className={OPTION_CLASS} onClick={() => setScale("one")}>
+                <button className={optionClass(scale === "one")} onClick={() => setScale("one")}>
                   {t.q3Options.one}
                 </button>
-                <button className={OPTION_CLASS} onClick={() => setScale("multiple_ongoing")}>
+                <button
+                  className={optionClass(scale === "multiple_ongoing")}
+                  onClick={() => setScale("multiple_ongoing")}
+                >
                   {t.q3Options.multiple}
                 </button>
               </div>
@@ -101,7 +119,7 @@ export default function PlanMatchQuiz({ dict }: { dict: Dictionary }) {
                   </button>
                   <button
                     onClick={handleSeePlan}
-                    className="brand-gradient-animated flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-[1.02]"
+                    className="btn-primary"
                   >
                     {t.seePlanDetails.replace("{plan}", plan.name)}
                     <ArrowDown size={16} />

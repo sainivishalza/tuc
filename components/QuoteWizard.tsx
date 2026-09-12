@@ -137,7 +137,7 @@ export default function QuoteWizard({ dict }: { dict: Dictionary }) {
                 href={whatsappLink(dict.contact.whatsappMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="brand-gradient mt-2 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                className="btn-primary mt-2"
               >
                 <MessageCircle size={16} />
                 {dict.nav.chatWhatsapp}

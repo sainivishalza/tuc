@@ -62,7 +62,7 @@ export default async function ContactPage({
               href={whatsappLink(dict.contact.whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="brand-gradient-animated mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:scale-105 hover:shadow-accent/30"
+              className="btn-primary mt-8"
             >
               <MessageCircle size={18} />
               {dict.contactPage.whatsappCta}

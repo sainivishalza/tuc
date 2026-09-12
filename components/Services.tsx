@@ -50,7 +50,7 @@ export default function Services({ dict }: { dict: Dictionary }) {
               >
                 <TiltCard className="glass-strong card group flex h-full flex-col gap-5">
                   <div className="flex items-start justify-between">
-                    <ServiceIllustration icon={Icon} variant={i % 2 === 0 ? "blue" : "navy"} />
+                    <ServiceIllustration icon={Icon} />
                     <span className="section-number text-2xl">
                       {String(i + 1).padStart(2, "0")}
                     </span>
