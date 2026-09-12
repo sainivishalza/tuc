@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import Reveal from "./Reveal";
-import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n";
@@ -51,11 +50,7 @@ export default function ProductMatcher({ dict }: { dict: Dictionary }) {
   };
 
   return (
-    <section id="smart-match" className="section-tint-blue relative px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
-
-        <Reveal delay={0.15} className="mt-10">
+    <Reveal delay={0.05}>
           <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <label className="mb-2 block text-sm font-medium">{t.label}</label>
             <textarea
@@ -154,8 +149,6 @@ export default function ProductMatcher({ dict }: { dict: Dictionary }) {
               </Reveal>
             )}
           </div>
-        </Reveal>
-      </div>
-    </section>
+    </Reveal>
   );
 }

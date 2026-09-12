@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ClipboardCheck, ArrowRight, Check, X } from "lucide-react";
 import Reveal from "./Reveal";
-import { SectionHeading } from "./Services";
 import { trackCtaClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n";
@@ -54,12 +53,8 @@ export default function ReadinessQuiz({ dict }: { dict: Dictionary }) {
   };
 
   return (
-    <section id="readiness-quiz" className="relative px-4 py-20 sm:px-6">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeading badge={t.badge} title={t.title} subtitle={t.subtitle} />
-
-        <Reveal delay={0.15} className="mt-10">
-          <div className="glass-strong rounded-2xl p-6 sm:p-8">
+    <Reveal delay={0.05}>
+      <div className="glass-strong rounded-2xl p-6 sm:p-8">
             <div className="space-y-5">
               {questions.map((q, i) => (
                 <div key={q.id} className="border-b border-border pb-5 last:border-0 last:pb-0">
@@ -137,9 +132,7 @@ export default function ReadinessQuiz({ dict }: { dict: Dictionary }) {
                 </div>
               </Reveal>
             )}
-          </div>
-        </Reveal>
       </div>
-    </section>
+    </Reveal>
   );
 }
