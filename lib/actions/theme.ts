@@ -52,15 +52,15 @@ function sanitizeSvg(svgText: string): string {
 
 const DEFAULT_THEME: SiteTheme = {
   id: "default",
-  primary_color: "#2f3a56",
-  accent_color: "#00c2cb",
-  secondary_color: "#00c2cb",
-  surface_color: "#ffffff",
-  background_color: "#f4f6f8",
-  font_choice: "inter",
+  primary_color: "#0e1a2b",
+  accent_color: "#c1791e",
+  secondary_color: "#16283f",
+  surface_color: "#f7f8fa",
+  background_color: "#edf0f4",
+  font_choice: "publicsans",
   text_scale: "medium",
-  corner_style: "rounded",
-  tinted_sections: false,
+  corner_style: "sharp",
+  tinted_sections: true,
   logo_url: null,
   updated_at: "",
 };
@@ -97,7 +97,7 @@ function sanitizeTheme(row: SiteTheme | null): SiteTheme {
     background_color: HEX_COLOR_RE.test(row.background_color)
       ? row.background_color
       : DEFAULT_THEME.background_color,
-    font_choice: ["inter", "poppins", "playfair"].includes(row.font_choice)
+    font_choice: ["inter", "poppins", "playfair", "publicsans"].includes(row.font_choice)
       ? row.font_choice
       : DEFAULT_THEME.font_choice,
     text_scale: ["small", "medium", "large"].includes(row.text_scale) ? row.text_scale : DEFAULT_THEME.text_scale,

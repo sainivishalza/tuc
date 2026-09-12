@@ -37,7 +37,7 @@ export default function NewsletterForm({ dict, locale }: { dict: Dictionary; loc
   if (submitted) {
     return (
       <p className="mt-4 flex items-center gap-2 text-sm text-white/70">
-        <CheckCircle size={16} className="text-brand-blue" />
+        <CheckCircle size={16} className="text-accent" />
         {dict.newsletter.success}
       </p>
     );
@@ -55,13 +55,13 @@ export default function NewsletterForm({ dict, locale }: { dict: Dictionary; loc
             onChange={(e) => setEmail(e.target.value)}
             placeholder={dict.newsletter.placeholder}
             required
-            className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/30 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+            className="w-full rounded border border-white/10 bg-white/5 py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/30 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
         <button
           type="submit"
           disabled={submitting || (captchaConfigured && showCaptcha && !turnstileToken)}
-          className="shrink-0 rounded-lg bg-brand-blue px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+          className="btn-primary shrink-0 rounded px-4 py-2 text-sm font-semibold disabled:opacity-60"
         >
           {submitting ? "..." : dict.newsletter.button}
         </button>

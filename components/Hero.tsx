@@ -1,58 +1,65 @@
 import Link from "next/link";
-import { MessageCircle, ArrowRight, ShieldCheck, PackageCheck, Globe2, Truck } from "lucide-react";
+import { MessageCircle, ArrowRight, PackageCheck, Globe2, ShieldCheck, Truck } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { whatsappLink } from "@/lib/whatsapp";
 
 export default function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
-    <section className="gradient-hero-light relative overflow-hidden px-4 pb-16 pt-16 sm:px-6 sm:pt-20">
-      <div className="blob -top-24 -left-24 h-80 w-80 bg-brand-blue/15" />
-      <div className="blob bottom-0 left-1/4 h-72 w-72 bg-accent/15" />
+    <section className="gradient-hero-dark relative overflow-hidden px-4 pb-16 pt-14 text-white sm:px-6 sm:pt-20">
+      <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+        {/* Left column — kicker, headline, subhead, CTAs. Left-aligned and
+            ragged-right, a briefing rather than a centered poster. */}
+        <div className="hero-stagger">
+          <span className="eyebrow eyebrow-ruled text-sm text-accent">{dict.hero.badge}</span>
 
-      <div className="relative mx-auto max-w-3xl text-center">
-        <div className="glass mx-auto inline-flex items-center gap-2 rounded-full border border-accent/25 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent sm:text-[13px]">
-          <Globe2 size={13} />
-          {dict.hero.badge}
-        </div>
+          <h1 className="font-display mt-5 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+            {dict.hero.title} <span className="text-accent">{dict.hero.titleHighlight}</span>
+          </h1>
 
-        <h1 className="font-display mt-6 text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-          {dict.hero.title} <span className="brand-gradient-text">{dict.hero.titleHighlight}</span>
-        </h1>
+          <p className="mt-5 max-w-md text-balance text-base leading-relaxed text-white/70 sm:text-lg">
+            {dict.hero.subtitle}
+          </p>
 
-        <p className="mx-auto mt-5 max-w-xl text-balance text-base text-muted sm:text-lg">
-          {dict.hero.subtitle}
-        </p>
+          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <a
+              href={whatsappLink(dict.contact.whatsappMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold sm:w-auto"
+            >
+              <MessageCircle size={18} />
+              {dict.hero.ctaWhatsapp}
+            </a>
+            <a
+              href="#services"
+              className="btn-secondary-inverse flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold sm:w-auto"
+            >
+              {dict.hero.ctaServices}
+              <ArrowRight size={16} />
+            </a>
+          </div>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <a
-            href={whatsappLink(dict.contact.whatsappMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="brand-gradient-animated flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:scale-105 sm:w-auto"
-          >
-            <MessageCircle size={18} />
-            {dict.hero.ctaWhatsapp}
-          </a>
-          <a
-            href="#services"
-            className="glass-strong flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-foreground transition hover:opacity-80 sm:w-auto"
-          >
-            {dict.hero.ctaServices}
-            <ArrowRight size={16} />
-          </a>
           <Link
             href={`/${locale}/track`}
-            className="glass-strong flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-foreground transition hover:opacity-80 sm:w-auto"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 underline decoration-white/25 underline-offset-4 transition hover:text-white hover:decoration-white/60"
           >
-            <Truck size={16} />
+            <Truck size={14} />
             {dict.nav.trackShipment}
           </Link>
         </div>
 
-        <div className="glass stat-bar mx-auto mt-12 grid max-w-lg grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl">
-          <Stat icon={<PackageCheck size={18} />} value="10" label={dict.hero.stat1Label} />
-          <Stat icon={<Globe2 size={18} />} value="3" label={dict.hero.stat2Label} />
-          <Stat icon={<ShieldCheck size={18} />} value="< 24h" label={dict.hero.stat3Label} />
+        {/* Right column — a nested ledger panel, one step lighter than the
+            hero ground, replacing the old horizontal glass stat-bar with a
+            vertical "briefing" list. */}
+        <div className="hero-stagger">
+          <div className="border border-white/10 bg-brand-blue/60 p-6 sm:p-7">
+            <p className="eyebrow text-xs text-white/50">At a glance</p>
+            <dl className="mt-4 flex flex-col divide-y divide-white/10">
+              <Stat icon={<PackageCheck size={18} />} value="10" label={dict.hero.stat1Label} />
+              <Stat icon={<Globe2 size={18} />} value="3" label={dict.hero.stat2Label} />
+              <Stat icon={<ShieldCheck size={18} />} value="< 24h" label={dict.hero.stat3Label} />
+            </dl>
+          </div>
         </div>
       </div>
     </section>
@@ -69,14 +76,12 @@ function Stat({
   label: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-1.5 px-3 py-6">
-      <span className="text-accent">{icon}</span>
-      <span className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
-        {value}
-      </span>
-      <span className="text-center text-[11px] font-medium text-muted sm:text-xs">
-        {label}
-      </span>
+    <div className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+      <div className="flex items-center gap-3">
+        <span className="text-accent">{icon}</span>
+        <dt className="text-sm text-white/70">{label}</dt>
+      </div>
+      <dd className="font-display text-2xl font-bold tracking-tight text-white">{value}</dd>
     </div>
   );
 }

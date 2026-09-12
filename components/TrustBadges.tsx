@@ -4,15 +4,16 @@ import { Shield, CheckCircle, Truck, Lock, Award, Headphones } from "lucide-reac
 import Reveal from "./Reveal";
 import type { Dictionary } from "@/lib/i18n";
 
+// Flat ink icons throughout, with gold reserved as the one deliberate
+// break from the ink/amber system — an award is gold, not a decorative
+// color choice.
 const badgeMeta = [
-  { icon: Shield, color: "text-brand-600", bg: "from-brand-500/15 to-brand-700/5" },
-  { icon: Lock, color: "text-brand-900", bg: "from-brand-900/12 to-brand-700/5" },
-  { icon: CheckCircle, color: "text-brand-600", bg: "from-brand-400/15 to-brand-600/5" },
-  { icon: Truck, color: "text-brand-800", bg: "from-brand-800/12 to-brand-600/5" },
-  // Gold is the one deliberate break from the brand's green/navy tonal
-  // range — an award is gold, not a decorative color choice.
-  { icon: Award, color: "text-[#b08d4f]", bg: "from-[#b08d4f]/15 to-[#b08d4f]/5" },
-  { icon: Headphones, color: "text-brand-600", bg: "from-brand-500/12 to-brand-700/5" },
+  { icon: Shield, color: "text-foreground" },
+  { icon: Lock, color: "text-foreground" },
+  { icon: CheckCircle, color: "text-foreground" },
+  { icon: Truck, color: "text-foreground" },
+  { icon: Award, color: "text-[#b08d4f]" },
+  { icon: Headphones, color: "text-foreground" },
 ];
 
 export default function TrustBadges({ dict }: { dict: Dictionary }) {
@@ -30,11 +31,9 @@ export default function TrustBadges({ dict }: { dict: Dictionary }) {
             const Icon = badge.icon;
             return (
               <Reveal key={badge.title} delay={i * 0.05}>
-                <div className="glass-strong group flex flex-col items-center gap-2 rounded-2xl p-4 text-center transition-all duration-300 hover:-translate-y-1">
-                  <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${badge.bg} transition-transform duration-300 group-hover:scale-110`}
-                  >
-                    <Icon size={22} className={badge.color} />
+                <div className="glass-strong group flex flex-col items-center gap-2 p-4 text-center">
+                  <div className="flex h-11 w-11 items-center justify-center border border-border transition-colors duration-300 group-hover:border-accent">
+                    <Icon size={20} strokeWidth={1.6} className={badge.color} />
                   </div>
                   <h3 className="text-xs font-semibold sm:text-sm">{badge.title}</h3>
                   <p className="text-[11px] text-muted">{badge.desc}</p>

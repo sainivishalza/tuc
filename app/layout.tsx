@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Inter, Poppins, Playfair_Display, Plus_Jakarta_Sans, IBM_Plex_Sans } from "next/font/google";
+import { Inter, Poppins, Playfair_Display, Public_Sans, Fraunces, IBM_Plex_Sans } from "next/font/google";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import { getSiteTheme } from "@/lib/actions/theme";
 import type { FontChoice, TextScale, CornerStyle } from "@/lib/supabase/types";
@@ -35,12 +35,26 @@ const playfair = Playfair_Display({
   preload: false,
 });
 
-// Used unconditionally for .font-display headings on every page, so this
-// one is worth preloading.
-const jakarta = Plus_Jakarta_Sans({
+// Institutional, refined grotesk — the default body face for the
+// editorial/corporate redesign (deliberately not Inter/Roboto/Arial).
+const publicSans = Public_Sans({
   subsets: ["latin"],
-  weight: ["600", "700"],
-  variable: "--font-jakarta",
+  variable: "--font-publicsans",
+  display: "swap",
+  preload: false,
+});
+
+// Used unconditionally for .font-display headings on every page (not
+// admin-configurable — see the comment on --font-display below), so this
+// one is worth preloading. A soft-contrast editorial serif with real
+// character, replacing the previous geometric-sans display face as part
+// of the editorial/corporate redesign — headlines, pull quotes, and big
+// stat figures all read as "trade publication," not "SaaS app."
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["600", "700", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
@@ -58,6 +72,7 @@ const FONT_VAR_BY_CHOICE: Record<FontChoice, string> = {
   inter: "var(--font-inter)",
   poppins: "var(--font-poppins)",
   playfair: "var(--font-playfair)",
+  publicsans: "var(--font-publicsans)",
 };
 
 const TEXT_SCALE_VALUE: Record<TextScale, number> = {
@@ -121,7 +136,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${poppins.variable} ${playfair.variable} ${jakarta.variable} ${plex.variable}`}
+      className={`${inter.variable} ${poppins.variable} ${playfair.variable} ${publicSans.variable} ${fraunces.variable} ${plex.variable}`}
     >
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeStyle }} />
