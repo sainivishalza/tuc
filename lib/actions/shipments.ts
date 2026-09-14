@@ -261,6 +261,44 @@ export async function getShipmentById(id: string): Promise<Shipment | null> {
   return data as Shipment | null;
 }
 
+export interface ShipmentCustomer {
+  name: string;
+  email: string | null;
+  reference: string | null;
+}
+
+/**
+ * Fill-from-history list for the "New/Edit shipment" form's private
+ * customer fields — derived live from past shipments rather than a
+ * separate customers table, same reasoning as admin_clients (one source
+ * of truth, no risk of it drifting from what shipments actually say).
+ * Deduped by email when set (the more reliable identity key), else by
+ * name, keeping each customer's most recent name/reference spelling —
+ * picking one still leaves every field editable in the form itself, since
+ * this only pre-fills, it never becomes the record of truth.
+ */
+export async function getShipmentCustomers(): Promise<ShipmentCustomer[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("shipments")
+    .select("customer_name, customer_email, customer_reference, created_at")
+    .not("customer_name", "is", null)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  const seen = new Map<string, ShipmentCustomer>();
+  for (const row of data as { customer_name: string; customer_email: string | null; customer_reference: string | null }[]) {
+    const key = (row.customer_email || row.customer_name).trim().toLowerCase();
+    if (!seen.has(key)) {
+      seen.set(key, { name: row.customer_name, email: row.customer_email, reference: row.customer_reference });
+    }
+  }
+
+  return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
+}
+
 /** The milestone field each status implies has been reached — backfilled
  * with now() only if not already set, so the Kanban board's "advance"
  * action keeps the shipment's own milestone timeline accurate instead of

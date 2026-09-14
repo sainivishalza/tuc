@@ -14,6 +14,7 @@ import {
 } from "@/lib/actions/shipments";
 import { refreshShipmentFromApi } from "@/lib/actions/dhlSync";
 import type { Shipment, ShipmentStatus, Carrier, ShipmentEvent } from "@/lib/supabase/types";
+import type { ShipmentCustomer } from "@/lib/actions/shipments";
 import { Button, Card, inputClass, labelClass, fileInputClass } from "@/components/admin/ui";
 
 const STATUS_OPTIONS: { value: ShipmentStatus; label: string }[] = [
@@ -89,11 +90,13 @@ export default function ShipmentForm({
   shipmentId,
   initial,
   carriers,
+  customers,
   initialEvents,
 }: {
   shipmentId?: string;
   initial?: Shipment;
   carriers: Carrier[];
+  customers?: ShipmentCustomer[];
   initialEvents?: ShipmentEvent[];
 }) {
   const router = useRouter();
@@ -305,6 +308,22 @@ export default function ShipmentForm({
     }
   }
 
+  function handleFillCustomer(e: React.ChangeEvent<HTMLSelectElement>) {
+    const key = e.target.value;
+    const match = customers?.find((c) => (c.email || c.name) === key);
+    if (match) {
+      setCustomerName(match.name);
+      setCustomerReference(match.reference ?? "");
+      setCustomerEmail(match.email ?? "");
+    }
+    // Resets back to the placeholder — this picks a starting point for the
+    // fields below, it isn't a persistent selection, so there's nothing to
+    // keep "selected" once it's done its job. The fields themselves stay
+    // ordinary editable inputs afterward, for when a customer's details
+    // have since changed.
+    e.target.value = "";
+  }
+
   async function handleDeleteEvent(eventId: string) {
     setEventError("");
     try {
@@ -375,6 +394,25 @@ export default function ShipmentForm({
         so you can tell whose parcel this is (and match it against the carrier&apos;s own
         system) without customers seeing each other&apos;s details.
       </div>
+
+      {customers && customers.length > 0 && (
+        <div>
+          <label className={labelClass}>Fill from an existing customer</label>
+          <select defaultValue="" onChange={handleFillCustomer} className={inputClass}>
+            <option value="">— Pick a returning customer to fill in their details —</option>
+            {customers.map((c) => (
+              <option key={c.email || c.name} value={c.email || c.name}>
+                {c.name}
+                {c.email ? ` — ${c.email}` : ""}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-[11px] text-gray-400">
+            Fills in the fields below from their last order — still editable afterward if any
+            of their details have changed.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
