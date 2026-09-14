@@ -261,6 +261,44 @@ export async function getShipmentById(id: string): Promise<Shipment | null> {
   return data as Shipment | null;
 }
 
+export interface ShipmentCustomer {
+  name: string;
+  email: string | null;
+  reference: string | null;
+}
+
+/**
+ * Fill-from-history list for the "New/Edit shipment" form's private
+ * customer fields — derived live from past shipments rather than a
+ * separate customers table, same reasoning as admin_clients (one source
+ * of truth, no risk of it drifting from what shipments actually say).
+ * Deduped by email when set (the more reliable identity key), else by
+ * name, keeping each customer's most recent name/reference spelling —
+ * picking one still leaves every field editable in the form itself, since
+ * this only pre-fills, it never becomes the record of truth.
+ */
+export async function getShipmentCustomers(): Promise<ShipmentCustomer[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("shipments")
+    .select("customer_name, customer_email, customer_reference, created_at")
+    .not("customer_name", "is", null)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  const seen = new Map<string, ShipmentCustomer>();
+  for (const row of data as { customer_name: string; customer_email: string | null; customer_reference: string | null }[]) {
+    const key = (row.customer_email || row.customer_name).trim().toLowerCase();
+    if (!seen.has(key)) {
+      seen.set(key, { name: row.customer_name, email: row.customer_email, reference: row.customer_reference });
+    }
+  }
+
+  return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
+}
+
 /** The milestone field each status implies has been reached — backfilled
  * with now() only if not already set, so the Kanban board's "advance"
  * action keeps the shipment's own milestone timeline accurate instead of
@@ -564,28 +602,53 @@ function rowsToPdfBuffer(rows: string[][], title: string): Promise<Buffer> {
 
     const colCount = Math.max(...rows.map((r) => r.length));
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-    const colWidth = pageWidth / colCount;
-    const rowHeight = 20;
+    const cellPadding = 4;
+    const MIN_COL_WIDTH = 50;
+
+    // A packing list's Product/Model column is routinely 5-10x longer
+    // than its Carton No./Quantity columns — an equal split (the previous
+    // approach) truncated it with an ellipsis even though the short
+    // columns had plenty of spare width to give up. Size each column to
+    // its own widest cell instead, then scale every column down together
+    // only if the total doesn't fit the page. Measured in Helvetica-Bold
+    // (the header's font) since bold is never narrower than regular, so
+    // this is a safe upper bound for whichever font a given row uses.
+    doc.font("Helvetica-Bold").fontSize(9);
+    const colContentWidths = Array.from({ length: colCount }, (_, c) =>
+      Math.max(MIN_COL_WIDTH, ...rows.map((r) => doc.widthOfString(r[c] ?? "") + cellPadding * 2))
+    );
+    const totalContentWidth = colContentWidths.reduce((a, b) => a + b, 0);
+    const scale = totalContentWidth > pageWidth ? pageWidth / totalContentWidth : 1;
+    const colWidths = colContentWidths.map((w) => w * scale);
+
     let y = doc.y;
 
-    doc.fontSize(9);
     for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const isHeader = i === 0;
+      const font = isHeader ? "Helvetica-Bold" : "Helvetica";
+
+      // Wrap instead of truncating: this row's height comes from its
+      // tallest cell, so a long Product/Model value gets a second line
+      // rather than losing text to an ellipsis.
+      doc.font(font);
+      const rowHeight =
+        Math.max(
+          20,
+          ...row.map((cell, c) => doc.heightOfString(cell ?? "", { width: colWidths[c] - cellPadding * 2 }))
+        ) + 8;
+
       if (y + rowHeight > doc.page.height - doc.page.margins.bottom) {
         doc.addPage();
         y = doc.page.margins.top;
       }
-      const row = rows[i];
-      const isHeader = i === 0;
+
       let x = doc.page.margins.left;
       for (let c = 0; c < colCount; c++) {
-        doc
-          .font(isHeader ? "Helvetica-Bold" : "Helvetica")
-          .text(row[c] ?? "", x + 2, y + 4, {
-            width: colWidth - 4,
-            height: rowHeight - 4,
-            ellipsis: true,
-          });
-        x += colWidth;
+        doc.font(font).text(row[c] ?? "", x + cellPadding, y + 4, {
+          width: colWidths[c] - cellPadding * 2,
+        });
+        x += colWidths[c];
       }
       doc
         .moveTo(doc.page.margins.left, y + rowHeight)

@@ -1,5 +1,6 @@
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getAllCarriers } from "@/lib/actions/carriers";
+import { getShipmentCustomers } from "@/lib/actions/shipments";
 import ShipmentForm from "@/components/admin/ShipmentForm";
 import AdminShell from "@/components/admin/AdminShell";
 import { BackLink, PageHeader, Card } from "@/components/admin/ui";
@@ -10,7 +11,7 @@ export const metadata = {
 
 export default async function NewShipmentPage() {
   await requireAdminPage();
-  const carriers = await getAllCarriers();
+  const [carriers, customers] = await Promise.all([getAllCarriers(), getShipmentCustomers()]);
 
   return (
     <AdminShell current="/admin/shipments">
@@ -18,7 +19,7 @@ export default async function NewShipmentPage() {
       <PageHeader title="New shipment" />
 
       <Card className="max-w-2xl">
-        <ShipmentForm carriers={carriers} />
+        <ShipmentForm carriers={carriers} customers={customers} />
       </Card>
     </AdminShell>
   );

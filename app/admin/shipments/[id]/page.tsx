@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireAdminPage } from "@/lib/adminAuth";
-import { getShipmentById, getShipmentEvents } from "@/lib/actions/shipments";
+import { getShipmentById, getShipmentEvents, getShipmentCustomers } from "@/lib/actions/shipments";
 import { getAllCarriers } from "@/lib/actions/carriers";
 import ShipmentForm from "@/components/admin/ShipmentForm";
 import AdminShell from "@/components/admin/AdminShell";
@@ -17,7 +17,11 @@ export default async function EditShipmentPage({
 }) {
   await requireAdminPage();
   const { id } = await params;
-  const [shipment, carriers] = await Promise.all([getShipmentById(id), getAllCarriers()]);
+  const [shipment, carriers, customers] = await Promise.all([
+    getShipmentById(id),
+    getAllCarriers(),
+    getShipmentCustomers(),
+  ]);
 
   if (!shipment) notFound();
 
@@ -33,6 +37,7 @@ export default async function EditShipmentPage({
           shipmentId={shipment.id}
           initial={shipment}
           carriers={carriers}
+          customers={customers}
           initialEvents={events}
         />
       </Card>
