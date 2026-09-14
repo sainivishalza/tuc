@@ -564,28 +564,53 @@ function rowsToPdfBuffer(rows: string[][], title: string): Promise<Buffer> {
 
     const colCount = Math.max(...rows.map((r) => r.length));
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-    const colWidth = pageWidth / colCount;
-    const rowHeight = 20;
+    const cellPadding = 4;
+    const MIN_COL_WIDTH = 50;
+
+    // A packing list's Product/Model column is routinely 5-10x longer
+    // than its Carton No./Quantity columns — an equal split (the previous
+    // approach) truncated it with an ellipsis even though the short
+    // columns had plenty of spare width to give up. Size each column to
+    // its own widest cell instead, then scale every column down together
+    // only if the total doesn't fit the page. Measured in Helvetica-Bold
+    // (the header's font) since bold is never narrower than regular, so
+    // this is a safe upper bound for whichever font a given row uses.
+    doc.font("Helvetica-Bold").fontSize(9);
+    const colContentWidths = Array.from({ length: colCount }, (_, c) =>
+      Math.max(MIN_COL_WIDTH, ...rows.map((r) => doc.widthOfString(r[c] ?? "") + cellPadding * 2))
+    );
+    const totalContentWidth = colContentWidths.reduce((a, b) => a + b, 0);
+    const scale = totalContentWidth > pageWidth ? pageWidth / totalContentWidth : 1;
+    const colWidths = colContentWidths.map((w) => w * scale);
+
     let y = doc.y;
 
-    doc.fontSize(9);
     for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const isHeader = i === 0;
+      const font = isHeader ? "Helvetica-Bold" : "Helvetica";
+
+      // Wrap instead of truncating: this row's height comes from its
+      // tallest cell, so a long Product/Model value gets a second line
+      // rather than losing text to an ellipsis.
+      doc.font(font);
+      const rowHeight =
+        Math.max(
+          20,
+          ...row.map((cell, c) => doc.heightOfString(cell ?? "", { width: colWidths[c] - cellPadding * 2 }))
+        ) + 8;
+
       if (y + rowHeight > doc.page.height - doc.page.margins.bottom) {
         doc.addPage();
         y = doc.page.margins.top;
       }
-      const row = rows[i];
-      const isHeader = i === 0;
+
       let x = doc.page.margins.left;
       for (let c = 0; c < colCount; c++) {
-        doc
-          .font(isHeader ? "Helvetica-Bold" : "Helvetica")
-          .text(row[c] ?? "", x + 2, y + 4, {
-            width: colWidth - 4,
-            height: rowHeight - 4,
-            ellipsis: true,
-          });
-        x += colWidth;
+        doc.font(font).text(row[c] ?? "", x + cellPadding, y + 4, {
+          width: colWidths[c] - cellPadding * 2,
+        });
+        x += colWidths[c];
       }
       doc
         .moveTo(doc.page.margins.left, y + rowHeight)
