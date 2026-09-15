@@ -6,7 +6,7 @@ import { sendEmail } from "@/lib/email";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { createLoginLinkToken } from "@/lib/portalAuth";
-import type { Shipment, QuoteRequest } from "@/lib/supabase/types";
+import type { Shipment, QuoteRequest, Client } from "@/lib/supabase/types";
 
 const SITE_URL = "https://theuniquechoice.com";
 
@@ -178,6 +178,13 @@ export async function registerClient(
   }
 
   return { message: "Account created! We've sent a sign-in link to your email. It expires in 15 minutes." };
+}
+
+export async function getPortalClient(email: string): Promise<Client | null> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase.from("clients").select("*").ilike("email", email).maybeSingle();
+  if (error) return null;
+  return data as Client | null;
 }
 
 export async function getPortalShipments(email: string): Promise<Shipment[]> {
