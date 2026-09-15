@@ -13,6 +13,14 @@ const SITE_URL = "https://theuniquechoice.com";
 export interface RequestLinkState {
   message?: string;
   error?: string;
+  /** Set when the email doesn't match a registered account, so the form
+   * can point the visitor at /portal/register instead of just failing. */
+  notRegistered?: boolean;
+}
+
+export interface RegisterState {
+  message?: string;
+  error?: string;
 }
 
 function portalLoginEmailHtml(link: string): string {
@@ -73,28 +81,103 @@ export async function requestPortalLink(
   }
 
   const supabase = getSupabaseAdminClient();
-  const [{ count: shipmentCount }, { count: quoteCount }] = await Promise.all([
-    supabase.from("shipments").select("id", { count: "exact", head: true }).ilike("customer_email", email),
-    supabase.from("quote_requests").select("id", { count: "exact", head: true }).ilike("email", email),
-  ]);
+  const { data: client } = await supabase
+    .from("clients")
+    .select("id")
+    .ilike("email", email)
+    .maybeSingle();
 
-  if ((shipmentCount ?? 0) > 0 || (quoteCount ?? 0) > 0) {
-    const token = createLoginLinkToken(email, secret);
-    const link = `${SITE_URL}/portal/verify?token=${encodeURIComponent(token)}`;
-    const result = await sendEmail({
-      to: email,
-      subject: "Sign in to your Unique Choice client portal",
-      html: portalLoginEmailHtml(link),
-    });
-    if (!result.ok) {
-      console.error(`[portal] failed to email login link to ${email}: ${result.message}`);
-    }
+  if (!client) {
+    return {
+      error: "We couldn't find an account for that email. Register below to get portal access.",
+      notRegistered: true,
+    };
   }
 
-  // Identical message whether or not we found an account — otherwise this
-  // form becomes a way to check which email addresses have shipments with
-  // us.
-  return { message: "If that email has an account with us, we've sent a sign-in link. It expires in 15 minutes." };
+  const token = createLoginLinkToken(email, secret);
+  const link = `${SITE_URL}/portal/verify?token=${encodeURIComponent(token)}`;
+  const result = await sendEmail({
+    to: email,
+    subject: "Sign in to your Unique Choice client portal",
+    html: portalLoginEmailHtml(link),
+  });
+  if (!result.ok) {
+    console.error(`[portal] failed to email login link to ${email}: ${result.message}`);
+    return { error: "We couldn't send the sign-in email right now. Please try again shortly." };
+  }
+
+  return { message: "We've sent a sign-in link to your email. It expires in 15 minutes." };
+}
+
+export async function registerClient(
+  _prevState: RegisterState,
+  formData: FormData
+): Promise<RegisterState> {
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const company = String(formData.get("company") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+
+  if (!name || !email || !email.includes("@")) {
+    return { error: "Enter your name and a valid email address." };
+  }
+
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for")?.split(",").pop()?.trim() ?? "unknown";
+  const rateLimitKey = `portal-register:${ip}`;
+
+  const limit = await checkRateLimit(rateLimitKey);
+  if (!limit.allowed) {
+    const minutes = Math.ceil((limit.retryAfterMs ?? 0) / 60000);
+    return { error: `Too many attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.` };
+  }
+  await recordFailedAttempt(rateLimitKey);
+
+  const turnstileToken = String(formData.get("turnstileToken") ?? "");
+  const captchaOk = await verifyTurnstileToken(turnstileToken, ip);
+  if (!captchaOk) {
+    return { error: "Verification failed — please try again." };
+  }
+
+  const secret = process.env.PORTAL_SESSION_SECRET;
+  if (!secret) {
+    return {
+      error:
+        "The client portal isn't configured yet. Set PORTAL_SESSION_SECRET as an environment variable on your hosting.",
+    };
+  }
+
+  const supabase = getSupabaseAdminClient();
+  const { data: existing } = await supabase.from("clients").select("id").ilike("email", email).maybeSingle();
+  if (existing) {
+    return { error: "An account with that email already exists — sign in instead." };
+  }
+
+  const { error: insertError } = await supabase.from("clients").insert({
+    name,
+    email,
+    company: company || null,
+    phone: phone || null,
+  });
+  if (insertError) {
+    return { error: "Something went wrong creating your account. Please try again." };
+  }
+
+  const token = createLoginLinkToken(email, secret);
+  const link = `${SITE_URL}/portal/verify?token=${encodeURIComponent(token)}`;
+  const result = await sendEmail({
+    to: email,
+    subject: "Welcome — sign in to your Unique Choice client portal",
+    html: portalLoginEmailHtml(link),
+  });
+  if (!result.ok) {
+    console.error(`[portal] failed to email login link to new client ${email}: ${result.message}`);
+    return {
+      message: "Your account was created, but we couldn't send the sign-in email right now. Try signing in again shortly.",
+    };
+  }
+
+  return { message: "Account created! We've sent a sign-in link to your email. It expires in 15 minutes." };
 }
 
 export async function getPortalShipments(email: string): Promise<Shipment[]> {

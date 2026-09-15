@@ -31,7 +31,7 @@ export default function PortalLoginForm() {
           </div>
           <h1 className="font-display mt-4 text-xl font-semibold">Client Portal</h1>
           <p className="mt-2 text-sm text-muted">
-            Enter the email on file with your orders and we&apos;ll send you a sign-in link — no password needed.
+            Enter your account email and we&apos;ll send you a sign-in link — no password needed.
           </p>
 
           {state?.message ? (
@@ -59,7 +59,21 @@ export default function PortalLoginForm() {
               </button>
             </form>
           )}
+
+          {state?.notRegistered && (
+            <Link href="/portal/register" className="btn-primary mt-4 w-full">
+              Create an account
+              <ArrowRight size={16} />
+            </Link>
+          )}
         </div>
+
+        <p className="mt-6 text-center text-sm text-muted">
+          Don&apos;t have an account?{" "}
+          <Link href="/portal/register" className="font-medium text-accent hover:underline">
+            Register
+          </Link>
+        </p>
       </div>
     </main>
   );
