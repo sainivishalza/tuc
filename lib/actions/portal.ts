@@ -81,11 +81,14 @@ export async function requestPortalLink(
   if ((shipmentCount ?? 0) > 0 || (quoteCount ?? 0) > 0) {
     const token = createLoginLinkToken(email, secret);
     const link = `${SITE_URL}/portal/verify?token=${encodeURIComponent(token)}`;
-    await sendEmail({
+    const result = await sendEmail({
       to: email,
       subject: "Sign in to your Unique Choice client portal",
       html: portalLoginEmailHtml(link),
     });
+    if (!result.ok) {
+      console.error(`[portal] failed to email login link to ${email}: ${result.message}`);
+    }
   }
 
   // Identical message whether or not we found an account — otherwise this
