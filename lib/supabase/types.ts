@@ -60,6 +60,19 @@ export interface ClientNote {
   updated_at: string;
 }
 
+/** A registered client-portal account — separate from AdminClient (a live
+ * aggregation over quote history). This is the actual account record: it's
+ * what requestPortalLink checks to decide whether to send a sign-in link
+ * or tell the visitor to register first. */
+export interface Client {
+  id: string;
+  name: string;
+  email: string;
+  company: string | null;
+  phone: string | null;
+  created_at: string;
+}
+
 export interface Testimonial {
   id: string;
   name: string;
