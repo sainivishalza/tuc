@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -46,6 +47,12 @@ export default async function SupplierRegisterPage({
             </h1>
             <p className="mt-5 text-base text-muted sm:text-lg">
               {dict.suppliers.register.subtitle}
+            </p>
+            <p className="mt-4 text-sm text-muted">
+              Already applied?{" "}
+              <Link href="/supplier-portal/login" className="font-medium text-accent hover:underline">
+                Sign in to your supplier account
+              </Link>
             </p>
           </div>
         </section>
