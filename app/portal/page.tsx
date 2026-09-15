@@ -1,10 +1,27 @@
 import Link from "next/link";
-import { Package, FileText, LogOut, MessageCircle } from "lucide-react";
+import {
+  Package,
+  FileText,
+  LogOut,
+  MessageCircle,
+  Building2,
+  Sparkles,
+  ClipboardList,
+  FileDown,
+  Users,
+  TrendingUp,
+  Globe2,
+  ShieldCheck,
+  LayoutGrid,
+  BookOpen,
+  ArrowUpRight,
+} from "lucide-react";
 import { requirePortalEmail } from "@/lib/portalAuth";
-import { getPortalShipments, getPortalQuoteRequests } from "@/lib/actions/portal";
+import { getPortalClient, getPortalShipments, getPortalQuoteRequests } from "@/lib/actions/portal";
 import { logout } from "@/app/portal/logout/actions";
 import { STATUS_LABELS, STATUS_COLORS } from "@/lib/shipmentStatus";
 import { whatsappLink } from "@/lib/whatsapp";
+import ServiceIllustration from "@/components/ServiceIllustration";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -16,21 +33,102 @@ const QUOTE_STATUS_LABELS: Record<string, string> = {
   closed: "Closed",
 };
 
+// Every real page/section of the site worth a returning client's time —
+// nothing here that isn't already built and live. Kept to one flat list
+// rather than split by category, since ten items reads fine as a single
+// scan and a taxonomy would be overhead for this few.
+const FEATURES = [
+  {
+    href: "/en/#free-tools",
+    icon: Sparkles,
+    title: "Free Sourcing Tools",
+    desc: "Instant product match, landed-cost calculator, and a document checklist.",
+  },
+  {
+    href: "/en/bulk-quote",
+    icon: ClipboardList,
+    title: "Bulk RFQ Upload",
+    desc: "Send a spreadsheet of items and get one consolidated quote back.",
+  },
+  {
+    href: "/en/suppliers",
+    icon: Users,
+    title: "Verified Suppliers",
+    desc: "Browse factories and suppliers we've vetted on the ground.",
+  },
+  {
+    href: "/en/case-studies",
+    icon: TrendingUp,
+    title: "Case Studies",
+    desc: "Real sourcing projects, with the cost and timeline numbers behind them.",
+  },
+  {
+    href: "/en/shipping",
+    icon: Globe2,
+    title: "Shipping Routes",
+    desc: "Sea, air, and express transit times by destination country.",
+  },
+  {
+    href: "/en/sourcing",
+    icon: LayoutGrid,
+    title: "Product Categories",
+    desc: "What we source, from electronics and home goods to building materials.",
+  },
+  {
+    href: "/en/guide",
+    icon: FileDown,
+    title: "Sourcing Guide",
+    desc: "A free PDF covering MOQs, Incoterms, and inspection basics.",
+  },
+  {
+    href: "/en/security",
+    icon: ShieldCheck,
+    title: "Trust & Security",
+    desc: "How we protect deposits, your data, and every shipment in transit.",
+  },
+  {
+    href: "/en/blog",
+    icon: BookOpen,
+    title: "Sourcing Guides & Tips",
+    desc: "Expert advice on negotiating, quality control, and logistics.",
+  },
+];
+
 export default async function PortalPage() {
   const email = await requirePortalEmail();
-  const [shipments, quoteRequests] = await Promise.all([
+  const [client, shipments, quoteRequests] = await Promise.all([
+    getPortalClient(email),
     getPortalShipments(email),
     getPortalQuoteRequests(email),
   ]);
 
+  const inTransitCount = shipments.filter((s) => s.status === "in_transit").length;
+  const openQuoteCount = quoteRequests.filter((q) => q.status === "new" || q.status === "contacted").length;
+
+  const stats = [
+    { label: "Shipments on file", value: shipments.length, icon: Package },
+    { label: "Currently in transit", value: inTransitCount, icon: Globe2 },
+    { label: "Open quote requests", value: openQuoteCount, icon: FileText },
+  ];
+
   return (
     <main className="min-h-screen px-4 py-12 sm:px-6">
-      <div className="mx-auto max-w-4xl">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="mx-auto max-w-5xl">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-8">
           <div>
-            <p className="eyebrow accent-text text-xs sm:text-sm">Client Portal</p>
-            <h1 className="font-display mt-2 text-2xl font-semibold sm:text-3xl">Welcome back</h1>
-            <p className="mt-1 text-sm text-muted">Signed in as {email}</p>
+            <p className="eyebrow eyebrow-ruled accent-text text-sm">Client Portal</p>
+            <h1 className="font-display mt-3 text-2xl font-semibold sm:text-3xl">
+              Welcome back{client?.name ? `, ${client.name.split(" ")[0]}` : ""}
+            </h1>
+            <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+              <span>{email}</span>
+              {client?.company && (
+                <span className="inline-flex items-center gap-1.5 border-l border-border pl-3">
+                  <Building2 size={13} />
+                  {client.company}
+                </span>
+              )}
+            </p>
           </div>
           <form action={logout}>
             <button
@@ -43,7 +141,19 @@ export default async function PortalPage() {
           </form>
         </div>
 
-        <section className="mt-10">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {stats.map((s) => (
+            <div key={s.label} className="glass-strong card flex items-center gap-4">
+              <ServiceIllustration icon={s.icon} size={44} />
+              <div>
+                <p className="kpi-value-compact">{s.value}</p>
+                <p className="mt-0.5 text-xs font-medium text-muted">{s.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <section className="mt-12">
           <h2 className="font-display text-lg font-semibold">Your Shipments</h2>
           {shipments.length === 0 ? (
             <p className="mt-3 text-sm text-muted">No shipments on file for this email yet.</p>
@@ -129,17 +239,44 @@ export default async function PortalPage() {
           )}
         </section>
 
-        <div className="mt-12 flex flex-col items-center gap-3 text-center">
+        <section className="mt-14">
+          <p className="eyebrow eyebrow-ruled accent-text text-sm">More From The Unique Choice</p>
+          <h2 className="font-display mt-2 text-xl font-semibold">Explore what else we can do for you</h2>
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <Link key={f.href} href={f.href} className="glass-strong card group flex items-start gap-4">
+                <ServiceIllustration icon={f.icon} size={44} />
+                <div className="min-w-0">
+                  <p className="font-display flex items-center gap-1.5 text-sm font-semibold">
+                    {f.title}
+                    <ArrowUpRight
+                      size={14}
+                      className="shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100"
+                    />
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted">{f.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <div className="mt-14 flex flex-col items-center gap-4 border-t border-border pt-10 text-center">
           <p className="text-sm text-muted">Need something new sourced, or have a question about an order?</p>
-          <a
-            href={whatsappLink("Hi! I'm signed in to my client portal and have a question.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary"
-          >
-            <MessageCircle size={16} />
-            Message Us on WhatsApp
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link href="/en/#consultation" className="btn-primary">
+              Request a New Quote
+            </Link>
+            <a
+              href={whatsappLink("Hi! I'm signed in to my client portal and have a question.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary"
+            >
+              <MessageCircle size={16} />
+              Message Us on WhatsApp
+            </a>
+          </div>
         </div>
       </div>
     </main>
