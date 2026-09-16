@@ -3,6 +3,11 @@ import "server-only";
 export interface SendEmailResult {
   ok: boolean;
   message: string;
+  /** Resend's own id for this send (its `data.id`) — the same id its
+   * webhook events (delivered/bounced/complained) report back under
+   * `data.email_id`, so storing this is what lets an inbound webhook be
+   * matched back to the specific recipient row that triggered it. */
+  id?: string;
 }
 
 /** Thin wrapper over Resend's REST API — no SDK dependency, matching how
@@ -57,7 +62,8 @@ export async function sendEmail(params: {
       return { ok: false, message: `Email API error (${res.status}): ${body}` };
     }
 
-    return { ok: true, message: "Sent." };
+    const data = (await res.json().catch(() => null)) as { id?: string } | null;
+    return { ok: true, message: "Sent.", id: data?.id };
   } catch (err) {
     return { ok: false, message: err instanceof Error ? err.message : "Failed to send email." };
   }

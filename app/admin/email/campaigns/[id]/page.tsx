@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { CheckCircle2, XCircle, Clock } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, AlertOctagon, Ban } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getEmailCampaignById, getEmailSendSettings } from "@/lib/actions/emailCampaigns";
 import CampaignSendPanel from "@/components/admin/CampaignSendPanel";
@@ -23,6 +23,8 @@ const recipientStatusIcon: Record<EmailCampaignRecipient["status"], React.Compon
   sent: CheckCircle2,
   failed: XCircle,
   skipped_unsubscribed: XCircle,
+  bounced: AlertOctagon,
+  complained: Ban,
 };
 
 export default async function EmailCampaignDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -73,7 +75,14 @@ export default async function EmailCampaignDetailPage({ params }: { params: Prom
         <div className="max-h-[480px] overflow-y-auto">
           {recipients.map((r) => {
             const Icon = recipientStatusIcon[r.status];
-            const tone: BadgeTone = r.status === "sent" ? "success" : r.status === "failed" ? "danger" : r.status === "skipped_unsubscribed" ? "neutral" : "neutral";
+            const tone: BadgeTone =
+              r.status === "sent"
+                ? "success"
+                : r.status === "failed" || r.status === "complained"
+                  ? "danger"
+                  : r.status === "bounced"
+                    ? "warning"
+                    : "neutral";
             return (
               <div key={r.id} className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-2.5 text-sm last:border-b-0">
                 <div className="flex min-w-0 items-center gap-2">
@@ -82,6 +91,11 @@ export default async function EmailCampaignDetailPage({ params }: { params: Prom
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   {r.error && <span className="max-w-[220px] truncate text-xs text-red-500" title={r.error}>{r.error}</span>}
+                  {r.status === "sent" && r.delivered_at && (
+                    <span className="text-xs text-emerald-600" title={`Delivered ${new Date(r.delivered_at).toLocaleString()}`}>
+                      delivered
+                    </span>
+                  )}
                   <Badge tone={tone}>{r.status.replace("_", " ")}</Badge>
                 </div>
               </div>

@@ -13,6 +13,7 @@ import type {
   EmailCampaignRecipient,
   EmailSendSettings,
   EmailProspect,
+  EmailEvent,
 } from "@/lib/supabase/types";
 
 const SITE_URL = "https://theuniquechoice.com";
@@ -347,6 +348,7 @@ export async function updateEmailSendSettings(input: {
   max_per_hour: number;
   max_per_batch: number;
   failure_pause_threshold_pct: number;
+  max_complaints_before_pause: number;
 }): Promise<void> {
   await requireAdminAction();
   if (input.max_per_hour < 1 || input.max_per_batch < 1) {
@@ -354,6 +356,9 @@ export async function updateEmailSendSettings(input: {
   }
   if (input.failure_pause_threshold_pct < 1 || input.failure_pause_threshold_pct > 100) {
     throw new Error("Failure threshold must be between 1 and 100.");
+  }
+  if (input.max_complaints_before_pause < 1) {
+    throw new Error("Complaint threshold must be at least 1.");
   }
   const supabase = getSupabaseAdminClient();
   const { error } = await supabase
@@ -471,7 +476,7 @@ export async function sendNextBatch(campaignId: string): Promise<SendBatchResult
       sentThisBatch += 1;
       await supabase
         .from("email_campaign_recipients")
-        .update({ status: "sent", sent_at: new Date().toISOString(), error: null })
+        .update({ status: "sent", sent_at: new Date().toISOString(), error: null, resend_email_id: result.id ?? null })
         .eq("id", recipient.id);
     } else {
       failedThisBatch += 1;
@@ -524,6 +529,45 @@ export async function sendNextBatch(campaignId: string): Promise<SendBatchResult
   revalidatePath("/admin/email");
 
   return { sentThisBatch, failedThisBatch, remaining, paused, pauseReason, hourlyLimitReached: false };
+}
+
+// ---------- Deliverability events (from Resend webhooks) ----------
+
+export async function getEmailEvents(limit = 100): Promise<EmailEvent[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("email_events")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return data as EmailEvent[];
+}
+
+export interface DeliverabilityStats {
+  delivered: number;
+  bounced: number;
+  complained: number;
+}
+
+/** Rolling 30-day counts — the at-a-glance health check on the hub page. */
+export async function getDeliverabilityStats(): Promise<DeliverabilityStats> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [delivered, bounced, complained] = await Promise.all([
+    supabase.from("email_events").select("id", { count: "exact", head: true }).eq("type", "email.delivered").gte("created_at", thirtyDaysAgo),
+    supabase.from("email_events").select("id", { count: "exact", head: true }).eq("type", "email.bounced").gte("created_at", thirtyDaysAgo),
+    supabase.from("email_events").select("id", { count: "exact", head: true }).eq("type", "email.complained").gte("created_at", thirtyDaysAgo),
+  ]);
+
+  return {
+    delivered: delivered.count ?? 0,
+    bounced: bounced.count ?? 0,
+    complained: complained.count ?? 0,
+  };
 }
 
 // ---------- Unsubscribe (public) ----------
