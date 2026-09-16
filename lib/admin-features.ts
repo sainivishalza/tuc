@@ -15,6 +15,7 @@ import {
   Ship,
   ShieldCheck,
   Users,
+  Send,
 } from "lucide-react";
 
 export interface AdminFeature {
@@ -134,6 +135,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/carriers",
     status: "live",
     icon: Building2,
+  },
+  {
+    title: "Email Sender",
+    description:
+      "Send templated campaigns to clients, suppliers, and newsletter subscribers — with sending-rate limits and an automatic pause if too many sends start failing, so a bad batch can't damage your domain's inbox reputation.",
+    href: "/admin/email",
+    status: "live",
+    icon: Send,
   },
   {
     title: "Newsletter & Guide Leads",
