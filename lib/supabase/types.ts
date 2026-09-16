@@ -185,13 +185,18 @@ export interface EmailCampaign {
   template_id: string | null;
   name: string;
   segments: EmailCampaignSegments;
-  status: "draft" | "sending" | "paused" | "completed";
+  status: "draft" | "scheduled" | "sending" | "paused" | "completed";
   total_recipients: number;
   sent_count: number;
   failed_count: number;
   created_at: string;
   started_at: string | null;
   completed_at: string | null;
+  /** When set, the cron-driven send-scheduled-campaigns route drives this
+   * campaign to completion on its own once this time passes — an admin
+   * never needs to click "send next batch" for it. Null means the
+   * campaign only sends when an admin clicks that button. */
+  scheduled_at: string | null;
 }
 
 export interface EmailCampaignRecipient {

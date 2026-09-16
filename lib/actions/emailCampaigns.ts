@@ -4,8 +4,9 @@ import { revalidatePath } from "next/cache";
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { sendEmail } from "@/lib/email";
-import { createUnsubscribeToken, verifyUnsubscribeToken } from "@/lib/unsubscribeAuth";
+import { verifyUnsubscribeToken } from "@/lib/unsubscribeAuth";
 import { renderCampaignEmailHtml, renderCampaignEmailText } from "@/lib/emailTemplateRenderer";
+import { sendCampaignBatch, type SendBatchResult } from "@/lib/emailBatchSender";
 import type {
   EmailTemplate,
   EmailCampaign,
@@ -15,8 +16,6 @@ import type {
   EmailProspect,
   EmailEvent,
 } from "@/lib/supabase/types";
-
-const SITE_URL = "https://theuniquechoice.com";
 
 // ---------- Templates ----------
 
@@ -299,12 +298,16 @@ export async function getEmailCampaignById(
 export async function createEmailCampaign(
   templateId: string,
   name: string,
-  segments: EmailCampaignSegments
+  segments: EmailCampaignSegments,
+  scheduledAt?: string | null
 ): Promise<string> {
   await requireAdminAction();
   if (!name.trim()) throw new Error("Give the campaign a name.");
   if (!segments.clients && !segments.suppliers && !segments.newsletter) {
     throw new Error("Pick at least one audience.");
+  }
+  if (scheduledAt && new Date(scheduledAt) <= new Date()) {
+    throw new Error("The scheduled time must be in the future.");
   }
 
   const supabase = getSupabaseAdminClient();
@@ -319,8 +322,9 @@ export async function createEmailCampaign(
       template_id: templateId,
       name: name.trim(),
       segments,
-      status: "draft",
+      status: scheduledAt ? "scheduled" : "draft",
       total_recipients: emails.size,
+      scheduled_at: scheduledAt || null,
     })
     .select("id")
     .single();
@@ -332,6 +336,23 @@ export async function createEmailCampaign(
 
   revalidatePath("/admin/email");
   return campaign.id as string;
+}
+
+/** Reverts a scheduled campaign back to an unscheduled draft — only valid
+ * before its scheduled time has actually triggered a first batch (once
+ * sending has started, the cron route owns it and this is a no-op from
+ * the campaign's point of view since status is no longer "scheduled"). */
+export async function cancelSchedule(campaignId: string): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase
+    .from("email_campaigns")
+    .update({ status: "draft", scheduled_at: null })
+    .eq("id", campaignId)
+    .eq("status", "scheduled");
+  if (error) throw new Error(error.message);
+  revalidatePath(`/admin/email/campaigns/${campaignId}`);
+  revalidatePath("/admin/email");
 }
 
 // ---------- Send settings / circuit breaker ----------
@@ -393,142 +414,11 @@ export async function resumeSending(): Promise<void> {
   revalidatePath("/admin/email");
 }
 
-export interface SendBatchResult {
-  sentThisBatch: number;
-  failedThisBatch: number;
-  remaining: number;
-  paused: boolean;
-  pauseReason: string | null;
-  hourlyLimitReached: boolean;
-}
+export type { SendBatchResult };
 
 export async function sendNextBatch(campaignId: string): Promise<SendBatchResult> {
   await requireAdminAction();
-  const supabase = getSupabaseAdminClient();
-
-  const { data: settings, error: settingsError } = await supabase
-    .from("email_send_settings")
-    .select("*")
-    .eq("id", "default")
-    .single();
-  if (settingsError) throw new Error(settingsError.message);
-
-  const now = new Date();
-  if (settings.paused_until && new Date(settings.paused_until) > now) {
-    return { sentThisBatch: 0, failedThisBatch: 0, remaining: 0, paused: true, pauseReason: settings.pause_reason, hourlyLimitReached: false };
-  }
-
-  const { data: campaign, error: campaignError } = await supabase
-    .from("email_campaigns")
-    .select("*")
-    .eq("id", campaignId)
-    .single();
-  if (campaignError) throw new Error(campaignError.message);
-
-  const { data: template } = campaign.template_id
-    ? await supabase.from("email_templates").select("*").eq("id", campaign.template_id).maybeSingle()
-    : { data: null };
-  if (!template) throw new Error("This campaign's template no longer exists.");
-
-  // Global hourly cap — counted across every campaign, not just this one,
-  // since it's protecting the sending domain's reputation as a whole.
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
-  const { count: sentLastHour } = await supabase
-    .from("email_campaign_recipients")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "sent")
-    .gte("sent_at", oneHourAgo);
-
-  const hourlyRemaining = Math.max(0, settings.max_per_hour - (sentLastHour ?? 0));
-  if (hourlyRemaining === 0) {
-    return { sentThisBatch: 0, failedThisBatch: 0, remaining: 0, paused: false, pauseReason: null, hourlyLimitReached: true };
-  }
-
-  const batchSize = Math.min(settings.max_per_batch, hourlyRemaining);
-  const { data: pending, error: pendingError } = await supabase
-    .from("email_campaign_recipients")
-    .select("*")
-    .eq("campaign_id", campaignId)
-    .eq("status", "pending")
-    .limit(batchSize);
-  if (pendingError) throw new Error(pendingError.message);
-
-  if (!campaign.started_at) {
-    await supabase.from("email_campaigns").update({ status: "sending", started_at: now.toISOString() }).eq("id", campaignId);
-  }
-
-  let sentThisBatch = 0;
-  let failedThisBatch = 0;
-
-  for (const recipient of pending ?? []) {
-    const token = createUnsubscribeToken(recipient.email);
-    const unsubscribeUrl = token ? `${SITE_URL}/unsubscribe?token=${encodeURIComponent(token)}` : null;
-
-    const html = renderCampaignEmailHtml(template, unsubscribeUrl);
-    const text = renderCampaignEmailText(template, unsubscribeUrl);
-    const headers = unsubscribeUrl
-      ? { "List-Unsubscribe": `<${unsubscribeUrl}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" }
-      : undefined;
-
-    const result = await sendEmail({ to: recipient.email, subject: template.subject, html, text, headers });
-
-    if (result.ok) {
-      sentThisBatch += 1;
-      await supabase
-        .from("email_campaign_recipients")
-        .update({ status: "sent", sent_at: new Date().toISOString(), error: null, resend_email_id: result.id ?? null })
-        .eq("id", recipient.id);
-    } else {
-      failedThisBatch += 1;
-      console.error(`[email-campaign] failed to send to ${recipient.email}: ${result.message}`);
-      await supabase
-        .from("email_campaign_recipients")
-        .update({ status: "failed", error: result.message })
-        .eq("id", recipient.id);
-    }
-  }
-
-  const batchTotal = sentThisBatch + failedThisBatch;
-  const failurePct = batchTotal > 0 ? (failedThisBatch / batchTotal) * 100 : 0;
-  // Only trip the breaker on a batch with enough volume to mean
-  // something — a single bad address in a 2-recipient batch shouldn't
-  // halt the whole campaign the same way a 25% failure rate across 25
-  // sends should.
-  let paused = false;
-  let pauseReason: string | null = null;
-  if (batchTotal >= 5 && failurePct >= settings.failure_pause_threshold_pct) {
-    paused = true;
-    pauseReason = `Auto-paused: ${failedThisBatch}/${batchTotal} sends failed in the last batch (${Math.round(failurePct)}%, threshold ${settings.failure_pause_threshold_pct}%).`;
-    await supabase
-      .from("email_send_settings")
-      .update({ paused_until: new Date(now.getTime() + 60 * 60 * 1000).toISOString(), pause_reason: pauseReason, updated_at: now.toISOString() })
-      .eq("id", "default");
-  }
-
-  const { count: remainingCount } = await supabase
-    .from("email_campaign_recipients")
-    .select("id", { count: "exact", head: true })
-    .eq("campaign_id", campaignId)
-    .eq("status", "pending");
-
-  const newSentCount = campaign.sent_count + sentThisBatch;
-  const newFailedCount = campaign.failed_count + failedThisBatch;
-  const remaining = remainingCount ?? 0;
-
-  await supabase
-    .from("email_campaigns")
-    .update({
-      sent_count: newSentCount,
-      failed_count: newFailedCount,
-      status: remaining === 0 ? "completed" : paused ? "paused" : "sending",
-      completed_at: remaining === 0 ? now.toISOString() : null,
-    })
-    .eq("id", campaignId);
-
-  revalidatePath(`/admin/email/campaigns/${campaignId}`);
-  revalidatePath("/admin/email");
-
-  return { sentThisBatch, failedThisBatch, remaining, paused, pauseReason, hourlyLimitReached: false };
+  return sendCampaignBatch(campaignId);
 }
 
 // ---------- Deliverability events (from Resend webhooks) ----------

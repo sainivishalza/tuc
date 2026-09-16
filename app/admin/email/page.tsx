@@ -13,6 +13,7 @@ export const metadata = {
 
 const statusTones: Record<EmailCampaign["status"], BadgeTone> = {
   draft: "neutral",
+  scheduled: "indigo",
   sending: "info",
   paused: "warning",
   completed: "success",
@@ -93,6 +94,7 @@ export default async function EmailAdminPage() {
                   <p className="truncate font-admin-display text-sm font-semibold text-gray-900">{c.name}</p>
                   <p className="text-xs text-gray-400">
                     {c.sent_count} sent · {c.failed_count} failed · {c.total_recipients} total
+                    {c.status === "scheduled" && c.scheduled_at && ` · sends ${new Date(c.scheduled_at).toLocaleString()}`}
                   </p>
                 </div>
                 <Badge tone={statusTones[c.status]}>{c.status}</Badge>
