@@ -101,12 +101,15 @@ export default async function SuppliersDirectoryPage({
               ))}
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-12 flex flex-col items-center gap-2 text-center">
               <Link
                 href={`/${locale}/suppliers/register`}
                 className="text-sm font-medium text-accent hover:opacity-80"
               >
                 Are you a supplier? Get listed →
+              </Link>
+              <Link href="/supplier-portal/login" className="text-sm font-medium text-muted hover:text-foreground">
+                Already applied? Sign in to your supplier account
               </Link>
             </div>
           </div>
