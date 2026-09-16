@@ -38,8 +38,16 @@ export default function CampaignSendPanel({ campaign, isPaused }: { campaign: Em
     return <p className="text-sm text-emerald-600">All recipients have been processed.</p>;
   }
 
+  const isAutomated = !!campaign.scheduled_at && campaign.status !== "draft";
+
   return (
     <div className="flex flex-col gap-3">
+      {isAutomated && !isPaused && (
+        <p className="text-xs text-gray-500">
+          This campaign is scheduled and sending itself automatically — the button below sends a batch right now instead of
+          waiting for the next automated run.
+        </p>
+      )}
       {isPaused ? (
         <p className="flex items-center gap-2 text-sm text-amber-700">
           <PauseCircle size={15} />

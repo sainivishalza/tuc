@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { CheckCircle2, XCircle, Clock, AlertOctagon, Ban } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, AlertOctagon, Ban, CalendarClock } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
-import { getEmailCampaignById, getEmailSendSettings } from "@/lib/actions/emailCampaigns";
+import { getEmailCampaignById, getEmailSendSettings, cancelSchedule } from "@/lib/actions/emailCampaigns";
 import CampaignSendPanel from "@/components/admin/CampaignSendPanel";
 import AdminShell from "@/components/admin/AdminShell";
-import { BackLink, PageHeader, Card, Badge, type BadgeTone } from "@/components/admin/ui";
+import { BackLink, PageHeader, Card, Badge, Button, type BadgeTone } from "@/components/admin/ui";
 import type { EmailCampaign, EmailCampaignRecipient } from "@/lib/supabase/types";
 
 export const metadata = {
@@ -13,6 +13,7 @@ export const metadata = {
 
 const statusTones: Record<EmailCampaign["status"], BadgeTone> = {
   draft: "neutral",
+  scheduled: "indigo",
   sending: "info",
   paused: "warning",
   completed: "success",
@@ -50,6 +51,25 @@ export default async function EmailCampaignDetailPage({ params }: { params: Prom
         <Card className="border-amber-200 bg-amber-50">
           <p className="text-sm font-semibold text-amber-800">Sending is paused</p>
           <p className="mt-1 text-xs text-amber-700">{settings.pause_reason}</p>
+        </Card>
+      )}
+
+      {campaign.status === "scheduled" && campaign.scheduled_at && (
+        <Card className="flex items-center justify-between gap-4 border-indigo-200 bg-indigo-50">
+          <p className="flex items-center gap-2 text-sm font-semibold text-indigo-800">
+            <CalendarClock size={15} />
+            Scheduled to send automatically starting {new Date(campaign.scheduled_at).toLocaleString()}
+          </p>
+          <form
+            action={async () => {
+              "use server";
+              await cancelSchedule(campaign.id);
+            }}
+          >
+            <Button type="submit" variant="secondary" size="sm">
+              Cancel schedule
+            </Button>
+          </form>
         </Card>
       )}
 

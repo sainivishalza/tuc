@@ -7,6 +7,17 @@ import { createEmailCampaign, getAudienceCount } from "@/lib/actions/emailCampai
 import type { EmailTemplate, EmailCampaignSegments } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
+/** A datetime-local input needs "YYYY-MM-DDTHH:mm" in the *local*
+ * timezone with no offset suffix — toISOString() gives UTC, so this
+ * builds the local equivalent by hand. Used only as the default value a
+ * minute from now, so the picker doesn't open already in the past. */
+function localDateTimeInputDefault(minutesFromNow: number): string {
+  const d = new Date(Date.now() + minutesFromNow * 60 * 1000);
+  d.setSeconds(0, 0);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export default function NewCampaignForm({ templates }: { templates: EmailTemplate[] }) {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -14,6 +25,8 @@ export default function NewCampaignForm({ templates }: { templates: EmailTemplat
   const [segments, setSegments] = useState<EmailCampaignSegments>({ clients: true, suppliers: false, newsletter: true, prospects: false });
   const [count, setCount] = useState<number | null>(null);
   const [countLoading, setCountLoading] = useState(false);
+  const [sendMode, setSendMode] = useState<"now" | "later">("now");
+  const [scheduledAt, setScheduledAt] = useState(() => localDateTimeInputDefault(60));
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -48,9 +61,18 @@ export default function NewCampaignForm({ templates }: { templates: EmailTemplat
       setError("Create a template first.");
       return;
     }
+    let scheduledAtIso: string | null = null;
+    if (sendMode === "later") {
+      const parsed = new Date(scheduledAt);
+      if (Number.isNaN(parsed.getTime()) || parsed <= new Date()) {
+        setError("Pick a time in the future to schedule this for.");
+        return;
+      }
+      scheduledAtIso = parsed.toISOString();
+    }
     setSubmitting(true);
     try {
-      const id = await createEmailCampaign(templateId, name, segments);
+      const id = await createEmailCampaign(templateId, name, segments, scheduledAtIso);
       router.push(`/admin/email/campaigns/${id}`);
       router.refresh();
     } catch (err) {
@@ -107,10 +129,39 @@ export default function NewCampaignForm({ templates }: { templates: EmailTemplat
         </p>
       </div>
 
+      <div>
+        <label className={labelClass}>When to send</label>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2.5 rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700">
+            <input type="radio" name="sendMode" checked={sendMode === "now"} onChange={() => setSendMode("now")} />
+            Save as a draft — I&apos;ll send the first batch myself
+          </label>
+          <label className="flex items-center gap-2.5 rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700">
+            <input type="radio" name="sendMode" checked={sendMode === "later"} onChange={() => setSendMode("later")} />
+            Schedule it — send automatically, no clicking required
+          </label>
+          {sendMode === "later" && (
+            <input
+              type="datetime-local"
+              value={scheduledAt}
+              onChange={(e) => setScheduledAt(e.target.value)}
+              min={localDateTimeInputDefault(1)}
+              className={inputClass}
+            />
+          )}
+        </div>
+        {sendMode === "later" && (
+          <p className="mt-2 text-xs text-gray-500">
+            Once this time passes, the campaign sends itself in batches — respecting the same hourly caps and circuit breaker as a
+            manual send — until every recipient has been processed. You can cancel the schedule any time before it starts.
+          </p>
+        )}
+      </div>
+
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       <Button type="submit" disabled={submitting || templates.length === 0} className="mt-2 w-fit">
-        {submitting ? "Creating..." : "Create campaign"}
+        {submitting ? "Creating..." : sendMode === "later" ? "Schedule campaign" : "Create campaign"}
       </Button>
     </form>
   );
