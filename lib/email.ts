@@ -13,6 +13,16 @@ export async function sendEmail(params: {
   to: string;
   subject: string;
   html: string;
+  /** Plain-text alternative part. Optional for one-off transactional
+   * sends, but real deliverability weight for bulk mail — a multipart
+   * (html + text) message reads as far less spammy to Gmail/Yahoo than
+   * HTML-only. See lib/emailTemplateRenderer.ts, which always supplies one. */
+  text?: string;
+  /** Raw header overrides — used by campaign sends to set List-Unsubscribe
+   * / List-Unsubscribe-Post, which Gmail and Yahoo's 2024 bulk-sender
+   * rules effectively require for mail to land in the inbox rather than
+   * spam. Left undefined for ordinary transactional sends. */
+  headers?: Record<string, string>;
 }): Promise<SendEmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
@@ -33,6 +43,8 @@ export async function sendEmail(params: {
         to: params.to,
         subject: params.subject,
         html: params.html,
+        ...(params.text ? { text: params.text } : {}),
+        ...(params.headers ? { headers: params.headers } : {}),
       }),
       // A hung Resend call must never hold up the server action that
       // triggered it (a customer submitting a form, an admin saving a

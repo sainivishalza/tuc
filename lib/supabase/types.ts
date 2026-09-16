@@ -143,6 +143,67 @@ export interface CaseStudy {
   updated_at: string;
 }
 
+export interface EmailTemplate {
+  id: string;
+  name: string;
+  category: "newsletter" | "announcement" | "promotional" | "general";
+  subject: string;
+  preheader: string | null;
+  headline: string;
+  /** Paragraphs, separated by a blank line — rendered into the email shell by lib/emailTemplateRenderer.ts. */
+  body_text: string;
+  cta_text: string | null;
+  cta_url: string | null;
+  status: "draft" | "active";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EmailCampaignSegments {
+  clients?: boolean;
+  suppliers?: boolean;
+  newsletter?: boolean;
+}
+
+export interface EmailCampaign {
+  id: string;
+  template_id: string | null;
+  name: string;
+  segments: EmailCampaignSegments;
+  status: "draft" | "sending" | "paused" | "completed";
+  total_recipients: number;
+  sent_count: number;
+  failed_count: number;
+  created_at: string;
+  started_at: string | null;
+  completed_at: string | null;
+}
+
+export interface EmailCampaignRecipient {
+  id: string;
+  campaign_id: string;
+  email: string;
+  status: "pending" | "sent" | "failed" | "skipped_unsubscribed";
+  error: string | null;
+  sent_at: string | null;
+  created_at: string;
+}
+
+/** Singleton row (id='default') — the sending circuit breaker's live
+ * config and state. paused_until/pause_reason are set automatically when
+ * a batch's failure rate crosses failure_pause_threshold_pct, or manually
+ * by an admin — either way, sendNextBatch refuses to send while
+ * paused_until is in the future. */
+export interface EmailSendSettings {
+  id: string;
+  max_per_hour: number;
+  max_per_batch: number;
+  failure_pause_threshold_pct: number;
+  paused_until: string | null;
+  pause_reason: string | null;
+  updated_at: string;
+}
+
 export interface NewsletterSubscriber {
   id: string;
   email: string;
