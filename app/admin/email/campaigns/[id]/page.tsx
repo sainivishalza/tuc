@@ -107,7 +107,10 @@ export default async function EmailCampaignDetailPage({ params }: { params: Prom
               <div key={r.id} className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-2.5 text-sm last:border-b-0">
                 <div className="flex min-w-0 items-center gap-2">
                   <Icon size={14} />
-                  <span className="truncate text-gray-700">{r.email}</span>
+                  <span className="truncate text-gray-700">
+                    {r.email}
+                    {r.name && <span className="text-gray-400"> — {r.name}</span>}
+                  </span>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   {r.error && <span className="max-w-[220px] truncate text-xs text-red-500" title={r.error}>{r.error}</span>}

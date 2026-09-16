@@ -4,6 +4,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { sendEmail } from "@/lib/email";
 import { createUnsubscribeToken } from "@/lib/unsubscribeAuth";
 import { renderCampaignEmailHtml, renderCampaignEmailText } from "@/lib/emailTemplateRenderer";
+import { applyMergeTags } from "@/lib/mergeTags";
 
 const SITE_URL = "https://theuniquechoice.com";
 
@@ -81,13 +82,23 @@ export async function sendCampaignBatch(campaignId: string): Promise<SendBatchRe
     const token = createUnsubscribeToken(recipient.email);
     const unsubscribeUrl = token ? `${SITE_URL}/unsubscribe?token=${encodeURIComponent(token)}` : null;
 
-    const html = renderCampaignEmailHtml(template, unsubscribeUrl);
-    const text = renderCampaignEmailText(template, unsubscribeUrl);
+    const mergeCtx = { email: recipient.email, name: recipient.name };
+    const personalized = {
+      subject: applyMergeTags(template.subject, mergeCtx),
+      preheader: template.preheader ? applyMergeTags(template.preheader, mergeCtx) : null,
+      headline: applyMergeTags(template.headline, mergeCtx),
+      body_text: applyMergeTags(template.body_text, mergeCtx),
+      cta_text: template.cta_text ? applyMergeTags(template.cta_text, mergeCtx) : null,
+      cta_url: template.cta_url,
+    };
+
+    const html = renderCampaignEmailHtml(personalized, unsubscribeUrl);
+    const text = renderCampaignEmailText(personalized, unsubscribeUrl);
     const headers = unsubscribeUrl
       ? { "List-Unsubscribe": `<${unsubscribeUrl}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" }
       : undefined;
 
-    const result = await sendEmail({ to: recipient.email, subject: template.subject, html, text, headers });
+    const result = await sendEmail({ to: recipient.email, subject: personalized.subject, html, text, headers });
 
     if (result.ok) {
       sentThisBatch += 1;

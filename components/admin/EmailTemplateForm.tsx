@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AlertTriangle, Send, CheckCircle } from "lucide-react";
 import { createEmailTemplate, updateEmailTemplate, sendTestEmail, type EmailTemplateInput } from "@/lib/actions/emailCampaigns";
 import { findSpamTriggerWords } from "@/lib/emailTemplateRenderer";
+import { MERGE_TAGS } from "@/lib/mergeTags";
 import type { EmailTemplate } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
@@ -25,6 +26,7 @@ export default function EmailTemplateForm({ template }: { template?: EmailTempla
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [testEmail, setTestEmail] = useState("");
+  const [testName, setTestName] = useState("Alex Rivera");
   const [testSending, setTestSending] = useState(false);
   const [testResult, setTestResult] = useState<{ ok: boolean; message: string } | null>(null);
 
@@ -34,7 +36,11 @@ export default function EmailTemplateForm({ template }: { template?: EmailTempla
     setTestResult(null);
     setTestSending(true);
     try {
-      const result = await sendTestEmail({ subject, preheader, headline, body_text: bodyText, cta_text: ctaText, cta_url: ctaUrl }, testEmail);
+      const result = await sendTestEmail(
+        { subject, preheader, headline, body_text: bodyText, cta_text: ctaText, cta_url: ctaUrl },
+        testEmail,
+        testName
+      );
       setTestResult(result);
     } catch (err) {
       setTestResult({ ok: false, message: err instanceof Error ? err.message : "Something went wrong." });
@@ -79,6 +85,16 @@ export default function EmailTemplateForm({ template }: { template?: EmailTempla
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-xs text-gray-600">
+        <span className="font-semibold text-gray-700">Personalize with:</span>
+        {MERGE_TAGS.map((t) => (
+          <code key={t.tag} title={t.description} className="rounded bg-white px-1.5 py-0.5 font-mono text-gray-700 shadow-sm">
+            {t.tag}
+          </code>
+        ))}
+        <span className="text-gray-400">— works in the subject, headline, body, and button text.</span>
       </div>
 
       <div>
@@ -150,6 +166,13 @@ export default function EmailTemplateForm({ template }: { template?: EmailTempla
             onChange={(e) => setTestEmail(e.target.value)}
             placeholder="you@company.com"
             className={`max-w-xs ${inputClass}`}
+          />
+          <input
+            value={testName}
+            onChange={(e) => setTestName(e.target.value)}
+            placeholder="Test as this name (optional)"
+            title="Stands in for the recipient's name, so {{first_name}}/{{name}} render with something real — leave blank to preview the no-name fallback."
+            className={`max-w-[220px] ${inputClass}`}
           />
           <Button type="button" variant="secondary" size="sm" disabled={testSending || !testEmail.trim() || !subject.trim() || !bodyText.trim()} onClick={handleSendTest}>
             <Send size={12} />

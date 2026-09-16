@@ -6,6 +6,7 @@ import { requireAdminAction } from "@/lib/adminAuth";
 import { sendEmail } from "@/lib/email";
 import { verifyUnsubscribeToken } from "@/lib/unsubscribeAuth";
 import { renderCampaignEmailHtml, renderCampaignEmailText } from "@/lib/emailTemplateRenderer";
+import { applyMergeTags } from "@/lib/mergeTags";
 import { sendCampaignBatch, type SendBatchResult } from "@/lib/emailBatchSender";
 import type {
   EmailTemplate,
@@ -116,21 +117,26 @@ export async function deleteEmailTemplate(id: string): Promise<void> {
  * the campaign/recipient machinery entirely — a way to see the actual
  * rendered email in a real inbox before committing to a real send. Takes
  * the same draft fields as the editor so an unsaved draft can be tested
- * too, not just a saved template. */
+ * too, not just a saved template. testName stands in for whatever name a
+ * real recipient would have on file, so {{first_name}}/{{name}} render
+ * with something other than the "there" fallback in the test — pass
+ * blank to preview that fallback instead. */
 export async function sendTestEmail(
   input: Pick<EmailTemplateInput, "subject" | "preheader" | "headline" | "body_text" | "cta_text" | "cta_url">,
-  toEmail: string
+  toEmail: string,
+  testName?: string
 ): Promise<{ ok: boolean; message: string }> {
   await requireAdminAction();
   if (!toEmail.trim() || !toEmail.includes("@")) {
     return { ok: false, message: "Enter a valid email address to send the test to." };
   }
+  const ctx = { email: toEmail.trim(), name: testName?.trim() || null };
   const template = {
-    subject: `[TEST] ${input.subject}`,
-    preheader: input.preheader || null,
-    headline: input.headline,
-    body_text: input.body_text,
-    cta_text: input.cta_text || null,
+    subject: `[TEST] ${applyMergeTags(input.subject, ctx)}`,
+    preheader: input.preheader ? applyMergeTags(input.preheader, ctx) : null,
+    headline: applyMergeTags(input.headline, ctx),
+    body_text: applyMergeTags(input.body_text, ctx),
+    cta_text: input.cta_text ? applyMergeTags(input.cta_text, ctx) : null,
     cta_url: input.cta_url || null,
   };
   const html = renderCampaignEmailHtml(template, null);
@@ -196,32 +202,42 @@ export async function deleteEmailProspect(id: string): Promise<void> {
 
 // ---------- Audience ----------
 
-async function collectAudienceEmails(segments: EmailCampaignSegments): Promise<Map<string, string>> {
-  const supabase = getSupabaseAdminClient();
-  const emails = new Map<string, string>(); // lowercased -> original casing
+export interface AudienceMember {
+  email: string;
+  /** Null when the source table has no name field (newsletter
+   * subscribers) or the record's name is blank. */
+  name: string | null;
+}
 
-  const add = (raw: string | null | undefined) => {
-    if (!raw) return;
-    const trimmed = raw.trim();
+async function collectAudienceEmails(segments: EmailCampaignSegments): Promise<Map<string, AudienceMember>> {
+  const supabase = getSupabaseAdminClient();
+  const emails = new Map<string, AudienceMember>(); // lowercased -> member
+
+  const add = (rawEmail: string | null | undefined, rawName: string | null | undefined) => {
+    if (!rawEmail) return;
+    const trimmed = rawEmail.trim();
     if (!trimmed || !trimmed.includes("@")) return;
     const key = trimmed.toLowerCase();
-    if (!emails.has(key)) emails.set(key, trimmed);
+    if (!emails.has(key)) emails.set(key, { email: trimmed, name: rawName?.trim() || null });
   };
 
   const queries: Promise<void>[] = [];
   if (segments.clients) {
     queries.push(
       (async () => {
-        const { data } = await supabase.from("clients").select("email");
-        (data ?? []).forEach((r) => add((r as { email: string }).email));
+        const { data } = await supabase.from("clients").select("email, name");
+        (data ?? []).forEach((r) => add((r as { email: string; name: string | null }).email, (r as { name: string | null }).name));
       })()
     );
   }
   if (segments.suppliers) {
     queries.push(
       (async () => {
-        const { data } = await supabase.from("suppliers").select("email");
-        (data ?? []).forEach((r) => add((r as { email: string }).email));
+        const { data } = await supabase.from("suppliers").select("email, contact_name, company_name");
+        (data ?? []).forEach((r) => {
+          const row = r as { email: string; contact_name: string | null; company_name: string | null };
+          add(row.email, row.contact_name || row.company_name);
+        });
       })()
     );
   }
@@ -229,15 +245,15 @@ async function collectAudienceEmails(segments: EmailCampaignSegments): Promise<M
     queries.push(
       (async () => {
         const { data } = await supabase.from("newsletter_subscribers").select("email");
-        (data ?? []).forEach((r) => add((r as { email: string }).email));
+        (data ?? []).forEach((r) => add((r as { email: string }).email, null));
       })()
     );
   }
   if (segments.prospects) {
     queries.push(
       (async () => {
-        const { data } = await supabase.from("email_prospects").select("email");
-        (data ?? []).forEach((r) => add((r as { email: string }).email));
+        const { data } = await supabase.from("email_prospects").select("email, name");
+        (data ?? []).forEach((r) => add((r as { email: string; name: string | null }).email, (r as { name: string | null }).name));
       })()
     );
   }
@@ -303,7 +319,7 @@ export async function createEmailCampaign(
 ): Promise<string> {
   await requireAdminAction();
   if (!name.trim()) throw new Error("Give the campaign a name.");
-  if (!segments.clients && !segments.suppliers && !segments.newsletter) {
+  if (!segments.clients && !segments.suppliers && !segments.newsletter && !segments.prospects) {
     throw new Error("Pick at least one audience.");
   }
   if (scheduledAt && new Date(scheduledAt) <= new Date()) {
@@ -330,7 +346,7 @@ export async function createEmailCampaign(
     .single();
   if (error) throw new Error(error.message);
 
-  const rows = Array.from(emails.values()).map((email) => ({ campaign_id: campaign.id, email, status: "pending" }));
+  const rows = Array.from(emails.values()).map((member) => ({ campaign_id: campaign.id, email: member.email, name: member.name, status: "pending" }));
   const { error: recipientsError } = await supabase.from("email_campaign_recipients").insert(rows);
   if (recipientsError) throw new Error(recipientsError.message);
 
