@@ -203,6 +203,12 @@ export interface EmailCampaignRecipient {
   id: string;
   campaign_id: string;
   email: string;
+  /** Captured from the source table (clients.name, suppliers.contact_name,
+   * etc.) at campaign-creation time — frozen like the email address, so a
+   * later name change doesn't retroactively alter an in-flight send. Null
+   * for sources with no name field (newsletter subscribers), in which
+   * case merge tags fall back to a generic greeting. */
+  name: string | null;
   /** "bounced"/"complained" arrive later, from a Resend webhook — the
    * send itself already succeeded (status was "sent") when Resend
    * reports the recipient's mail server rejected it or marked it spam. */
