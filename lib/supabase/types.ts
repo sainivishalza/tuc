@@ -146,7 +146,7 @@ export interface CaseStudy {
 export interface EmailTemplate {
   id: string;
   name: string;
-  category: "newsletter" | "announcement" | "promotional" | "general";
+  category: "newsletter" | "announcement" | "promotional" | "invite" | "general";
   subject: string;
   preheader: string | null;
   headline: string;
@@ -163,6 +163,21 @@ export interface EmailCampaignSegments {
   clients?: boolean;
   suppliers?: boolean;
   newsletter?: boolean;
+  prospects?: boolean;
+}
+
+/** A manually-managed outreach list — people who are neither a client nor
+ * a supplier yet, added one at a time or via bulk import, to invite them
+ * to become one. Kept as its own table (not folded into newsletter
+ * subscribers) since these people never opted in the way a newsletter
+ * signup or account registration implies — it's a cold-outreach list the
+ * admin builds deliberately, not something the site itself grows. */
+export interface EmailProspect {
+  id: string;
+  email: string;
+  name: string | null;
+  note: string | null;
+  created_at: string;
 }
 
 export interface EmailCampaign {

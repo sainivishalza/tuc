@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, UserPlus } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getEmailCampaigns, getEmailSendSettings } from "@/lib/actions/emailCampaigns";
 import EmailSendSettingsForm from "@/components/admin/EmailSendSettingsForm";
@@ -27,9 +27,13 @@ export default async function EmailAdminPage() {
     <AdminShell current="/admin/email">
       <PageHeader
         title="Email Sender"
-        subtitle="Send templated campaigns to clients, suppliers, and newsletter subscribers — with built-in deliverability safeguards."
+        subtitle="Send templated campaigns to clients, suppliers, newsletter subscribers, and prospects you're inviting to join — with built-in deliverability safeguards."
         action={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <LinkButton href="/admin/email/prospects" variant="secondary">
+              <UserPlus size={15} />
+              Prospects
+            </LinkButton>
             <LinkButton href="/admin/email/templates" variant="secondary">
               <FileText size={15} />
               Templates

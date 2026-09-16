@@ -12,6 +12,7 @@ import type {
   EmailCampaignSegments,
   EmailCampaignRecipient,
   EmailSendSettings,
+  EmailProspect,
 } from "@/lib/supabase/types";
 
 const SITE_URL = "https://theuniquechoice.com";
@@ -111,6 +112,88 @@ export async function deleteEmailTemplate(id: string): Promise<void> {
   revalidatePath("/admin/email/templates");
 }
 
+/** Sends one render of a template straight to a chosen address, bypassing
+ * the campaign/recipient machinery entirely — a way to see the actual
+ * rendered email in a real inbox before committing to a real send. Takes
+ * the same draft fields as the editor so an unsaved draft can be tested
+ * too, not just a saved template. */
+export async function sendTestEmail(
+  input: Pick<EmailTemplateInput, "subject" | "preheader" | "headline" | "body_text" | "cta_text" | "cta_url">,
+  toEmail: string
+): Promise<{ ok: boolean; message: string }> {
+  await requireAdminAction();
+  if (!toEmail.trim() || !toEmail.includes("@")) {
+    return { ok: false, message: "Enter a valid email address to send the test to." };
+  }
+  const template = {
+    subject: `[TEST] ${input.subject}`,
+    preheader: input.preheader || null,
+    headline: input.headline,
+    body_text: input.body_text,
+    cta_text: input.cta_text || null,
+    cta_url: input.cta_url || null,
+  };
+  const html = renderCampaignEmailHtml(template, null);
+  const text = renderCampaignEmailText(template, null);
+  const result = await sendEmail({ to: toEmail.trim(), subject: template.subject, html, text });
+  return { ok: result.ok, message: result.ok ? "Test email sent." : result.message };
+}
+
+// ---------- Prospects (cold-outreach list) ----------
+
+export async function getEmailProspects(): Promise<EmailProspect[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase.from("email_prospects").select("*").order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data as EmailProspect[];
+}
+
+export async function addEmailProspect(email: string, name: string, note: string): Promise<void> {
+  await requireAdminAction();
+  const trimmed = email.trim().toLowerCase();
+  if (!trimmed || !trimmed.includes("@")) throw new Error("Enter a valid email address.");
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase
+    .from("email_prospects")
+    .upsert({ email: trimmed, name: name.trim() || null, note: note.trim() || null }, { onConflict: "email", ignoreDuplicates: true });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/email/prospects");
+}
+
+const EMAIL_MATCH = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+/g;
+
+/** Accepts raw pasted text OR the raw text content of an uploaded file
+ * (CSV, TXT, one-per-line, comma-separated — anything) and just pulls
+ * every valid-looking email address out of it with a regex, rather than
+ * parsing columns. That's deliberately more forgiving than real CSV
+ * parsing: it works the same whether the admin pastes a list, exports a
+ * spreadsheet, or uploads an address book, with no format to get wrong. */
+export async function bulkImportEmailProspects(rawText: string): Promise<{ added: number; total: number }> {
+  await requireAdminAction();
+  const matches = rawText.match(EMAIL_MATCH) ?? [];
+  const unique = Array.from(new Set(matches.map((e) => e.trim().toLowerCase())));
+  if (unique.length === 0) return { added: 0, total: 0 };
+
+  const supabase = getSupabaseAdminClient();
+  const rows = unique.map((email) => ({ email }));
+  const { data, error } = await supabase
+    .from("email_prospects")
+    .upsert(rows, { onConflict: "email", ignoreDuplicates: true })
+    .select("id");
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/email/prospects");
+  return { added: data?.length ?? 0, total: unique.length };
+}
+
+export async function deleteEmailProspect(id: string): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("email_prospects").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/email/prospects");
+}
+
 // ---------- Audience ----------
 
 async function collectAudienceEmails(segments: EmailCampaignSegments): Promise<Map<string, string>> {
@@ -146,6 +229,14 @@ async function collectAudienceEmails(segments: EmailCampaignSegments): Promise<M
     queries.push(
       (async () => {
         const { data } = await supabase.from("newsletter_subscribers").select("email");
+        (data ?? []).forEach((r) => add((r as { email: string }).email));
+      })()
+    );
+  }
+  if (segments.prospects) {
+    queries.push(
+      (async () => {
+        const { data } = await supabase.from("email_prospects").select("email");
         (data ?? []).forEach((r) => add((r as { email: string }).email));
       })()
     );
