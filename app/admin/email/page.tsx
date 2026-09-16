@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, UserPlus, Activity, MailCheck, AlertOctagon, Ban } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
-import { getEmailCampaigns, getEmailSendSettings } from "@/lib/actions/emailCampaigns";
+import { getEmailCampaigns, getEmailSendSettings, getDeliverabilityStats } from "@/lib/actions/emailCampaigns";
 import EmailSendSettingsForm from "@/components/admin/EmailSendSettingsForm";
 import AdminShell from "@/components/admin/AdminShell";
-import { PageHeader, Card, EmptyState, Badge, LinkButton, type BadgeTone } from "@/components/admin/ui";
+import { PageHeader, Card, EmptyState, Badge, LinkButton, KpiCard, type BadgeTone } from "@/components/admin/ui";
 import type { EmailCampaign } from "@/lib/supabase/types";
 
 export const metadata = {
@@ -20,19 +20,31 @@ const statusTones: Record<EmailCampaign["status"], BadgeTone> = {
 
 export default async function EmailAdminPage() {
   await requireAdminPage();
-  const [campaigns, settings] = await Promise.all([getEmailCampaigns(), getEmailSendSettings()]);
+  const [campaigns, settings, deliverability] = await Promise.all([
+    getEmailCampaigns(),
+    getEmailSendSettings(),
+    getDeliverabilityStats(),
+  ]);
   const isPaused = !!settings.paused_until && new Date(settings.paused_until) > new Date();
 
   return (
     <AdminShell current="/admin/email">
       <PageHeader
         title="Email Sender"
-        subtitle="Send templated campaigns to clients, suppliers, and newsletter subscribers — with built-in deliverability safeguards."
+        subtitle="Send templated campaigns to clients, suppliers, newsletter subscribers, and prospects you're inviting to join — with built-in deliverability safeguards."
         action={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <LinkButton href="/admin/email/prospects" variant="secondary">
+              <UserPlus size={15} />
+              Prospects
+            </LinkButton>
             <LinkButton href="/admin/email/templates" variant="secondary">
               <FileText size={15} />
               Templates
+            </LinkButton>
+            <LinkButton href="/admin/email/events" variant="secondary">
+              <Activity size={15} />
+              Events
             </LinkButton>
             <LinkButton href="/admin/email/campaigns/new">
               <Plus size={15} />
@@ -41,6 +53,25 @@ export default async function EmailAdminPage() {
           </div>
         }
       />
+
+      <div>
+        <p className="mb-3 font-admin-display text-sm font-semibold text-gray-900">Deliverability (last 30 days)</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <KpiCard label="Delivered" value={deliverability.delivered.toLocaleString()} icon={MailCheck} tone="success" />
+          <KpiCard
+            label="Bounced"
+            value={deliverability.bounced.toLocaleString()}
+            icon={AlertOctagon}
+            tone={deliverability.bounced > 0 ? "warning" : "neutral"}
+          />
+          <KpiCard
+            label="Spam complaints"
+            value={deliverability.complained.toLocaleString()}
+            icon={Ban}
+            tone={deliverability.complained > 0 ? "danger" : "neutral"}
+          />
+        </div>
+      </div>
 
       <Card>
         <p className="mb-1 font-admin-display text-sm font-semibold text-gray-900">Sending Limits & Safety</p>

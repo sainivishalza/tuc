@@ -12,6 +12,7 @@ export default function EmailSendSettingsForm({ settings, isPaused }: { settings
   const [maxPerHour, setMaxPerHour] = useState(settings.max_per_hour);
   const [maxPerBatch, setMaxPerBatch] = useState(settings.max_per_batch);
   const [failureThreshold, setFailureThreshold] = useState(settings.failure_pause_threshold_pct);
+  const [complaintThreshold, setComplaintThreshold] = useState(settings.max_complaints_before_pause);
   const [pauseReason, setPauseReason] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -21,7 +22,12 @@ export default function EmailSendSettingsForm({ settings, isPaused }: { settings
     setError("");
     setSaving(true);
     try {
-      await updateEmailSendSettings({ max_per_hour: maxPerHour, max_per_batch: maxPerBatch, failure_pause_threshold_pct: failureThreshold });
+      await updateEmailSendSettings({
+        max_per_hour: maxPerHour,
+        max_per_batch: maxPerBatch,
+        failure_pause_threshold_pct: failureThreshold,
+        max_complaints_before_pause: complaintThreshold,
+      });
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -84,7 +90,7 @@ export default function EmailSendSettingsForm({ settings, isPaused }: { settings
       )}
 
       <form onSubmit={handleSaveSettings} className="flex flex-col gap-3">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label className={labelClass}>Max emails / hour</label>
             <input
@@ -116,10 +122,21 @@ export default function EmailSendSettingsForm({ settings, isPaused }: { settings
               className={inputClass}
             />
           </div>
+          <div>
+            <label className={labelClass}>Spam complaints / 24h before pause</label>
+            <input
+              type="number"
+              min={1}
+              value={complaintThreshold}
+              onChange={(e) => setComplaintThreshold(Number(e.target.value))}
+              className={inputClass}
+            />
+          </div>
         </div>
         <p className="text-xs text-gray-500">
-          If a batch of 5+ sends fails at or above this rate, sending auto-pauses for an hour — a spike in failures usually means a
-          bad address list or an API problem, not something worth burning your domain reputation over.
+          If a batch of 5+ sends fails at or above the failure threshold, sending auto-pauses for an hour — a spike in failures
+          usually means a bad address list or an API problem. Spam complaints reported back by Gmail/Yahoo (via the Resend webhook)
+          pause sending for 24 hours once the threshold is hit — a much more serious reputation signal, worth stopping to review.
         </p>
         {error && <p className="text-sm text-red-500">{error}</p>}
         <Button type="submit" disabled={saving} size="sm" className="w-fit">

@@ -146,7 +146,7 @@ export interface CaseStudy {
 export interface EmailTemplate {
   id: string;
   name: string;
-  category: "newsletter" | "announcement" | "promotional" | "general";
+  category: "newsletter" | "announcement" | "promotional" | "invite" | "general";
   subject: string;
   preheader: string | null;
   headline: string;
@@ -163,6 +163,21 @@ export interface EmailCampaignSegments {
   clients?: boolean;
   suppliers?: boolean;
   newsletter?: boolean;
+  prospects?: boolean;
+}
+
+/** A manually-managed outreach list — people who are neither a client nor
+ * a supplier yet, added one at a time or via bulk import, to invite them
+ * to become one. Kept as its own table (not folded into newsletter
+ * subscribers) since these people never opted in the way a newsletter
+ * signup or account registration implies — it's a cold-outreach list the
+ * admin builds deliberately, not something the site itself grows. */
+export interface EmailProspect {
+  id: string;
+  email: string;
+  name: string | null;
+  note: string | null;
+  created_at: string;
 }
 
 export interface EmailCampaign {
@@ -183,25 +198,52 @@ export interface EmailCampaignRecipient {
   id: string;
   campaign_id: string;
   email: string;
-  status: "pending" | "sent" | "failed" | "skipped_unsubscribed";
+  /** "bounced"/"complained" arrive later, from a Resend webhook — the
+   * send itself already succeeded (status was "sent") when Resend
+   * reports the recipient's mail server rejected it or marked it spam. */
+  status: "pending" | "sent" | "failed" | "skipped_unsubscribed" | "bounced" | "complained";
   error: string | null;
   sent_at: string | null;
+  /** Set by the email.delivered webhook — real confirmation from the
+   * recipient's mail server, not just "Resend accepted the API call". */
+  delivered_at: string | null;
+  /** Resend's id for this specific send — how an inbound webhook event
+   * (which reports `email_id`) gets matched back to this row. */
+  resend_email_id: string | null;
   created_at: string;
 }
 
 /** Singleton row (id='default') — the sending circuit breaker's live
  * config and state. paused_until/pause_reason are set automatically when
- * a batch's failure rate crosses failure_pause_threshold_pct, or manually
- * by an admin — either way, sendNextBatch refuses to send while
- * paused_until is in the future. */
+ * a batch's failure rate crosses failure_pause_threshold_pct (checked at
+ * send time) or too many spam complaints land within 24h (checked as
+ * webhook events arrive), or manually by an admin — either way,
+ * sendNextBatch refuses to send while paused_until is in the future. */
 export interface EmailSendSettings {
   id: string;
   max_per_hour: number;
   max_per_batch: number;
   failure_pause_threshold_pct: number;
+  /** Spam complaints in a rolling 24h window that trigger an auto-pause —
+   * kept far lower than the batch failure threshold, since even a
+   * handful of complaints is a serious reputation signal Gmail/Yahoo act
+   * on directly, unlike an API-level send failure. */
+  max_complaints_before_pause: number;
   paused_until: string | null;
   pause_reason: string | null;
   updated_at: string;
+}
+
+export interface EmailEvent {
+  id: string;
+  /** Resend's webhook event type, e.g. "email.delivered", "email.bounced". */
+  type: string;
+  resend_email_id: string | null;
+  recipient_email: string | null;
+  campaign_recipient_id: string | null;
+  bounce_type: string | null;
+  bounce_subtype: string | null;
+  created_at: string;
 }
 
 export interface NewsletterSubscriber {

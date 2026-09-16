@@ -2,13 +2,13 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle } from "lucide-react";
-import { createEmailTemplate, updateEmailTemplate, type EmailTemplateInput } from "@/lib/actions/emailCampaigns";
+import { AlertTriangle, Send, CheckCircle } from "lucide-react";
+import { createEmailTemplate, updateEmailTemplate, sendTestEmail, type EmailTemplateInput } from "@/lib/actions/emailCampaigns";
 import { findSpamTriggerWords } from "@/lib/emailTemplateRenderer";
 import type { EmailTemplate } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
-const CATEGORIES: EmailTemplate["category"][] = ["newsletter", "announcement", "promotional", "general"];
+const CATEGORIES: EmailTemplate["category"][] = ["newsletter", "announcement", "promotional", "invite", "general"];
 
 export default function EmailTemplateForm({ template }: { template?: EmailTemplate }) {
   const router = useRouter();
@@ -24,8 +24,24 @@ export default function EmailTemplateForm({ template }: { template?: EmailTempla
   const [status, setStatus] = useState<EmailTemplate["status"]>(template?.status ?? "draft");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [testEmail, setTestEmail] = useState("");
+  const [testSending, setTestSending] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; message: string } | null>(null);
 
   const spamWarnings = Array.from(new Set([...findSpamTriggerWords(subject), ...findSpamTriggerWords(bodyText)]));
+
+  async function handleSendTest() {
+    setTestResult(null);
+    setTestSending(true);
+    try {
+      const result = await sendTestEmail({ subject, preheader, headline, body_text: bodyText, cta_text: ctaText, cta_url: ctaUrl }, testEmail);
+      setTestResult(result);
+    } catch (err) {
+      setTestResult({ ok: false, message: err instanceof Error ? err.message : "Something went wrong." });
+    } finally {
+      setTestSending(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -124,6 +140,29 @@ export default function EmailTemplateForm({ template }: { template?: EmailTempla
           </span>
         </div>
       )}
+
+      <div className="flex flex-col gap-2 rounded-xl border border-gray-200 p-4">
+        <p className="text-xs font-semibold text-gray-700">Send yourself a test — see the real rendered email before using this in a campaign</p>
+        <div className="flex flex-wrap gap-2">
+          <input
+            type="email"
+            value={testEmail}
+            onChange={(e) => setTestEmail(e.target.value)}
+            placeholder="you@company.com"
+            className={`max-w-xs ${inputClass}`}
+          />
+          <Button type="button" variant="secondary" size="sm" disabled={testSending || !testEmail.trim() || !subject.trim() || !bodyText.trim()} onClick={handleSendTest}>
+            <Send size={12} />
+            {testSending ? "Sending..." : "Send test"}
+          </Button>
+        </div>
+        {testResult && (
+          <p className={`flex items-center gap-1.5 text-xs ${testResult.ok ? "text-emerald-600" : "text-red-500"}`}>
+            {testResult.ok && <CheckCircle size={13} />}
+            {testResult.message}
+          </p>
+        )}
+      </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
