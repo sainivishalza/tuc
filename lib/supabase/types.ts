@@ -147,10 +147,33 @@ export interface SourcingRequestInterest {
 export type ConnectMode = "direct" | "staff_mediated" | "platform_chat";
 export type MonetizationMode = "free" | "supplier_paid" | "commission";
 
+export type AiProvider = "env" | "anthropic" | "openai_compatible";
+
+/** Raw DB row shape — includes the real ai_api_key, so this never leaves
+ * the server. getPlatformSettings() (lib/actions/sourcingRequests.ts)
+ * returns the client-safe PlatformSettingsView below instead. */
 export interface PlatformSettings {
   id: string;
   connect_mode: ConnectMode;
   monetization_mode: MonetizationMode;
+  ai_provider: AiProvider;
+  ai_api_key: string | null;
+  ai_model: string | null;
+  ai_base_url: string | null;
+  updated_at: string;
+}
+
+/** What the admin settings card actually receives — the key itself is
+ * masked server-side (see getPlatformSettings) so it's never embedded in
+ * client-rendered HTML. */
+export interface PlatformSettingsView {
+  id: string;
+  connect_mode: ConnectMode;
+  monetization_mode: MonetizationMode;
+  ai_provider: AiProvider;
+  ai_key_preview: string | null;
+  ai_model: string | null;
+  ai_base_url: string | null;
   updated_at: string;
 }
 

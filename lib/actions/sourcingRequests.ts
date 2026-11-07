@@ -22,6 +22,7 @@ import type {
   SupplierVisibleSourcingRequest,
   SourcingCategory,
   PlatformSettings,
+  PlatformSettingsView,
   Supplier,
 } from "@/lib/supabase/types";
 
@@ -517,24 +518,58 @@ export async function pushToSuppliers(requestId: string, supplierIds: string[]):
 // Platform settings (connect mode / monetization — admin-configurable)
 // ---------------------------------------------------------------------------
 
-export async function getPlatformSettings(): Promise<PlatformSettings> {
+/** Masks a stored API key for display — e.g. "sk-or-v1-abc...9f2k" becomes
+ * "••••9f2k". Never send the raw key to a client component's props; this
+ * is what the admin UI renders instead, and the input only overwrites it
+ * when the admin actually types a new value (see updatePlatformSettings). */
+function maskKey(key: string | null): string | null {
+  if (!key) return null;
+  if (key.length <= 4) return "••••";
+  return `••••${key.slice(-4)}`;
+}
+
+export async function getPlatformSettings(): Promise<PlatformSettingsView> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase.from("platform_settings").select("*").eq("id", "default").single();
   if (error) throw new Error(error.message);
-  return data as PlatformSettings;
+  const row = data as PlatformSettings;
+  return {
+    id: row.id,
+    connect_mode: row.connect_mode,
+    monetization_mode: row.monetization_mode,
+    ai_provider: row.ai_provider,
+    ai_key_preview: maskKey(row.ai_api_key),
+    ai_model: row.ai_model,
+    ai_base_url: row.ai_base_url,
+    updated_at: row.updated_at,
+  };
 }
 
 export async function updatePlatformSettings(input: {
   connect_mode: PlatformSettings["connect_mode"];
   monetization_mode: PlatformSettings["monetization_mode"];
+  ai_provider: PlatformSettings["ai_provider"];
+  /** Omit or leave blank to keep the currently-stored key unchanged —
+   * the admin UI never has the real value to send back, only its mask. */
+  ai_api_key?: string;
+  ai_model?: string;
+  ai_base_url?: string;
 }): Promise<void> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
-  const { error } = await supabase
-    .from("platform_settings")
-    .update({ ...input, updated_at: new Date().toISOString() })
-    .eq("id", "default");
+  const update: Record<string, unknown> = {
+    connect_mode: input.connect_mode,
+    monetization_mode: input.monetization_mode,
+    ai_provider: input.ai_provider,
+    ai_model: input.ai_model?.trim() || null,
+    ai_base_url: input.ai_base_url?.trim() || null,
+    updated_at: new Date().toISOString(),
+  };
+  if (input.ai_api_key?.trim()) {
+    update.ai_api_key = input.ai_api_key.trim();
+  }
+  const { error } = await supabase.from("platform_settings").update(update).eq("id", "default");
   if (error) throw new Error(error.message);
   revalidateSourcingPaths();
 }
