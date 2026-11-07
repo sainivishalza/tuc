@@ -73,6 +73,87 @@ export interface Client {
   created_at: string;
 }
 
+export interface SourcingCategory {
+  id: string;
+  name: string;
+  created_at: string;
+}
+
+export type SourcingRequestType = "product" | "service" | "other";
+export type SourcingRequestStatus = "pending" | "approved" | "rejected" | "closed";
+export type SourcingRequestSource = "direct" | "promoted_from_quote";
+export type TranslationStatus = "pending" | "done" | "failed" | "skipped";
+
+export interface SourcingRequest {
+  id: string;
+  title: string;
+  description: string;
+  type: SourcingRequestType;
+  category_id: string | null;
+  quantity: string | null;
+  budget_range: string | null;
+  timeline: string | null;
+  destination_country: string | null;
+  customer_name: string;
+  customer_email: string;
+  customer_whatsapp: string | null;
+  image_urls: string[];
+  video_url: string | null;
+  social_link: string | null;
+  title_zh: string | null;
+  description_zh: string | null;
+  title_ru: string | null;
+  description_ru: string | null;
+  translation_status: TranslationStatus;
+  status: SourcingRequestStatus;
+  source: SourcingRequestSource;
+  quote_request_id: string | null;
+  created_at: string;
+  updated_at: string;
+  closed_at: string | null;
+}
+
+/** What the public board/detail page and the submit form may ever see —
+ * deliberately excludes customer_name/email/whatsapp. A query that selects
+ * this shape can never leak contact info no matter what UI code does with it. */
+export type PublicSourcingRequest = Omit<
+  SourcingRequest,
+  "customer_name" | "customer_email" | "customer_whatsapp"
+> & { category_name: string | null };
+
+/** Full admin view, with the category name joined in and engagement counts. */
+export interface AdminSourcingRequest extends SourcingRequest {
+  category_name: string | null;
+  interest_count: number;
+  push_count: number;
+}
+
+/** What an approved, signed-in supplier sees on their own board — full
+ * contact fields, plus whether they've already clicked "I'm interested". */
+export interface SupplierVisibleSourcingRequest extends PublicSourcingRequest {
+  customer_name: string;
+  customer_email: string;
+  customer_whatsapp: string | null;
+  already_interested: boolean;
+}
+
+export interface SourcingRequestInterest {
+  id: string;
+  sourcing_request_id: string;
+  supplier_id: string;
+  created_at: string;
+}
+
+export type ConnectMode = "direct" | "staff_mediated" | "platform_chat";
+export type MonetizationMode = "free" | "supplier_paid" | "commission";
+
+export interface PlatformSettings {
+  id: string;
+  connect_mode: ConnectMode;
+  monetization_mode: MonetizationMode;
+  updated_at: string;
+}
+
 export interface Testimonial {
   id: string;
   name: string;

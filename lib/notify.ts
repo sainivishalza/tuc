@@ -322,6 +322,120 @@ export async function notifyNewSupplierRegistration(params: {
   });
 }
 
+/** Best-effort — never throws. Same lead-alert purpose as
+ * notifyNewQuoteRequest, for a customer-posted Sourcing Request. */
+export async function notifyNewSourcingRequest(params: {
+  title: string;
+  customerName: string;
+  customerEmail: string;
+}): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] new sourcing request received but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Sourcing Request
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 16px;">${escapeHtml(params.title)}</h1>
+      <p style="font-size: 14px; margin: 0 0 8px;"><strong>From:</strong> ${escapeHtml(params.customerName)} (${escapeHtml(params.customerEmail)})</p>
+      <p style="font-size: 14px; margin: 12px 0 0;">Nothing shows on the public board until you review and approve it.</p>
+      <a href="${SITE_URL}/admin/sourcing-requests" style="display: inline-block; margin-top: 20px; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Review in admin panel
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({ to, subject: `New sourcing request: ${params.title}`, html });
+}
+
+/** Best-effort — never throws. Sent to every supplier whose category
+ * matches a request the moment staff approves it, so engagement doesn't
+ * depend on suppliers remembering to check the board themselves. */
+export async function notifySourcingRequestApprovedToSuppliers(params: {
+  title: string;
+  description: string;
+  requestId: string;
+  supplierEmails: string[];
+}): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Sourcing Request
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">${escapeHtml(params.title)}</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">${escapeHtml(params.description.slice(0, 240))}${params.description.length > 240 ? "…" : ""}</p>
+      <a href="${SITE_URL}/supplier-portal/requirements" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View &amp; respond
+      </a>
+    </div>
+  `;
+
+  await Promise.all(
+    params.supplierEmails.map((to) =>
+      sendAndLog({ to, subject: `New sourcing request matching your category: ${params.title}`, html })
+    )
+  );
+}
+
+/** Best-effort — never throws. Staff hand-picked these specific suppliers
+ * for this requirement, so the email makes that explicit rather than
+ * reading like the generic category-match notification. */
+export async function notifySourcingRequestPush(params: {
+  title: string;
+  description: string;
+  supplierEmails: string[];
+}): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — You Were Selected
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">Our team thought you'd be a good fit for: ${escapeHtml(params.title)}</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">${escapeHtml(params.description.slice(0, 240))}${params.description.length > 240 ? "…" : ""}</p>
+      <a href="${SITE_URL}/supplier-portal/requirements" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View &amp; respond
+      </a>
+    </div>
+  `;
+
+  await Promise.all(
+    params.supplierEmails.map((to) => sendAndLog({ to, subject: `You were selected for a sourcing request: ${params.title}`, html }))
+  );
+}
+
+/** Best-effort — never throws. Keeps the customer engaged after posting —
+ * otherwise they have no way to know the board is working until a
+ * supplier actually reaches out directly. */
+export async function notifySourcingRequestInterest(params: {
+  customerEmail: string;
+  title: string;
+  interestCount: number;
+}): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">
+        ${params.interestCount} supplier${params.interestCount === 1 ? "" : "s"} interested in your requirement
+      </h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0;">
+        "${escapeHtml(params.title)}" — a supplier has your contact details now and may reach out to you directly.
+      </p>
+    </div>
+  `;
+
+  await sendAndLog({
+    to: params.customerEmail,
+    subject: `${params.interestCount} supplier${params.interestCount === 1 ? "" : "s"} interested in your requirement`,
+    html,
+  });
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")

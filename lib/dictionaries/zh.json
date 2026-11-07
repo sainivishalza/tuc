@@ -1023,5 +1023,51 @@
         }
       }
     }
+  },
+  "sourcingRequests": {
+    "navLabel": "采购需求",
+    "board": {
+      "badge": "公开市场",
+      "title": "采购需求",
+      "subtitle": "发布您的需求 — 认证供应商可以直接查看并联系您。",
+      "postCta": "发布需求",
+      "emptyState": "暂无公开需求。成为第一个发布的人。",
+      "filterAll": "所有类别",
+      "typeProduct": "产品",
+      "typeService": "服务",
+      "typeOther": "其他",
+      "viewDetails": "查看详情"
+    },
+    "detail": {
+      "backToBoard": "返回需求列表",
+      "postedOn": "发布于",
+      "signInCta": "供应商登录后可回应",
+      "notFound": "该需求当前不可用。"
+    },
+    "form": {
+      "badge": "发布需求",
+      "title": "告诉供应商您需要什么",
+      "subtitle": "描述您的产品或服务需求 — 认证供应商可以查看并直接联系您。无需注册账户。",
+      "titleLabel": "标题",
+      "titlePlaceholder": "例如：5000个定制硅胶手机壳",
+      "descriptionLabel": "描述",
+      "descriptionPlaceholder": "规格、材料、目标价格，以及供应商需要了解的其他信息",
+      "typeLabel": "类型",
+      "categoryLabel": "类别",
+      "quantityLabel": "数量",
+      "budgetLabel": "预算（可选）",
+      "timelineLabel": "时间要求",
+      "destinationLabel": "目的地国家",
+      "nameLabel": "您的姓名",
+      "emailLabel": "您的邮箱",
+      "whatsappLabel": "WhatsApp（可选）",
+      "imagesLabel": "参考图片（可选）",
+      "videoLabel": "视频链接（可选）",
+      "socialLabel": "社交媒体/网站链接（可选）",
+      "submit": "提交审核",
+      "submitting": "提交中...",
+      "submittedTitle": "已提交审核",
+      "submittedBody": "我们将审核您的需求，审核通过后将显示在公开列表中。"
+    }
   }
 }

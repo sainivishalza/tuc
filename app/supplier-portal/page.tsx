@@ -15,6 +15,7 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  Handshake,
 } from "lucide-react";
 import { requireSupplierEmail } from "@/lib/supplierAuth";
 import { getSupplierBySelf } from "@/lib/actions/supplierPortal";
@@ -137,6 +138,28 @@ export default async function SupplierPortalPage() {
             <p className="mt-1 text-sm text-muted">{status.desc}</p>
           </div>
         </div>
+
+        {supplier.status === "approved" && (
+          <section className="mt-10">
+            <Link
+              href="/supplier-portal/requirements"
+              className="glass-strong card group flex items-center gap-4 border-accent/30 bg-accent/5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                <Handshake size={22} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display flex items-center gap-1.5 text-base font-semibold">
+                  Open Sourcing Requests
+                  <ArrowUpRight size={15} className="shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  Buyers looking for suppliers like you — click &quot;I&apos;m interested&quot; to see their contact details instantly.
+                </p>
+              </div>
+            </Link>
+          </section>
+        )}
 
         <section className="mt-10">
           <div className="flex flex-wrap items-center justify-between gap-3">
