@@ -5,7 +5,7 @@ import { LayoutGrid, List } from "lucide-react";
 import type { ReactNode } from "react";
 
 export default function ShipmentsViewSwitcher({ board, list }: { board: ReactNode; list: ReactNode }) {
-  const [view, setView] = useState<"board" | "list">("board");
+  const [view, setView] = useState<"board" | "list">("list");
 
   return (
     <div className="flex flex-col gap-4">

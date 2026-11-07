@@ -413,6 +413,9 @@
       "quality_check": "质检中",
       "ready_to_ship": "备货完成",
       "in_transit": "运输途中",
+      "arrived": "已到达",
+      "customs_clearance": "清关中",
+      "customs_inspection": "海关查验",
       "delayed": "运输延迟",
       "delivered": "已签收",
       "exception": "可能异常"

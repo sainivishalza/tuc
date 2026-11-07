@@ -236,16 +236,53 @@ export async function getShipmentKpiCounts(): Promise<{ inTransit: number; inspe
   return { inTransit: inTransitRes.count ?? 0, inspectionsPending: inspectionsRes.count ?? 0 };
 }
 
-export async function getAllShipments(): Promise<Shipment[]> {
+/** A shipment plus the earliest tracking update on file for it — usually
+ * the "received at warehouse" line, whether that was typed in by hand or
+ * came from a bulk-pasted carrier text block. Used only by the admin
+ * board/list pages to show "how long has this actually been sitting
+ * here" at a glance, without opening each one. */
+export interface ShipmentListItem extends Shipment {
+  first_event_at: string | null;
+}
+
+export async function getAllShipments(): Promise<ShipmentListItem[]> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("shipments")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [{ data: shipments, error }, { data: events }] = await Promise.all([
+    supabase.from("shipments").select("*").order("created_at", { ascending: false }),
+    supabase.from("shipment_events").select("shipment_id, event_at"),
+  ]);
 
   if (error) throw new Error(error.message);
-  return data as Shipment[];
+
+  const firstEventByShipment = new Map<string, string>();
+  for (const ev of events ?? []) {
+    const current = firstEventByShipment.get(ev.shipment_id);
+    if (!current || new Date(ev.event_at).getTime() < new Date(current).getTime()) {
+      firstEventByShipment.set(ev.shipment_id, ev.event_at);
+    }
+  }
+
+  const items: ShipmentListItem[] = (shipments as Shipment[]).map((s) => ({
+    ...s,
+    first_event_at: firstEventByShipment.get(s.id) ?? null,
+  }));
+
+  // Delivered shipments sink to the bottom — they're done, so they
+  // shouldn't compete for attention with ones still moving. Within each
+  // bucket, oldest-received-first surfaces whatever's been sitting
+  // longest without progressing, which is exactly what needs a look.
+  // Falls back to created_at when no update has been logged yet, rather
+  // than leaving every untouched shipment tied at the same sort position.
+  const sortKey = (s: ShipmentListItem) => new Date(s.first_event_at ?? s.created_at).getTime();
+  items.sort((a, b) => {
+    const aDelivered = a.status === "delivered";
+    const bDelivered = b.status === "delivered";
+    if (aDelivered !== bDelivered) return aDelivered ? 1 : -1;
+    return sortKey(a) - sortKey(b);
+  });
+
+  return items;
 }
 
 export async function getShipmentById(id: string): Promise<Shipment | null> {
@@ -365,6 +402,7 @@ export interface ShipmentInput {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  status_note: string | null;
   milestone_deposit_paid_at: string | null;
   milestone_sample_approved_at: string | null;
   milestone_production_started_at: string | null;
@@ -401,6 +439,7 @@ export async function createShipment(input: ShipmentInput): Promise<string> {
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
+      status_note: input.status_note?.trim() || null,
       milestone_deposit_paid_at: input.milestone_deposit_paid_at || null,
       milestone_sample_approved_at: input.milestone_sample_approved_at || null,
       milestone_production_started_at: input.milestone_production_started_at || null,
@@ -444,6 +483,7 @@ export async function updateShipment(id: string, input: ShipmentInput): Promise<
       total_pieces: input.total_pieces,
       current_location: input.current_location?.trim() || null,
       status: input.status,
+      status_note: input.status_note?.trim() || null,
       milestone_deposit_paid_at: input.milestone_deposit_paid_at || null,
       milestone_sample_approved_at: input.milestone_sample_approved_at || null,
       milestone_production_started_at: input.milestone_production_started_at || null,

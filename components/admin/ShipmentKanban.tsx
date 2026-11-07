@@ -2,10 +2,10 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { ArrowRight, Package, AlertTriangle } from "lucide-react";
+import { ArrowRight, Package, AlertTriangle, PackageCheck } from "lucide-react";
 import type { Shipment } from "@/lib/supabase/types";
-import { updateShipmentStatus } from "@/lib/actions/shipments";
-import { Button, formatLastUpdated } from "@/components/admin/ui";
+import { updateShipmentStatus, type ShipmentListItem } from "@/lib/actions/shipments";
+import { Button, formatLastUpdated, formatReceivedDate } from "@/components/admin/ui";
 
 type ColumnId = "sourcing" | "sample_approved" | "production" | "inspection" | "shipped" | "delivered";
 
@@ -35,6 +35,9 @@ function columnFor(s: Shipment): ColumnId {
       return "inspection";
     case "ready_to_ship":
     case "in_transit":
+    case "arrived":
+    case "customs_clearance":
+    case "customs_inspection":
     case "delayed":
       return "shipped";
     case "delivered":
@@ -52,7 +55,7 @@ function columnFor(s: Shipment): ColumnId {
   }
 }
 
-export default function ShipmentKanban({ shipments }: { shipments: Shipment[] }) {
+export default function ShipmentKanban({ shipments }: { shipments: ShipmentListItem[] }) {
   const [items, setItems] = useState(shipments);
   const [isPending, startTransition] = useTransition();
 
@@ -111,7 +114,7 @@ function OrderCard({
   onAdvance,
   disabled,
 }: {
-  shipment: Shipment;
+  shipment: ShipmentListItem;
   nextLabel: string;
   onAdvance?: () => void;
   disabled: boolean;
@@ -138,9 +141,23 @@ function OrderCard({
       <p className="truncate text-xs text-gray-400">
         {[s.destination_country, s.total_pieces ? `${s.total_pieces} pcs` : null].filter(Boolean).join(" · ") || "No details yet"}
       </p>
-      <p className="truncate text-[11px] text-gray-300" title={new Date(s.updated_at).toLocaleString()}>
+      {s.status_note && (
+        <p className="truncate text-[11px] text-amber-700" title={s.status_note}>
+          {s.status_note}
+        </p>
+      )}
+      {s.first_event_at && (
+        <p className="flex items-center gap-1 truncate text-[11px] font-medium text-gray-500">
+          <PackageCheck size={10} className="shrink-0 text-gray-400" />
+          {formatReceivedDate(s.first_event_at)}
+        </p>
+      )}
+      <span
+        className="w-fit rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600"
+        title={new Date(s.updated_at).toLocaleString()}
+      >
         {formatLastUpdated(s.updated_at)}
-      </p>
+      </span>
       {onAdvance && (
         <Button size="sm" variant="secondary" disabled={disabled} onClick={onAdvance} className="mt-1 w-full">
           {nextLabel}

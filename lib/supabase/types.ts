@@ -348,6 +348,9 @@ export type ShipmentStatus =
   | "quality_check"
   | "ready_to_ship"
   | "in_transit"
+  | "arrived"
+  | "customs_clearance"
+  | "customs_inspection"
   | "delayed"
   | "delivered"
   | "exception";
@@ -368,6 +371,11 @@ export interface Shipment {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  /** Free-text detail an admin can attach to the current status — most
+   * useful on "delayed"/"exception", where a plain badge doesn't say what
+   * actually happened. Shown alongside the status wherever it appears,
+   * including the public tracking page. */
+  status_note: string | null;
   /** Pre-shipment production stages — shown to the customer as an earlier tracker on the same page. */
   milestone_deposit_paid_at: string | null;
   milestone_sample_approved_at: string | null;
@@ -403,6 +411,7 @@ export interface PublicShipment {
   total_pieces: number | null;
   current_location: string | null;
   status: ShipmentStatus;
+  status_note: string | null;
   milestone_deposit_paid_at: string | null;
   milestone_sample_approved_at: string | null;
   milestone_production_started_at: string | null;
