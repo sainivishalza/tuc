@@ -98,6 +98,14 @@ export async function getApprovedSuppliers(): Promise<
   return data as Supplier[];
 }
 
+/** Just the ids, for the sitemap. */
+export async function getAllApprovedSupplierIds(): Promise<string[]> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase.from("suppliers").select("id").eq("status", "approved");
+  if (error || !data) return [];
+  return data.map((s) => s.id as string);
+}
+
 export async function getApprovedSupplierById(id: string): Promise<Supplier | null> {
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase.from("suppliers").select("*").eq("id", id).eq("status", "approved").maybeSingle();

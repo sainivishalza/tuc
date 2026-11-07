@@ -198,6 +198,13 @@ async function fetchActiveApprovedProducts(): Promise<{ product: SupplierProduct
  * component applies category/search/price filtering itself. Revisit with
  * real server-side pagination once the catalog has enough products for
  * an unbounded fetch to matter. */
+/** Just the ids, for the sitemap — same approved+active filter as
+ * getPublicProducts, without fetching every field. */
+export async function getAllActiveProductIds(): Promise<string[]> {
+  const rows = await fetchActiveApprovedProducts();
+  return rows.map((r) => r.product.id);
+}
+
 export async function getPublicProducts(): Promise<PublicSupplierProduct[]> {
   const [rows, cats] = await Promise.all([fetchActiveApprovedProducts(), categoryMap()]);
   return rows.map((r) => ({
