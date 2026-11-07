@@ -10,9 +10,12 @@ import {
   uploadProofOfDelivery,
   removeProofOfDelivery,
   addShipmentEvent,
+  addShipmentEventsBulk,
   deleteShipmentEvent,
+  type BulkShipmentEventInput,
 } from "@/lib/actions/shipments";
 import { refreshShipmentFromApi } from "@/lib/actions/dhlSync";
+import { parseTrackingUpdates } from "@/lib/trackingTextParser";
 import type { Shipment, ShipmentStatus, Carrier, ShipmentEvent } from "@/lib/supabase/types";
 import type { ShipmentCustomer } from "@/lib/actions/shipments";
 import { Button, Card, inputClass, labelClass, fileInputClass } from "@/components/admin/ui";
@@ -144,6 +147,11 @@ export default function ShipmentForm({
   const [newEventDesc, setNewEventDesc] = useState("");
   const [addingEvent, setAddingEvent] = useState(false);
   const [eventError, setEventError] = useState("");
+
+  const [pasteText, setPasteText] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState("");
+  const parsedUpdates = pasteText.trim() ? parseTrackingUpdates(pasteText) : [];
 
   const lastApiSyncAt = initial?.last_api_sync_at ?? null;
   const [syncing, setSyncing] = useState(false);
@@ -305,6 +313,40 @@ export default function ShipmentForm({
       setEventError(err instanceof Error ? err.message : "Failed to add update.");
     } finally {
       setAddingEvent(false);
+    }
+  }
+
+  async function handleImportPasted() {
+    if (!shipmentId || parsedUpdates.length === 0) return;
+    setImporting(true);
+    setEventError("");
+    setImportResult("");
+    try {
+      const payload: BulkShipmentEventInput[] = [];
+      for (const u of parsedUpdates) {
+        const iso = fromDatetimeLocal(u.localDateTime);
+        if (iso) payload.push({ event_at: iso, description: u.description });
+      }
+      if (payload.length === 0) throw new Error("Couldn't read any valid dates from that text.");
+      const result = await addShipmentEventsBulk(shipmentId, payload);
+      setImportResult(
+        result.added === 0
+          ? "Nothing new to import — every line already matches an existing update."
+          : `Imported ${result.added} new update${result.added === 1 ? "" : "s"}${
+              result.skippedExisting ? ` (${result.skippedExisting} already on file, skipped).` : "."
+            }`
+      );
+      if (result.insertedEvents.length > 0) {
+        setEvents((prev) =>
+          [...result.insertedEvents, ...prev].sort((a, b) => (a.event_at < b.event_at ? 1 : -1))
+        );
+      }
+      setPasteText("");
+      router.refresh();
+    } catch (err) {
+      setEventError(err instanceof Error ? err.message : "Failed to import updates.");
+    } finally {
+      setImporting(false);
     }
   }
 
@@ -674,6 +716,35 @@ export default function ShipmentForm({
               {addingEvent ? "Adding..." : "Add"}
             </Button>
           </div>
+
+          <div className="mt-4 rounded-xl border border-gray-200 p-3">
+            <label className="mb-1 block text-[11px] font-medium text-gray-600">
+              Or paste a carrier&apos;s whole tracking history at once
+            </label>
+            <p className="mb-2 text-[11px] text-gray-400">
+              Copy the list of dated updates straight off the carrier&apos;s own tracking page (e.g.
+              &ldquo;2026-10-30 09:43 [South Africa] In customs clearance&rdquo;) and paste the whole
+              block below — every dated line becomes its own update, in one go. Re-pasting later is
+              safe: lines already on file are skipped automatically.
+            </p>
+            <textarea
+              value={pasteText}
+              onChange={(e) => setPasteText(e.target.value)}
+              rows={6}
+              placeholder={"2026-10-30 09:43:01 [South Africa] In customs clearance (Clearing customs)\n2026-10-29 20:25:25 [South Africa] Actual Time of Arrival (Arrived at port)\n..."}
+              className={`resize-none font-mono text-xs ${inputClass}`}
+            />
+            <div className="mt-2 flex items-center gap-3">
+              <Button type="button" variant="secondary" size="sm" onClick={handleImportPasted} disabled={importing || parsedUpdates.length === 0}>
+                {importing ? "Importing..." : `Import ${parsedUpdates.length || ""} update${parsedUpdates.length === 1 ? "" : "s"}`}
+              </Button>
+              {pasteText.trim() && parsedUpdates.length === 0 && (
+                <p className="text-xs text-amber-600">Couldn&apos;t find any dated lines in that text.</p>
+              )}
+            </div>
+            {importResult && <p className="mt-2 text-xs text-emerald-600">{importResult}</p>}
+          </div>
+
           {eventError && <p className="mt-2 text-xs text-red-500">{eventError}</p>}
 
           {events.length > 0 ? (

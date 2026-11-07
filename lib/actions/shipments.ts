@@ -546,6 +546,85 @@ export async function addShipmentEvent(
   revalidateShipmentPaths();
 }
 
+export interface BulkShipmentEventInput {
+  event_at: string;
+  description: string;
+}
+
+export interface BulkAddShipmentEventsResult {
+  added: number;
+  skippedExisting: number;
+  insertedEvents: ShipmentEvent[];
+}
+
+/** Imports many updates at once — the admin's answer to retyping a
+ * carrier's whole tracking history one line at a time. Rows that exactly
+ * match an existing (event_at, description) pair are skipped, so pasting
+ * the same carrier page again later (now with a few new lines appended at
+ * the top) only adds what's actually new. Sends at most one "new update"
+ * email for the batch — using the most recent newly-added line — instead
+ * of one per row, which would otherwise replay a shipment's entire history
+ * into the customer's inbox at once. */
+export async function addShipmentEventsBulk(
+  shipmentId: string,
+  updates: BulkShipmentEventInput[]
+): Promise<BulkAddShipmentEventsResult> {
+  await requireAdminAction();
+  const cleaned = updates
+    .map((u) => ({ event_at: u.event_at, description: u.description.trim() }))
+    .filter((u) => u.event_at && u.description);
+  if (cleaned.length === 0) throw new Error("No updates to import.");
+
+  const supabase = getSupabaseAdminClient();
+
+  const { data: existing, error: existingError } = await supabase
+    .from("shipment_events")
+    .select("event_at, description")
+    .eq("shipment_id", shipmentId);
+  if (existingError) throw new Error(existingError.message);
+
+  // Postgres/PostgREST doesn't echo timestamptz back in the same string
+  // format it was inserted with (e.g. "2026-10-30 09:43:00+00" vs. the
+  // "2026-10-30T09:43:00.000Z" a client sends) — comparing those strings
+  // directly would never match, so re-pasting the same block would
+  // duplicate every row instead of skipping what's already on file.
+  // Compare the instant each represents instead.
+  const dedupeKey = (eventAt: string, description: string) => `${new Date(eventAt).getTime()}|${description}`;
+  const existingKeys = new Set((existing ?? []).map((e) => dedupeKey(e.event_at, e.description)));
+  const toInsert = cleaned.filter((u) => !existingKeys.has(dedupeKey(u.event_at, u.description)));
+
+  if (toInsert.length === 0) {
+    return { added: 0, skippedExisting: cleaned.length, insertedEvents: [] };
+  }
+
+  const { data: inserted, error } = await supabase
+    .from("shipment_events")
+    .insert(toInsert.map((u) => ({ shipment_id: shipmentId, event_at: u.event_at, description: u.description })))
+    .select("*");
+  if (error) throw new Error(error.message);
+
+  const { data: shipment } = await supabase
+    .from("shipments")
+    .select("tracking_number, customer_email")
+    .eq("id", shipmentId)
+    .maybeSingle();
+  if (shipment?.customer_email) {
+    const latest = toInsert.reduce((a, b) => (a.event_at > b.event_at ? a : b));
+    await notifyNewUpdate({
+      customerEmail: shipment.customer_email,
+      trackingNumber: shipment.tracking_number,
+      description: latest.description,
+    });
+  }
+
+  revalidateShipmentPaths();
+  return {
+    added: toInsert.length,
+    skippedExisting: cleaned.length - toInsert.length,
+    insertedEvents: (inserted ?? []) as ShipmentEvent[],
+  };
+}
+
 export async function deleteShipmentEvent(eventId: string): Promise<void> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
