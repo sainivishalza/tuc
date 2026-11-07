@@ -413,6 +413,9 @@
       "quality_check": "Контроль качества",
       "ready_to_ship": "Готово к отправке",
       "in_transit": "В пути",
+      "arrived": "Прибыло",
+      "customs_clearance": "Таможенная очистка",
+      "customs_inspection": "Таможенный досмотр",
       "delayed": "Задержка",
       "delivered": "Доставлено",
       "exception": "Возможная проблема"

@@ -216,6 +216,7 @@ function ShipmentResultCard({
           {dict.tracking.status[shipment.status]}
         </span>
       </div>
+      {shipment.status_note && <p className="mt-2 text-sm text-muted">{shipment.status_note}</p>}
 
       <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {shipment.destination_country && (

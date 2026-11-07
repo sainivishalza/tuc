@@ -428,6 +428,9 @@
       "quality_check": "Quality Check",
       "ready_to_ship": "Ready to Ship",
       "in_transit": "In Transit",
+      "arrived": "Arrived",
+      "customs_clearance": "Customs Clearance",
+      "customs_inspection": "Customs Inspection",
       "delayed": "Delayed",
       "delivered": "Delivered",
       "exception": "Possible Exception"

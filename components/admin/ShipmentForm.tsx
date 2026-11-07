@@ -27,6 +27,9 @@ const STATUS_OPTIONS: { value: ShipmentStatus; label: string }[] = [
   { value: "quality_check", label: "Quality check" },
   { value: "ready_to_ship", label: "Ready to ship" },
   { value: "in_transit", label: "In transit" },
+  { value: "arrived", label: "Arrived (at destination port/country)" },
+  { value: "customs_clearance", label: "Customs clearance" },
+  { value: "customs_inspection", label: "Customs inspection" },
   { value: "delayed", label: "Delayed" },
   { value: "delivered", label: "Delivered" },
   { value: "exception", label: "Possible exception" },
@@ -114,6 +117,7 @@ export default function ShipmentForm({
   const [totalPieces, setTotalPieces] = useState(initial?.total_pieces?.toString() ?? "");
   const [currentLocation, setCurrentLocation] = useState(initial?.current_location ?? "");
   const [status, setStatus] = useState<ShipmentStatus>(initial?.status ?? "in_transit");
+  const [statusNote, setStatusNote] = useState(initial?.status_note ?? "");
   const [milestones, setMilestones] = useState<Record<MilestoneKey, string>>({
     milestone_deposit_paid_at: toDatetimeLocal(initial?.milestone_deposit_paid_at),
     milestone_sample_approved_at: toDatetimeLocal(initial?.milestone_sample_approved_at),
@@ -198,6 +202,7 @@ export default function ShipmentForm({
         total_pieces: totalPieces ? Number(totalPieces) : null,
         current_location: currentLocation || null,
         status,
+        status_note: statusNote || null,
         milestone_deposit_paid_at: fromDatetimeLocal(milestones.milestone_deposit_paid_at),
         milestone_sample_approved_at: fromDatetimeLocal(milestones.milestone_sample_approved_at),
         milestone_production_started_at: fromDatetimeLocal(milestones.milestone_production_started_at),
@@ -551,6 +556,21 @@ export default function ShipmentForm({
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
+      </div>
+
+      <div>
+        <label className={labelClass}>Status note (optional)</label>
+        <input
+          value={statusNote}
+          onChange={(e) => setStatusNote(e.target.value)}
+          placeholder="e.g. Held for customs inspection, no issue reported yet — expect 2-3 extra days"
+          className={inputClass}
+        />
+        <p className="mt-1 text-[11px] text-gray-400">
+          Shown next to the status badge everywhere it appears, including the public tracking page —
+          most useful on &ldquo;Delayed&rdquo; or &ldquo;Possible exception&rdquo;, where the badge alone
+          doesn&apos;t say what&apos;s actually going on.
+        </p>
       </div>
 
       <Card>

@@ -35,6 +35,9 @@ function columnFor(s: Shipment): ColumnId {
       return "inspection";
     case "ready_to_ship":
     case "in_transit":
+    case "arrived":
+    case "customs_clearance":
+    case "customs_inspection":
     case "delayed":
       return "shipped";
     case "delivered":
@@ -138,6 +141,11 @@ function OrderCard({
       <p className="truncate text-xs text-gray-400">
         {[s.destination_country, s.total_pieces ? `${s.total_pieces} pcs` : null].filter(Boolean).join(" · ") || "No details yet"}
       </p>
+      {s.status_note && (
+        <p className="truncate text-[11px] text-amber-700" title={s.status_note}>
+          {s.status_note}
+        </p>
+      )}
       <p className="truncate text-[11px] text-gray-300" title={new Date(s.updated_at).toLocaleString()}>
         {formatLastUpdated(s.updated_at)}
       </p>

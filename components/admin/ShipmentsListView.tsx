@@ -13,6 +13,9 @@ const statusLabels: Record<ShipmentStatus, string> = {
   quality_check: "Quality check",
   ready_to_ship: "Ready to ship",
   in_transit: "In transit",
+  arrived: "Arrived",
+  customs_clearance: "Customs clearance",
+  customs_inspection: "Customs inspection",
   delayed: "Delayed",
   delivered: "Delivered",
   exception: "Exception",
@@ -25,6 +28,9 @@ const statusTones: Record<ShipmentStatus, BadgeTone> = {
   quality_check: "indigo",
   ready_to_ship: "teal",
   in_transit: "info",
+  arrived: "teal",
+  customs_clearance: "info",
+  customs_inspection: "warning",
   delayed: "warning",
   delivered: "success",
   exception: "danger",
@@ -74,6 +80,7 @@ export default function ShipmentsListView({
                 .filter(Boolean)
                 .join(" · ") || "No details yet"}
             </p>
+            {s.status_note && <p className="mt-0.5 truncate text-xs text-amber-700">{s.status_note}</p>}
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1.5">
             <p className="text-[11px] text-gray-400" title={new Date(s.updated_at).toLocaleString()}>
