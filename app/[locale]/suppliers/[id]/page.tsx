@@ -10,6 +10,7 @@ import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
 import { getApprovedSupplierById } from "@/lib/actions/suppliers";
 import { getProductsBySupplier } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
+import { jsonLdHtml } from "@/lib/jsonLd";
 
 export const dynamic = "force-dynamic";
 
@@ -41,8 +42,22 @@ export default async function SupplierDetailPage({
   ]);
   const t = dict.suppliers.detail;
 
+  const jsonLd = supplier
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: supplier.company_name,
+        description: supplier.bio || undefined,
+        image: supplier.company_photo_url || undefined,
+        address: [supplier.business_address, supplier.country].filter(Boolean).join(", ") || undefined,
+      }
+    : null;
+
   return (
     <>
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }} />
+      )}
       <Header dict={dict} locale={locale} />
       <main>
         <section className="relative px-4 pt-28 pb-20 sm:px-6">

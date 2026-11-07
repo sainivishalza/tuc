@@ -9,6 +9,7 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
 import { getPublicProductById } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
+import { jsonLdHtml } from "@/lib/jsonLd";
 
 export const dynamic = "force-dynamic";
 
@@ -36,8 +37,37 @@ export default async function ProductDetailPage({
   const [dict, product] = await Promise.all([getDictionary(locale), getPublicProductById(id)]);
   const t = dict.products.detail;
 
+  const jsonLd = product
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.title,
+        description: product.description || undefined,
+        image: product.image_urls.length > 0 ? product.image_urls : undefined,
+        category: product.category_name || undefined,
+        brand: {
+          "@type": "Brand",
+          name: product.supplier_company_name,
+        },
+        offers:
+          product.price_tiers.length > 0
+            ? {
+                "@type": "AggregateOffer",
+                priceCurrency: "USD",
+                lowPrice: Math.min(...product.price_tiers.map((tier) => tier.price)),
+                highPrice: Math.max(...product.price_tiers.map((tier) => tier.price)),
+                offerCount: product.price_tiers.length,
+                availability: "https://schema.org/InStock",
+              }
+            : undefined,
+      }
+    : null;
+
   return (
     <>
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }} />
+      )}
       <Header dict={dict} locale={locale} />
       <main>
         <section className="relative px-4 pt-28 pb-20 sm:px-6">
