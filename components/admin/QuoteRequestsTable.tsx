@@ -9,6 +9,7 @@ import {
   updateQuoteValue,
   bulkUpdateQuoteStatus,
 } from "@/lib/actions/quoteRequests";
+import { promoteQuoteRequestToSourcingRequest } from "@/lib/actions/sourcingRequests";
 import { Badge, Button, EmptyState, inputClass, type BadgeTone } from "@/components/admin/ui";
 import Modal from "@/components/admin/Modal";
 
@@ -234,9 +235,17 @@ export default function QuoteRequestsTable({ requests }: { requests: QuoteReques
 }
 
 function QuoteDetailModal({ quote, onClose }: { quote: QuoteRequest; onClose: () => void }) {
+  const router = useRouter();
   const [status, setStatus] = useState(quote.status);
   const [value, setValue] = useState(quote.quoted_value !== null ? String(quote.quoted_value) : "");
   const [saving, setSaving] = useState(false);
+  const [promoting, setPromoting] = useState(false);
+
+  async function handlePromote() {
+    setPromoting(true);
+    const { id } = await promoteQuoteRequestToSourcingRequest(quote.id);
+    router.push(`/admin/sourcing-requests/${id}`);
+  }
 
   async function handleSave() {
     setSaving(true);
@@ -317,13 +326,18 @@ function QuoteDetailModal({ quote, onClose }: { quote: QuoteRequest; onClose: ()
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
+        <div className="flex items-center justify-between gap-2">
+          <Button variant="secondary" onClick={handlePromote} disabled={promoting}>
+            {promoting ? "Promoting…" : "Promote to Sourcing Request"}
           </Button>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving…" : "Save changes"}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? "Saving…" : "Save changes"}
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>

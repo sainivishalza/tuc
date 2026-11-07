@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Users,
   Send,
+  Handshake,
 } from "lucide-react";
 
 export interface AdminFeature {
@@ -95,6 +96,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/suppliers",
     status: "live",
     icon: ShieldCheck,
+  },
+  {
+    title: "Sourcing Requests",
+    description:
+      "Customer-posted requirements for products or services — approve to publish on the public board and notify matching suppliers. Suppliers connect with the customer directly.",
+    href: "/admin/sourcing-requests",
+    status: "live",
+    icon: Handshake,
   },
   {
     title: "Shipping Routes",

@@ -1023,5 +1023,51 @@
         }
       }
     }
+  },
+  "sourcingRequests": {
+    "navLabel": "Sourcing Requests",
+    "board": {
+      "badge": "Open Marketplace",
+      "title": "Sourcing Requests",
+      "subtitle": "Post what you need — verified suppliers can see it and reach out directly.",
+      "postCta": "Post a Requirement",
+      "emptyState": "No open requirements yet. Be the first to post one.",
+      "filterAll": "All categories",
+      "typeProduct": "Product",
+      "typeService": "Service",
+      "typeOther": "Other",
+      "viewDetails": "View details"
+    },
+    "detail": {
+      "backToBoard": "Back to all requests",
+      "postedOn": "Posted",
+      "signInCta": "Sign in as a supplier to respond",
+      "notFound": "This requirement isn't available."
+    },
+    "form": {
+      "badge": "Post a Requirement",
+      "title": "Tell suppliers what you need",
+      "subtitle": "Describe your product or service requirement — our verified suppliers can see it and reach out to you directly. No account needed.",
+      "titleLabel": "Title",
+      "titlePlaceholder": "e.g. 5,000 units of custom silicone phone cases",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Specs, materials, target price, anything a supplier should know",
+      "typeLabel": "Type",
+      "categoryLabel": "Category",
+      "quantityLabel": "Quantity",
+      "budgetLabel": "Budget (optional)",
+      "timelineLabel": "Timeline",
+      "destinationLabel": "Destination country",
+      "nameLabel": "Your name",
+      "emailLabel": "Your email",
+      "whatsappLabel": "WhatsApp (optional)",
+      "imagesLabel": "Reference photos (optional)",
+      "videoLabel": "Video link (optional)",
+      "socialLabel": "Social media / website link (optional)",
+      "submit": "Submit for review",
+      "submitting": "Submitting...",
+      "submittedTitle": "Submitted for review",
+      "submittedBody": "We'll review your requirement and it'll appear on the public board once approved."
+    }
   }
 }

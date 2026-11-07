@@ -75,3 +75,20 @@ export async function requireSupplierEmail(): Promise<string> {
   if (!email) redirect("/supplier-portal/login");
   return email;
 }
+
+/** Same check as requireSupplierEmail but never redirects — for a public
+ * page (e.g. a Sourcing Request detail page) that renders differently for
+ * a signed-in supplier without requiring one. */
+export async function getSupplierEmailIfValid(): Promise<string | null> {
+  const token = (await cookies()).get(SUPPLIER_COOKIE_NAME)?.value;
+  return verifySupplierSessionToken(token, process.env.SUPPLIER_SESSION_SECRET);
+}
+
+/** Same check as requireSupplierEmail but throws instead of redirecting —
+ * the requireAdminAction/requireAdminPage split in lib/adminAuth.ts for
+ * the same reason: a server action can't redirect the caller's page state. */
+export async function requireSupplierEmailAction(): Promise<string> {
+  const email = await getSupplierEmailIfValid();
+  if (!email) throw new Error("Not authenticated");
+  return email;
+}
