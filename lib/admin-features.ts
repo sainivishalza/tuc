@@ -17,6 +17,7 @@ import {
   Users,
   Send,
   Handshake,
+  Package,
 } from "lucide-react";
 
 export interface AdminFeature {
@@ -104,6 +105,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/sourcing-requests",
     status: "live",
     icon: Handshake,
+  },
+  {
+    title: "Products",
+    description:
+      "Individual product listings from every approved supplier — title, photos, quantity-break pricing, MOQ, and more. Goes live immediately when a supplier adds one; edit or deactivate any listing here.",
+    href: "/admin/products",
+    status: "live",
+    icon: Package,
   },
   {
     title: "Shipping Routes",

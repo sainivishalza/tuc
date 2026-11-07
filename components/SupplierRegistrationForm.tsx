@@ -124,6 +124,15 @@ export default function SupplierRegistrationForm({ dict }: { dict: Dictionary })
           <input name="business_address" placeholder="City, Province" className={inputClass} />
         </div>
         <div className="sm:col-span-2">
+          <label className="mb-2 block text-sm font-medium">Company Bio</label>
+          <textarea
+            name="bio"
+            rows={3}
+            placeholder="A short pitch buyers will see on your public profile — what you make, your strengths, years in business, typical MOQ…"
+            className={`resize-none ${inputClass}`}
+          />
+        </div>
+        <div className="sm:col-span-2">
           <label className="mb-2 block text-sm font-medium">Additional Notes</label>
           <textarea name="notes" rows={3} placeholder="Anything else worth knowing about your business" className={`resize-none ${inputClass}`} />
         </div>
@@ -148,6 +157,21 @@ export default function SupplierRegistrationForm({ dict }: { dict: Dictionary })
           hint="Storefront, office, or factory — image, up to 5MB"
           accept="image/png,image/jpeg,image/webp"
         />
+      </div>
+
+      <div className="mt-6">
+        <p className="mb-2 text-sm font-medium">Photo Gallery (optional — add up to 3 now, more later from your account)</p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {[0, 1, 2].map((i) => (
+            <FileField
+              key={i}
+              name={`gallery_${i}`}
+              label={`Gallery Photo ${i + 1}`}
+              hint="Image, up to 5MB"
+              accept="image/png,image/jpeg,image/webp"
+            />
+          ))}
+        </div>
       </div>
 
       <div className="mt-6">

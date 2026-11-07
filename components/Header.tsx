@@ -31,6 +31,7 @@ export default async function Header({
   // linked from the footer's own site map).
   const moreLinks = [
     { href: `/${locale}/sourcing`, label: dict.categories.title },
+    { href: `/${locale}/products`, label: dict.products.navLabel },
     { href: `/${locale}/sourcing-requests`, label: dict.sourcingRequests.navLabel },
     { href: `/${locale}/case-studies`, label: dict.caseStudies.title },
     { href: `/${locale}/track`, label: dict.nav.trackShipment },

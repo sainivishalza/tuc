@@ -2,13 +2,54 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, Upload } from "lucide-react";
+import { CheckCircle, Upload, X } from "lucide-react";
 import { updateOwnSupplierProfile } from "@/lib/actions/supplierPortal";
 import type { Supplier } from "@/lib/supabase/types";
 
 const inputClass =
   "w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 const labelClass = "mb-2 block text-sm font-medium";
+const MAX_GALLERY_IMAGES = 6;
+
+/** Same remove-then-add-more pattern as the admin GalleryManager
+ * (components/admin/SupplierEditForm.tsx) — kept separate since this form
+ * lives in the public "glass" style system, not the admin one. */
+function GalleryManager({ images }: { images: string[] }) {
+  const [kept, setKept] = useState<string[]>(images);
+  const remainingSlots = Math.max(0, MAX_GALLERY_IMAGES - kept.length);
+
+  return (
+    <div>
+      <label className={labelClass}>Photo Gallery (up to {MAX_GALLERY_IMAGES} photos)</label>
+      <input type="hidden" name="existing_gallery_urls" value={JSON.stringify(kept)} />
+      {kept.length > 0 && (
+        <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {kept.map((url) => (
+            <div key={url} className="group relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt="" className="h-16 w-full rounded-lg border border-border object-cover" />
+              <button
+                type="button"
+                onClick={() => setKept((prev) => prev.filter((u) => u !== url))}
+                aria-label="Remove photo"
+                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow"
+              >
+                <X size={11} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      {remainingSlots > 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {Array.from({ length: remainingSlots }).map((_, i) => (
+            <input key={i} type="file" name={`gallery_${i}`} accept="image/png,image/jpeg,image/webp" className="text-[11px]" />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function FileField({
   name,
@@ -69,6 +110,7 @@ export default function SupplierProfileForm({ supplier }: { supplier: Supplier }
   const [productCategories, setProductCategories] = useState(supplier.product_categories ?? "");
   const [businessAddress, setBusinessAddress] = useState(supplier.business_address ?? "");
   const [country, setCountry] = useState(supplier.country ?? "");
+  const [bio, setBio] = useState(supplier.bio ?? "");
   const [notes, setNotes] = useState(supplier.notes ?? "");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -89,6 +131,7 @@ export default function SupplierProfileForm({ supplier }: { supplier: Supplier }
         product_categories: productCategories,
         business_address: businessAddress,
         country,
+        bio,
         notes,
       },
       formData
@@ -139,6 +182,16 @@ export default function SupplierProfileForm({ supplier }: { supplier: Supplier }
           <input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="China" className={inputClass} />
         </div>
         <div className="sm:col-span-2">
+          <label className={labelClass}>Company Bio (shown publicly on your directory profile)</label>
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            rows={3}
+            placeholder="A short pitch buyers will see — what you make, your strengths, years in business, typical MOQ…"
+            className={`resize-none ${inputClass}`}
+          />
+        </div>
+        <div className="sm:col-span-2">
           <label className={labelClass}>Additional Notes</label>
           <textarea
             value={notes}
@@ -172,6 +225,10 @@ export default function SupplierProfileForm({ supplier }: { supplier: Supplier }
           accept="image/png,image/jpeg,image/webp"
           currentUrl={supplier.company_photo_url}
         />
+      </div>
+
+      <div className="mt-6">
+        <GalleryManager images={supplier.gallery_urls} />
       </div>
 
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}

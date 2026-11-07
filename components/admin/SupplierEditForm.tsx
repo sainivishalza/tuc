@@ -2,9 +2,61 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 import { updateSupplier } from "@/lib/actions/suppliers";
 import type { Supplier } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
+
+const MAX_GALLERY_IMAGES = 6;
+
+/** Lets the admin drop existing photos (client-side only — the removal
+ * takes effect when the form saves, via the existing_gallery_urls hidden
+ * field) and add new ones in the freed-up slots. Mirrors the same
+ * component in SupplierProfileForm.tsx (supplier's own self-service edit) —
+ * not shared between them since the two forms live in different style
+ * systems (admin gray theme vs. the public "glass" theme). */
+function GalleryManager({ images }: { images: string[] }) {
+  const [kept, setKept] = useState<string[]>(images);
+  const remainingSlots = Math.max(0, MAX_GALLERY_IMAGES - kept.length);
+
+  return (
+    <div>
+      <label className={labelClass}>Photo Gallery (up to {MAX_GALLERY_IMAGES} photos)</label>
+      <input type="hidden" name="existing_gallery_urls" value={JSON.stringify(kept)} />
+      {kept.length > 0 && (
+        <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {kept.map((url) => (
+            <div key={url} className="group relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt="" className="h-16 w-full rounded-lg border border-gray-200 object-cover" />
+              <button
+                type="button"
+                onClick={() => setKept((prev) => prev.filter((u) => u !== url))}
+                aria-label="Remove photo"
+                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow"
+              >
+                <X size={11} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      {remainingSlots > 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {Array.from({ length: remainingSlots }).map((_, i) => (
+            <input
+              key={i}
+              type="file"
+              name={`gallery_${i}`}
+              accept="image/png,image/jpeg,image/webp"
+              className="text-[11px]"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
   const router = useRouter();
@@ -16,6 +68,7 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
   const [productCategories, setProductCategories] = useState(supplier.product_categories ?? "");
   const [businessAddress, setBusinessAddress] = useState(supplier.business_address ?? "");
   const [country, setCountry] = useState(supplier.country ?? "");
+  const [bio, setBio] = useState(supplier.bio ?? "");
   const [rating, setRating] = useState<number | null>(supplier.rating);
   const [notes, setNotes] = useState(supplier.notes ?? "");
   const [adminNotes, setAdminNotes] = useState(supplier.admin_notes ?? "");
@@ -39,6 +92,7 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
           product_categories: productCategories,
           business_address: businessAddress,
           country,
+          bio,
           rating,
           notes,
           admin_notes: adminNotes,
@@ -103,6 +157,11 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
       </div>
 
       <div>
+        <label className={labelClass}>Bio (shown publicly on their directory profile)</label>
+        <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} className={`resize-none ${inputClass}`} />
+      </div>
+
+      <div>
         <label className={labelClass}>Notes (from supplier)</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className={`resize-none ${inputClass}`} />
       </div>
@@ -141,6 +200,8 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
           <input type="file" name="company_photo" accept="image/png,image/jpeg,image/webp" className={`${inputClass} py-2 text-xs`} />
         </div>
       </div>
+
+      <GalleryManager images={supplier.gallery_urls} />
 
       <div>
         <label className={labelClass}>Status</label>

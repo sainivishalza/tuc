@@ -521,6 +521,12 @@
       "badge": "供应商专区",
       "title": "申请成为认证供应商",
       "subtitle": "提交您的企业信息和相关文件以供审核。审核通过后，您的公司将出现在我们的公开认证供应商页面上——为评估您的买家提供信任信号。"
+    },
+    "detail": {
+      "backLabel": "所有认证供应商",
+      "galleryHeading": "照片展示",
+      "notFound": "未找到该供应商。",
+      "productsHeading": "该供应商的产品"
     }
   },
   "tools": {
@@ -1068,6 +1074,33 @@
       "submitting": "提交中...",
       "submittedTitle": "已提交审核",
       "submittedBody": "我们将审核您的需求，审核通过后将显示在公开列表中。"
+    }
+  },
+  "products": {
+    "navLabel": "产品",
+    "catalog": {
+      "badge": "产品目录",
+      "title": "产品",
+      "subtitle": "浏览我们认证供应商的真实产品列表——联系前先比较价格、起订量和交货周期。",
+      "searchPlaceholder": "搜索产品…",
+      "filterAllCategories": "所有类别",
+      "maxPricePlaceholder": "最高价格",
+      "emptyState": "暂无符合筛选条件的产品。",
+      "fromLabel": "起"
+    },
+    "detail": {
+      "backLabel": "所有产品",
+      "notFound": "该产品暂不可用。",
+      "priceLabel": "阶梯价格",
+      "quantityColumn": "数量",
+      "priceColumn": "价格",
+      "moqLabel": "起订量",
+      "leadTimeLabel": "交货周期",
+      "unitLabel": "单位",
+      "portLabel": "发货港口",
+      "customizableLabel": "支持定制",
+      "sampleAvailableLabel": "提供样品",
+      "inquireCta": "通过 WhatsApp 联系供应商"
     }
   }
 }

@@ -7,7 +7,7 @@ import { requireAdminAction } from "@/lib/adminAuth";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { notifyNewSupplierRegistration } from "@/lib/notify";
-import { BUCKET, validateAndUploadFile, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
+import { BUCKET, validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
 import type { Supplier } from "@/lib/supabase/types";
 
 export async function submitSupplierRegistration(
@@ -52,6 +52,9 @@ export async function submitSupplierRegistration(
   const photoResult = await validateAndUploadFile(formData, "company_photo", IMAGE_TYPES, pathPrefix);
   if (photoResult && !photoResult.ok) return { success: false, error: photoResult.message };
 
+  const galleryResult = await processGalleryUpload(formData, pathPrefix);
+  if (!galleryResult.ok) return { success: false, error: galleryResult.message };
+
   const supabase = getSupabaseAdminClient();
   const { error } = await supabase.from("suppliers").insert({
     company_name: companyName,
@@ -60,10 +63,12 @@ export async function submitSupplierRegistration(
     phone: String(formData.get("phone") ?? "").trim() || null,
     product_categories: String(formData.get("product_categories") ?? "").trim() || null,
     business_address: String(formData.get("business_address") ?? "").trim() || null,
+    bio: String(formData.get("bio") ?? "").trim() || null,
     notes: String(formData.get("notes") ?? "").trim() || null,
     business_license_url: licenseResult?.ok ? licenseResult.url : null,
     visiting_card_url: cardResult?.ok ? cardResult.url : null,
     company_photo_url: photoResult?.ok ? photoResult.url : null,
+    gallery_urls: galleryResult.urls,
     status: "pending",
   });
 
@@ -77,17 +82,27 @@ export async function submitSupplierRegistration(
 }
 
 export async function getApprovedSuppliers(): Promise<
-  Pick<Supplier, "id" | "company_name" | "product_categories" | "company_photo_url" | "business_license_url" | "visiting_card_url">[]
+  Pick<
+    Supplier,
+    "id" | "company_name" | "product_categories" | "company_photo_url" | "business_license_url" | "visiting_card_url" | "bio" | "gallery_urls"
+  >[]
 > {
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase
     .from("suppliers")
-    .select("id, company_name, product_categories, company_photo_url, business_license_url, visiting_card_url")
+    .select("id, company_name, product_categories, company_photo_url, business_license_url, visiting_card_url, bio, gallery_urls")
     .eq("status", "approved")
     .order("company_name", { ascending: true });
 
   if (error) return [];
   return data as Supplier[];
+}
+
+export async function getApprovedSupplierById(id: string): Promise<Supplier | null> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase.from("suppliers").select("*").eq("id", id).eq("status", "approved").maybeSingle();
+  if (error) return null;
+  return data as Supplier | null;
 }
 
 /** Lightweight count for the top bar's notification badge. */
@@ -172,6 +187,7 @@ export interface SupplierEditInput {
   product_categories: string;
   business_address: string;
   country: string;
+  bio: string;
   rating: number | null;
   notes: string;
   admin_notes: string;
@@ -193,6 +209,7 @@ export async function updateSupplier(id: string, input: SupplierEditInput, formD
     product_categories: input.product_categories.trim() || null,
     business_address: input.business_address.trim() || null,
     country: input.country.trim() || null,
+    bio: input.bio.trim() || null,
     rating: input.rating,
     notes: input.notes.trim() || null,
     admin_notes: input.admin_notes.trim() || null,
@@ -216,6 +233,9 @@ export async function updateSupplier(id: string, input: SupplierEditInput, formD
       if (!photoResult.ok) throw new Error(photoResult.message);
       update.company_photo_url = photoResult.url;
     }
+    const galleryResult = await processGalleryUpload(formData, pathPrefix);
+    if (!galleryResult.ok) throw new Error(galleryResult.message);
+    update.gallery_urls = galleryResult.urls;
   }
 
   const supabase = getSupabaseAdminClient();
@@ -231,12 +251,17 @@ export async function deleteSupplier(id: string): Promise<void> {
 
   const { data: supplier } = await supabase
     .from("suppliers")
-    .select("business_license_url, visiting_card_url, company_photo_url")
+    .select("business_license_url, visiting_card_url, company_photo_url, gallery_urls")
     .eq("id", id)
     .maybeSingle();
 
   if (supplier) {
-    const paths = [supplier.business_license_url, supplier.visiting_card_url, supplier.company_photo_url]
+    const paths = [
+      supplier.business_license_url,
+      supplier.visiting_card_url,
+      supplier.company_photo_url,
+      ...((supplier.gallery_urls as string[] | null) ?? []),
+    ]
       .filter((url): url is string => !!url)
       .map((url) => url.split(`${BUCKET}/`)[1])
       .filter((p): p is string => !!p);

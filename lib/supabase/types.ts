@@ -404,8 +404,57 @@ export interface Supplier {
   company_photo_url: string | null;
   admin_notes: string | null;
   status: "pending" | "approved" | "rejected";
+  /** Short public pitch shown on the supplier's directory profile — distinct
+   * from `notes` (private, shown only to admin in the edit form). */
+  bio: string | null;
+  /** Public photo gallery, capped at MAX_GALLERY_IMAGES (lib/supplierFileUpload.ts). */
+  gallery_urls: string[];
   created_at: string;
   updated_at: string;
+}
+
+export interface PriceTier {
+  min_qty: number;
+  price: number;
+}
+
+export type SupplierProductStatus = "active" | "inactive";
+
+export interface SupplierProduct {
+  id: string;
+  supplier_id: string;
+  category_id: string | null;
+  title: string;
+  description: string | null;
+  image_urls: string[];
+  /** Alibaba-style quantity-break pricing, sorted ascending by min_qty — not a flat min/max. */
+  price_tiers: PriceTier[];
+  price_unit: string | null;
+  moq: string | null;
+  lead_time: string | null;
+  unit: string | null;
+  customizable: boolean;
+  customization_notes: string | null;
+  sample_available: boolean;
+  sample_price: number | null;
+  port_of_shipment: string | null;
+  /** A visibility toggle the supplier/admin controls directly — not an
+   * approval queue. Products go live immediately on save; there is no
+   * moderation gate on this table (deliberately decided against, unlike
+   * suppliers/sourcing_requests). */
+  status: SupplierProductStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+/** What the public catalog grid/detail and a supplier's own public profile
+ * page may ever see — joined with category name and the owning supplier's
+ * public-facing identity, and restricted server-side to active products of
+ * approved suppliers only (see getPublicProducts/getPublicProductById/
+ * getProductsBySupplier in lib/actions/supplierProducts.ts). */
+export interface PublicSupplierProduct extends SupplierProduct {
+  category_name: string | null;
+  supplier_company_name: string;
 }
 
 export interface CategoryPage {
