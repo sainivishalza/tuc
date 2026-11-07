@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { CheckCircle, Upload, X } from "lucide-react";
 import { updateOwnSupplierProfile } from "@/lib/actions/supplierPortal";
 import type { Supplier } from "@/lib/supabase/types";
@@ -25,9 +26,8 @@ function GalleryManager({ images }: { images: string[] }) {
       {kept.length > 0 && (
         <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
           {kept.map((url) => (
-            <div key={url} className="group relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" className="h-16 w-full rounded-lg border border-border object-cover" />
+            <div key={url} className="group relative h-16 w-full">
+              <Image src={url} alt="" fill sizes="96px" className="rounded-lg border border-border object-cover" />
               <button
                 type="button"
                 onClick={() => setKept((prev) => prev.filter((u) => u !== url))}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { updateSourcingRequest, pushToSuppliers } from "@/lib/actions/sourcingRequests";
 import type { AdminSourcingRequest, SourcingCategory, SourcingRequestType, SourcingRequestStatus, Supplier } from "@/lib/supabase/types";
 import { Button, Badge, inputClass, labelClass } from "@/components/admin/ui";
@@ -173,8 +174,9 @@ export default function SourcingRequestEditForm({
             <label className={labelClass}>Uploaded photos</label>
             <div className="flex gap-3">
               {request.image_urls.map((url) => (
-                /* eslint-disable-next-line @next/next/no-img-element -- Supabase-hosted upload, same convention as other admin-reviewed images */
-                <img key={url} src={url} alt="" className="h-20 w-20 rounded-lg border border-gray-200 object-cover" />
+                <div key={url} className="relative h-20 w-20 overflow-hidden rounded-lg border border-gray-200">
+                  <Image src={url} alt="" fill sizes="80px" className="object-cover" />
+                </div>
               ))}
             </div>
           </div>

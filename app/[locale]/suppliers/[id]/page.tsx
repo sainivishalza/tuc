@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, ShieldCheck, FileCheck2, MapPin, Tags, PackageX } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
@@ -59,12 +60,15 @@ export default async function SupplierDetailPage({
             ) : (
               <div className="glass-strong rounded-2xl p-6 sm:p-8">
                 {supplier.company_photo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={supplier.company_photo_url}
-                    alt={supplier.company_name}
-                    className="h-48 w-full rounded-xl object-cover"
-                  />
+                  <div className="relative h-48 w-full overflow-hidden rounded-xl">
+                    <Image
+                      src={supplier.company_photo_url}
+                      alt={supplier.company_name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 672px"
+                      className="object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="flex h-48 w-full items-center justify-center rounded-xl bg-surface-2 text-muted">
                     <ShieldCheck size={40} />
@@ -102,8 +106,9 @@ export default async function SupplierDetailPage({
                     <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t.galleryHeading}</p>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {supplier.gallery_urls.map((url) => (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img key={url} src={url} alt="" className="h-28 w-full rounded-lg object-cover" />
+                        <div key={url} className="relative h-28 w-full overflow-hidden rounded-lg">
+                          <Image src={url} alt="" fill sizes="(max-width: 640px) 50vw, 33vw" className="object-cover" />
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -143,8 +148,9 @@ export default async function SupplierDetailPage({
                           className="group flex flex-col gap-1.5 rounded-xl border border-border p-2.5 transition hover:border-accent/40"
                         >
                           {p.image_urls[0] ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={p.image_urls[0]} alt={p.title} className="h-20 w-full rounded-lg object-cover" />
+                            <div className="relative h-20 w-full overflow-hidden rounded-lg">
+                              <Image src={p.image_urls[0]} alt={p.title} fill sizes="(max-width: 640px) 50vw, 200px" className="object-cover" />
+                            </div>
                           ) : (
                             <div className="flex h-20 w-full items-center justify-center rounded-lg bg-surface-2 text-muted">
                               <PackageX size={18} />

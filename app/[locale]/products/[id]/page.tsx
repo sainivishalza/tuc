@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Building2, PackageX, CheckCircle2 } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
@@ -53,13 +54,18 @@ export default async function ProductDetailPage({
                 {product.image_urls.length > 0 ? (
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {product.image_urls.map((url, i) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <div
                         key={url}
-                        src={url}
-                        alt={product.title}
-                        className={`rounded-xl object-cover ${i === 0 ? "col-span-2 h-56 sm:col-span-2" : "h-28"}`}
-                      />
+                        className={`relative w-full overflow-hidden rounded-xl ${i === 0 ? "col-span-2 h-56 sm:col-span-2" : "h-28"}`}
+                      >
+                        <Image
+                          src={url}
+                          alt={product.title}
+                          fill
+                          sizes={i === 0 ? "(max-width: 768px) 100vw, 672px" : "(max-width: 640px) 50vw, 220px"}
+                          className="object-cover"
+                        />
+                      </div>
                     ))}
                   </div>
                 ) : (

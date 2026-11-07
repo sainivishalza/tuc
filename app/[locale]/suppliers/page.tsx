@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { ShieldCheck, FileCheck2 } from "lucide-react";
 import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
@@ -72,11 +73,15 @@ export default async function SuppliersDirectoryPage({
                   className="glass-strong flex flex-col gap-3 rounded-2xl p-6 transition hover:shadow-lg"
                 >
                   {s.company_photo_url ? (
-                    <img
-                      src={s.company_photo_url}
-                      alt={s.company_name}
-                      className="h-36 w-full rounded-xl object-cover"
-                    />
+                    <div className="relative h-36 w-full overflow-hidden rounded-xl">
+                      <Image
+                        src={s.company_photo_url}
+                        alt={s.company_name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    </div>
                   ) : (
                     <div className="flex h-36 w-full items-center justify-center rounded-xl bg-surface-2 text-muted">
                       <ShieldCheck size={32} />

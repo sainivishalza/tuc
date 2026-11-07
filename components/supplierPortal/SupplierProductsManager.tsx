@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Plus, Pencil, Trash2, X, PackageX } from "lucide-react";
 import { createProduct, updateProduct, deleteProduct } from "@/lib/actions/supplierProducts";
 import type { SupplierProduct, SourcingCategory, PriceTier } from "@/lib/supabase/types";
@@ -33,9 +34,8 @@ function GalleryManager({ images }: { images: string[] }) {
       {kept.length > 0 && (
         <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
           {kept.map((url) => (
-            <div key={url} className="group relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" className="h-16 w-full rounded-lg border border-border object-cover" />
+            <div key={url} className="group relative h-16 w-full">
+              <Image src={url} alt="" fill sizes="96px" className="rounded-lg border border-border object-cover" />
               <button
                 type="button"
                 onClick={() => setKept((prev) => prev.filter((u) => u !== url))}
@@ -341,8 +341,9 @@ export default function SupplierProductsManager({
           {products.map((p) => (
             <div key={p.id} className="glass-strong flex flex-col gap-2 rounded-2xl p-4">
               {p.image_urls[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.image_urls[0]} alt={p.title} className="h-32 w-full rounded-xl object-cover" />
+                <div className="relative h-32 w-full overflow-hidden rounded-xl">
+                  <Image src={p.image_urls[0]} alt={p.title} fill sizes="300px" className="object-cover" />
+                </div>
               ) : (
                 <div className="flex h-32 w-full items-center justify-center rounded-xl bg-surface-2 text-muted">
                   <PackageX size={24} />

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getSiteTheme } from "@/lib/actions/theme";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderMoreMenu from "./HeaderMoreMenu";
@@ -73,8 +74,8 @@ export default async function Header({
               // Fixed-size box regardless of the uploaded image's own
               // dimensions/aspect ratio — object-contain scales it to fit
               // without stretching or disturbing the header layout.
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded bg-white">
-                <img src={theme.logo_url} alt="" className="h-full w-full object-contain" />
+              <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded bg-white">
+                <Image src={theme.logo_url} alt="" fill sizes="36px" className="object-contain" />
               </span>
             ) : (
               <span className="flex h-9 w-9 items-center justify-center rounded bg-brand-navy font-display text-base font-semibold text-white">

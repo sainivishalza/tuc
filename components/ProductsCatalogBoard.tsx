@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, PackageX, Building2 } from "lucide-react";
 import type { PublicSupplierProduct, SourcingCategory } from "@/lib/supabase/types";
 import type { Dictionary } from "@/lib/i18n";
@@ -96,8 +97,9 @@ export default function ProductsCatalogBoard({
               className="glass-strong card group flex flex-col gap-3 transition hover:border-accent/40"
             >
               {p.image_urls[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.image_urls[0]} alt={p.title} className="h-40 w-full rounded-xl object-cover" />
+                <div className="relative h-40 w-full overflow-hidden rounded-xl">
+                  <Image src={p.image_urls[0]} alt={p.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                </div>
               ) : (
                 <div className="flex h-40 w-full items-center justify-center rounded-xl bg-surface-2 text-muted">
                   <PackageX size={28} />
