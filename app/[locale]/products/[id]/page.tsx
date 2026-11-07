@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Building2, PackageX, MessageCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Building2, PackageX, CheckCircle2 } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
 import { getPublicProductById } from "@/lib/actions/supplierProducts";
-import { whatsappLink } from "@/lib/whatsapp";
 import { localeAlternates } from "@/lib/hreflang";
 
 export const dynamic = "force-dynamic";
@@ -144,15 +144,15 @@ export default async function ProductDetailPage({
                 )}
 
                 <div className="mt-8 border-t border-border pt-6 text-center">
-                  <a
-                    href={whatsappLink(`Hi! I'm interested in "${product.title}" from ${product.supplier_company_name}.`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary"
-                  >
-                    <MessageCircle size={16} />
-                    {t.inquireCta}
-                  </a>
+                  <WhatsAppInquireButton
+                    message={`Hi! I'm interested in "${product.title}" from ${product.supplier_company_name}.`}
+                    label={t.inquireCta}
+                    entityType="product"
+                    entityId={product.id}
+                    supplierId={product.supplier_id}
+                    supplierCompanyName={product.supplier_company_name}
+                    productTitle={product.title}
+                  />
                 </div>
               </div>
             )}

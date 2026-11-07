@@ -526,7 +526,8 @@
       "backLabel": "All verified suppliers",
       "galleryHeading": "Photo Gallery",
       "notFound": "Supplier not found.",
-      "productsHeading": "Products from this supplier"
+      "productsHeading": "Products from this supplier",
+      "contactCta": "Contact this supplier"
     }
   },
   "tools": {

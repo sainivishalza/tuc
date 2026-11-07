@@ -526,7 +526,8 @@
       "backLabel": "所有认证供应商",
       "galleryHeading": "照片展示",
       "notFound": "未找到该供应商。",
-      "productsHeading": "该供应商的产品"
+      "productsHeading": "该供应商的产品",
+      "contactCta": "联系该供应商"
     }
   },
   "tools": {
