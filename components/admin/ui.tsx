@@ -162,6 +162,24 @@ export function LinkButton({
   );
 }
 
+/** A relative stamp ("Updated 2h ago") answers "did I already touch
+ * this?" at a glance — faster to scan down a list than doing the math
+ * on an absolute date/time yourself. Falls back to a plain date once
+ * it's old enough that "ago" stops being useful. */
+export function formatLastUpdated(iso: string): string {
+  const then = new Date(iso).getTime();
+  if (isNaN(then)) return "";
+  const diffMs = Date.now() - then;
+  const minutes = Math.floor(diffMs / 60000);
+  if (minutes < 1) return "Updated just now";
+  if (minutes < 60) return `Updated ${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `Updated ${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `Updated ${days}d ago`;
+  return `Updated ${new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+}
+
 export const inputClass =
   "w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 

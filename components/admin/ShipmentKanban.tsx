@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Package, AlertTriangle } from "lucide-react";
 import type { Shipment } from "@/lib/supabase/types";
 import { updateShipmentStatus } from "@/lib/actions/shipments";
-import { Button } from "@/components/admin/ui";
+import { Button, formatLastUpdated } from "@/components/admin/ui";
 
 type ColumnId = "sourcing" | "sample_approved" | "production" | "inspection" | "shipped" | "delivered";
 
@@ -137,6 +137,9 @@ function OrderCard({
       {s.customer_name && <p className="truncate text-xs text-gray-500">{s.customer_name}</p>}
       <p className="truncate text-xs text-gray-400">
         {[s.destination_country, s.total_pieces ? `${s.total_pieces} pcs` : null].filter(Boolean).join(" · ") || "No details yet"}
+      </p>
+      <p className="truncate text-[11px] text-gray-300" title={new Date(s.updated_at).toLocaleString()}>
+        {formatLastUpdated(s.updated_at)}
       </p>
       {onAdvance && (
         <Button size="sm" variant="secondary" disabled={disabled} onClick={onAdvance} className="mt-1 w-full">
