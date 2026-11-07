@@ -180,6 +180,20 @@ export function formatLastUpdated(iso: string): string {
   return `Updated ${new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
 }
 
+/** "Received Sep 7 · 45d ago" — the admin's own stated goal was knowing
+ * "how many days before we shipped" at a glance without opening the
+ * shipment, so this leads with the day count rather than hour-level
+ * precision (which doesn't matter for something that happened weeks ago). */
+export function formatReceivedDate(iso: string): string {
+  const then = new Date(iso);
+  const thenMs = then.getTime();
+  if (isNaN(thenMs)) return "";
+  const days = Math.floor((Date.now() - thenMs) / 86400000);
+  const dateLabel = then.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  const agoLabel = days <= 0 ? "today" : days === 1 ? "1d ago" : `${days}d ago`;
+  return `Received ${dateLabel} · ${agoLabel}`;
+}
+
 export const inputClass =
   "w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 

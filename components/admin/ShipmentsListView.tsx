@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Trash2, FileText, FileSpreadsheet } from "lucide-react";
-import type { Shipment, ShipmentStatus } from "@/lib/supabase/types";
-import { deleteShipment } from "@/lib/actions/shipments";
-import { Card, EmptyState, Badge, LinkButton, Button, formatLastUpdated, type BadgeTone } from "@/components/admin/ui";
+import { Trash2, FileText, FileSpreadsheet, PackageCheck } from "lucide-react";
+import type { ShipmentStatus } from "@/lib/supabase/types";
+import { deleteShipment, type ShipmentListItem } from "@/lib/actions/shipments";
+import { Card, EmptyState, Badge, LinkButton, Button, formatLastUpdated, formatReceivedDate, type BadgeTone } from "@/components/admin/ui";
 
 const statusLabels: Record<ShipmentStatus, string> = {
   not_found: "Not found",
@@ -40,7 +40,7 @@ export default function ShipmentsListView({
   shipments,
   carrierById,
 }: {
-  shipments: Shipment[];
+  shipments: ShipmentListItem[];
   carrierById: Map<string, string>;
 }) {
   const router = useRouter();
@@ -81,11 +81,20 @@ export default function ShipmentsListView({
                 .join(" · ") || "No details yet"}
             </p>
             {s.status_note && <p className="mt-0.5 truncate text-xs text-amber-700">{s.status_note}</p>}
+            {s.first_event_at && (
+              <p className="mt-1 flex items-center gap-1 text-[11px] font-medium text-gray-500">
+                <PackageCheck size={11} className="shrink-0 text-gray-400" />
+                {formatReceivedDate(s.first_event_at)}
+              </p>
+            )}
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1.5">
-            <p className="text-[11px] text-gray-400" title={new Date(s.updated_at).toLocaleString()}>
+            <span
+              className="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-600"
+              title={new Date(s.updated_at).toLocaleString()}
+            >
               {formatLastUpdated(s.updated_at)}
-            </p>
+            </span>
             <div className="flex items-center gap-2">
               <LinkButton href={`/admin/shipments/${s.id}`} variant="secondary" size="sm">
                 Edit
