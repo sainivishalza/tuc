@@ -78,3 +78,39 @@ export function trackPageView(path: string) {
 export function trackCtaClick(label: string, path: string) {
   send("cta_click", path, label);
 }
+
+/** Logs a click on a product/supplier "inquire" button into its own
+ * `inquiries` table — unlike trackCtaClick (a static label, counted
+ * site-wide), this records which specific product or supplier the
+ * visitor was interested in, so the admin can see what's actually
+ * getting traction. Same fire-and-forget, never-throws shape as send(). */
+export function trackInquiry(params: {
+  entityType: "product" | "supplier";
+  entityId: string;
+  supplierId: string;
+  supplierCompanyName: string;
+  productTitle?: string | null;
+  path: string;
+}) {
+  if (typeof window === "undefined") return;
+  try {
+    const session = readOrCreateSession();
+    const supabase = getSupabasePublicClient();
+    supabase
+      .from("inquiries")
+      .insert({
+        entity_type: params.entityType,
+        entity_id: params.entityId,
+        supplier_id: params.supplierId,
+        supplier_company_name: params.supplierCompanyName,
+        product_title: params.productTitle ?? null,
+        channel: "whatsapp",
+        locale: localeFromPath(params.path),
+        path: params.path,
+        session_id: session?.sessionId ?? null,
+      })
+      .then(() => {});
+  } catch {
+    // Inquiry tracking must never break the inquire action itself.
+  }
+}

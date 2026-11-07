@@ -18,6 +18,7 @@ import {
   Send,
   Handshake,
   Package,
+  MessageCircle,
 } from "lucide-react";
 
 export interface AdminFeature {
@@ -113,6 +114,14 @@ export const adminFeatures: AdminFeature[] = [
     href: "/admin/products",
     status: "live",
     icon: Package,
+  },
+  {
+    title: "Inquiries",
+    description:
+      "Every \"Contact\" / \"Inquire\" click on a product or supplier page, stored in the database — see which products and suppliers are actually getting interest from visitors.",
+    href: "/admin/inquiries",
+    status: "live",
+    icon: MessageCircle,
   },
   {
     title: "Shipping Routes",

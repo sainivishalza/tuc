@@ -5,6 +5,7 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
 import { getApprovedSupplierById } from "@/lib/actions/suppliers";
 import { getProductsBySupplier } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
@@ -119,6 +120,17 @@ export default async function SupplierDetailPage({
                     View business license
                   </a>
                 )}
+
+                <div className="mt-6">
+                  <WhatsAppInquireButton
+                    message={`Hi! I'm interested in working with ${supplier.company_name}.`}
+                    label={t.contactCta}
+                    entityType="supplier"
+                    entityId={supplier.id}
+                    supplierId={supplier.id}
+                    supplierCompanyName={supplier.company_name}
+                  />
+                </div>
 
                 {products.length > 0 && (
                   <div className="mt-8 border-t border-border pt-6">

@@ -589,6 +589,27 @@ export interface ShipmentEvent {
   created_at: string;
 }
 
+/** A visitor clicking "inquire" on a product or supplier — tracked
+ * separately from AnalyticsEvent's generic cta_click (which only counts
+ * a static label, never a specific entity) so the admin can see exactly
+ * which products/suppliers are actually generating interest. */
+export interface Inquiry {
+  id: string;
+  entity_type: "product" | "supplier";
+  entity_id: string;
+  supplier_id: string;
+  /** Snapshot at click time — only set for a product inquiry, so the
+   * admin view still shows a readable label even if the product is
+   * later deleted or renamed. */
+  product_title: string | null;
+  supplier_company_name: string;
+  channel: string;
+  locale: string | null;
+  path: string | null;
+  session_id: string | null;
+  created_at: string;
+}
+
 export interface AnalyticsEvent {
   id: number;
   event_type: "pageview" | "cta_click";
