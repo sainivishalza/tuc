@@ -1,7 +1,7 @@
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getQuoteRequests } from "@/lib/actions/quoteRequests";
 import AdminShell from "@/components/admin/AdminShell";
-import { PageHeader } from "@/components/admin/ui";
+import { PageHeader, ExportCsvLink } from "@/components/admin/ui";
 import QuoteRequestsTable from "@/components/admin/QuoteRequestsTable";
 
 export const metadata = {
@@ -17,6 +17,7 @@ export default async function QuoteRequestsPage() {
       <PageHeader
         title="Quote Management"
         subtitle={`${requests.length} submission${requests.length === 1 ? "" : "s"} from the Quote Wizard. Click a row to view details, update status, or set a value.`}
+        action={<ExportCsvLink href="/api/admin/export/quote-requests" />}
       />
       <QuoteRequestsTable requests={requests} />
     </AdminShell>

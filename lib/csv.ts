@@ -51,3 +51,41 @@ export function parseCsv(text: string): string[][] {
 
   return rows.filter((r) => r.some((cell) => cell.trim() !== ""));
 }
+
+export interface CsvColumn {
+  key: string;
+  label: string;
+}
+
+/** The export direction's serializer — quotes a field only when it
+ * actually contains a comma, quote, or newline, doubling any embedded
+ * quotes, which is all real spreadsheet software needs to round-trip
+ * admin-authored free text (messages, notes, addresses) correctly.
+ * No "server-only" guard here since parseCsv above is used by a client
+ * component (BulkQuoteForm) — this file is shared by both directions,
+ * but toCsv/csvResponse are in practice only ever called from the
+ * admin export Route Handlers (app/api/admin/export/*). */
+export function toCsv(rows: Record<string, unknown>[], columns: CsvColumn[]): string {
+  const escape = (value: unknown): string => {
+    if (value === null || value === undefined) return "";
+    const str = String(value);
+    return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+  };
+
+  const header = columns.map((c) => escape(c.label)).join(",");
+  const lines = rows.map((row) => columns.map((c) => escape(row[c.key])).join(","));
+  return [header, ...lines].join("\r\n");
+}
+
+/** A CSV download response — a plain `<a href>` (no JS, no blob/fetch
+ * dance) to one of these routes is enough for the browser to save it,
+ * since Content-Disposition: attachment is what actually triggers the
+ * download rather than rendering the response inline. */
+export function csvResponse(filename: string, csv: string): Response {
+  return new Response(csv, {
+    headers: {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${filename}"`,
+    },
+  });
+}

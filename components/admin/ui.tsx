@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Download } from "lucide-react";
 import type { ReactNode } from "react";
 
 /**
@@ -192,6 +193,23 @@ export function formatReceivedDate(iso: string): string {
   const dateLabel = then.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   const agoLabel = days <= 0 ? "today" : days === 1 ? "1d ago" : `${days}d ago`;
   return `Received ${dateLabel} · ${agoLabel}`;
+}
+
+/** A plain `<a>`, not `next/link`'s Link — this points at a Route Handler
+ * (app/api/admin/export/.../route.ts) that answers with
+ * Content-Disposition: attachment, which is what makes the browser save
+ * the response instead of trying to render it. No onClick/blob/fetch
+ * dance needed; the browser's own download handling does all of it. */
+export function ExportCsvLink({ href }: { href: string }) {
+  return (
+    <a
+      href={href}
+      className={`${BUTTON_BASE} ${BUTTON_SIZES.md} ${BUTTON_VARIANTS.secondary}`}
+    >
+      <Download size={15} />
+      Export CSV
+    </a>
+  );
 }
 
 export const inputClass =
