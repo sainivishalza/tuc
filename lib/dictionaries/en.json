@@ -525,7 +525,8 @@
     "detail": {
       "backLabel": "All verified suppliers",
       "galleryHeading": "Photo Gallery",
-      "notFound": "Supplier not found."
+      "notFound": "Supplier not found.",
+      "productsHeading": "Products from this supplier"
     }
   },
   "tools": {
@@ -1073,6 +1074,33 @@
       "submitting": "Submitting...",
       "submittedTitle": "Submitted for review",
       "submittedBody": "We'll review your requirement and it'll appear on the public board once approved."
+    }
+  },
+  "products": {
+    "navLabel": "Products",
+    "catalog": {
+      "badge": "Product Catalog",
+      "title": "Products",
+      "subtitle": "Browse real listings from our verified suppliers — compare prices, MOQ, and lead times before you reach out.",
+      "searchPlaceholder": "Search products…",
+      "filterAllCategories": "All categories",
+      "maxPricePlaceholder": "Max price",
+      "emptyState": "No products match your filters yet.",
+      "fromLabel": "From"
+    },
+    "detail": {
+      "backLabel": "All products",
+      "notFound": "This product isn't available.",
+      "priceLabel": "Quantity-break pricing",
+      "quantityColumn": "Quantity",
+      "priceColumn": "Price",
+      "moqLabel": "MOQ",
+      "leadTimeLabel": "Lead time",
+      "unitLabel": "Unit",
+      "portLabel": "Port of shipment",
+      "customizableLabel": "Customization available",
+      "sampleAvailableLabel": "Sample available",
+      "inquireCta": "Message supplier on WhatsApp"
     }
   }
 }

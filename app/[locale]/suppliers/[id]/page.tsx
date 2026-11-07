@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, FileCheck2, MapPin, Tags } from "lucide-react";
+import { ArrowLeft, ShieldCheck, FileCheck2, MapPin, Tags, PackageX } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { getApprovedSupplierById } from "@/lib/actions/suppliers";
+import { getProductsBySupplier } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +32,11 @@ export default async function SupplierDetailPage({
   params: Promise<{ locale: Locale; id: string }>;
 }) {
   const { locale, id } = await params;
-  const [dict, supplier] = await Promise.all([getDictionary(locale), getApprovedSupplierById(id)]);
+  const [dict, supplier, products] = await Promise.all([
+    getDictionary(locale),
+    getApprovedSupplierById(id),
+    getProductsBySupplier(id),
+  ]);
   const t = dict.suppliers.detail;
 
   return (
@@ -113,6 +118,31 @@ export default async function SupplierDetailPage({
                     <FileCheck2 size={12} />
                     View business license
                   </a>
+                )}
+
+                {products.length > 0 && (
+                  <div className="mt-8 border-t border-border pt-6">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">{t.productsHeading}</p>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {products.map((p) => (
+                        <Link
+                          key={p.id}
+                          href={`/${locale}/products/${p.id}`}
+                          className="group flex flex-col gap-1.5 rounded-xl border border-border p-2.5 transition hover:border-accent/40"
+                        >
+                          {p.image_urls[0] ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={p.image_urls[0]} alt={p.title} className="h-20 w-full rounded-lg object-cover" />
+                          ) : (
+                            <div className="flex h-20 w-full items-center justify-center rounded-lg bg-surface-2 text-muted">
+                              <PackageX size={18} />
+                            </div>
+                          )}
+                          <p className="line-clamp-2 text-xs font-medium">{p.title}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             )}
