@@ -530,10 +530,16 @@ export async function addShipmentEvent(
 
   if (error) throw new Error(error.message);
 
+  // An update's own save already bumps updated_at — adding a tracking
+  // event is just as much "touching" the shipment and should show up
+  // the same way in the admin list, so an admin working purely through
+  // the Updates box (increasingly the common case now that tracking text
+  // can be pasted in bulk) isn't invisible in "last updated" sorting.
   const { data: shipment } = await supabase
     .from("shipments")
-    .select("tracking_number, customer_email")
+    .update({ updated_at: new Date().toISOString() })
     .eq("id", shipmentId)
+    .select("tracking_number, customer_email")
     .maybeSingle();
   if (shipment?.customer_email) {
     await notifyNewUpdate({
@@ -605,8 +611,9 @@ export async function addShipmentEventsBulk(
 
   const { data: shipment } = await supabase
     .from("shipments")
-    .select("tracking_number, customer_email")
+    .update({ updated_at: new Date().toISOString() })
     .eq("id", shipmentId)
+    .select("tracking_number, customer_email")
     .maybeSingle();
   if (shipment?.customer_email) {
     const latest = toInsert.reduce((a, b) => (a.event_at > b.event_at ? a : b));

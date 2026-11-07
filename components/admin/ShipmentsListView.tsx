@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Trash2, FileText, FileSpreadsheet } from "lucide-react";
 import type { Shipment, ShipmentStatus } from "@/lib/supabase/types";
 import { deleteShipment } from "@/lib/actions/shipments";
-import { Card, EmptyState, Badge, LinkButton, Button, type BadgeTone } from "@/components/admin/ui";
+import { Card, EmptyState, Badge, LinkButton, Button, formatLastUpdated, type BadgeTone } from "@/components/admin/ui";
 
 const statusLabels: Record<ShipmentStatus, string> = {
   not_found: "Not found",
@@ -75,24 +75,29 @@ export default function ShipmentsListView({
                 .join(" · ") || "No details yet"}
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <LinkButton href={`/admin/shipments/${s.id}`} variant="secondary" size="sm">
-              Edit
-            </LinkButton>
-            <Button
-              type="button"
-              variant="danger"
-              size="sm"
-              onClick={async () => {
-                if (confirm(`Delete shipment ${s.tracking_number}? This can't be undone.`)) {
-                  await deleteShipment(s.id);
-                  router.refresh();
-                }
-              }}
-            >
-              <Trash2 size={12} />
-              Delete
-            </Button>
+          <div className="flex shrink-0 flex-col items-end gap-1.5">
+            <p className="text-[11px] text-gray-400" title={new Date(s.updated_at).toLocaleString()}>
+              {formatLastUpdated(s.updated_at)}
+            </p>
+            <div className="flex items-center gap-2">
+              <LinkButton href={`/admin/shipments/${s.id}`} variant="secondary" size="sm">
+                Edit
+              </LinkButton>
+              <Button
+                type="button"
+                variant="danger"
+                size="sm"
+                onClick={async () => {
+                  if (confirm(`Delete shipment ${s.tracking_number}? This can't be undone.`)) {
+                    await deleteShipment(s.id);
+                    router.refresh();
+                  }
+                }}
+              >
+                <Trash2 size={12} />
+                Delete
+              </Button>
+            </div>
           </div>
         </Card>
       ))}
