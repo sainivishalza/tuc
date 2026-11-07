@@ -404,6 +404,11 @@ export interface Supplier {
   company_photo_url: string | null;
   admin_notes: string | null;
   status: "pending" | "approved" | "rejected";
+  /** Short public pitch shown on the supplier's directory profile — distinct
+   * from `notes` (private, shown only to admin in the edit form). */
+  bio: string | null;
+  /** Public photo gallery, capped at MAX_GALLERY_IMAGES (lib/supplierFileUpload.ts). */
+  gallery_urls: string[];
   created_at: string;
   updated_at: string;
 }

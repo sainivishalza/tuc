@@ -521,6 +521,11 @@
       "badge": "For Suppliers",
       "title": "Get Listed as a Verified Supplier",
       "subtitle": "Submit your business details and documents for review. Once approved, your company appears on our public Verified Suppliers page — a trust signal for buyers evaluating you."
+    },
+    "detail": {
+      "backLabel": "All verified suppliers",
+      "galleryHeading": "Photo Gallery",
+      "notFound": "Supplier not found."
     }
   },
   "tools": {

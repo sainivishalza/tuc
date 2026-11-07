@@ -6,7 +6,7 @@ import { sendEmail } from "@/lib/email";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { createLoginLinkToken } from "@/lib/supplierAuth";
-import { validateAndUploadFile, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
+import { validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
 import type { Supplier } from "@/lib/supabase/types";
 
 const SITE_URL = "https://theuniquechoice.com";
@@ -117,6 +117,7 @@ export interface SupplierProfileInput {
   product_categories: string;
   business_address: string;
   country: string;
+  bio: string;
   notes: string;
 }
 
@@ -146,6 +147,7 @@ export async function updateOwnSupplierProfile(
     product_categories: input.product_categories.trim() || null,
     business_address: input.business_address.trim() || null,
     country: input.country.trim() || null,
+    bio: input.bio.trim() || null,
     notes: input.notes.trim() || null,
     updated_at: new Date().toISOString(),
   };
@@ -167,6 +169,9 @@ export async function updateOwnSupplierProfile(
       if (!photoResult.ok) return { error: photoResult.message };
       update.company_photo_url = photoResult.url;
     }
+    const galleryResult = await processGalleryUpload(formData, pathPrefix);
+    if (!galleryResult.ok) return { error: galleryResult.message };
+    update.gallery_urls = galleryResult.urls;
   }
 
   const { error } = await supabase.from("suppliers").update(update).eq("id", existing.id).eq("email", email);

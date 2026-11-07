@@ -66,7 +66,11 @@ export default async function SuppliersDirectoryPage({
             )}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {suppliers.map((s) => (
-                <div key={s.id} className="glass-strong flex flex-col gap-3 rounded-2xl p-6">
+                <Link
+                  key={s.id}
+                  href={`/${locale}/suppliers/${s.id}`}
+                  className="glass-strong flex flex-col gap-3 rounded-2xl p-6 transition hover:shadow-lg"
+                >
                   {s.company_photo_url ? (
                     <img
                       src={s.company_photo_url}
@@ -86,18 +90,14 @@ export default async function SuppliersDirectoryPage({
                   {s.product_categories && (
                     <p className="text-sm text-muted">{s.product_categories}</p>
                   )}
+                  {s.bio && <p className="line-clamp-2 text-sm text-muted/80">{s.bio}</p>}
                   {s.business_license_url && (
-                    <a
-                      href={s.business_license_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-accent underline decoration-accent/40 underline-offset-4 hover:opacity-80"
-                    >
+                    <span className="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-accent">
                       <FileCheck2 size={12} />
-                      View business license
-                    </a>
+                      Verified license on file
+                    </span>
                   )}
-                </div>
+                </Link>
               ))}
             </div>
 

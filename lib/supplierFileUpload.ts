@@ -11,6 +11,7 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
 
 export const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 export const LICENSE_TYPES = [...IMAGE_TYPES, "application/pdf"];
+export const MAX_GALLERY_IMAGES = 6;
 
 /** Same reasoning as theme.ts's logo upload — `file.type` is just the
  * browser-declared Content-Type, not verified content. Checking magic
@@ -80,4 +81,40 @@ export async function validateAndUploadFile(
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
   return { ok: true, url: data.publicUrl };
+}
+
+/** Shared by the registration form, the admin editor, and the supplier's
+ * own self-service edit — all three need the same "keep some existing
+ * photos, add some new ones, cap at MAX_GALLERY_IMAGES" merge logic.
+ * `existing_gallery_urls` (a JSON array, sent as a hidden field by the
+ * edit forms) is the client's record of which currently-stored photos it
+ * kept after any removals; the registration form simply omits it, so
+ * `urls` starts empty there. New files are read from fixed field names
+ * `gallery_0".."gallery_{MAX_GALLERY_IMAGES - 1}` — whichever of those
+ * the caller's form actually rendered. */
+export async function processGalleryUpload(
+  formData: FormData,
+  pathPrefix: string
+): Promise<{ ok: true; urls: string[] } | { ok: false; message: string }> {
+  const keepRaw = formData.get("existing_gallery_urls");
+  let urls: string[] = [];
+  if (typeof keepRaw === "string" && keepRaw.trim()) {
+    try {
+      const parsed = JSON.parse(keepRaw);
+      if (Array.isArray(parsed)) {
+        urls = parsed.filter((u): u is string => typeof u === "string").slice(0, MAX_GALLERY_IMAGES);
+      }
+    } catch {
+      // Malformed input — fall back to an empty kept list rather than failing the save.
+    }
+  }
+
+  for (let i = 0; i < MAX_GALLERY_IMAGES && urls.length < MAX_GALLERY_IMAGES; i++) {
+    const result = await validateAndUploadFile(formData, `gallery_${i}`, IMAGE_TYPES, pathPrefix);
+    if (result === null) continue;
+    if (!result.ok) return { ok: false, message: result.message };
+    urls.push(result.url);
+  }
+
+  return { ok: true, urls };
 }
