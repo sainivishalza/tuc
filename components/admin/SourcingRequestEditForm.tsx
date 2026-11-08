@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { updateSourcingRequest, pushToSuppliers } from "@/lib/actions/sourcingRequests";
-import type { AdminSourcingRequest, SourcingCategory, SourcingRequestType, SourcingRequestStatus, Supplier } from "@/lib/supabase/types";
-import { Button, Badge, inputClass, labelClass } from "@/components/admin/ui";
+import { updateSourcingRequest, pushToSuppliers, updateInterestDealStatus, type InterestedSupplierRow } from "@/lib/actions/sourcingRequests";
+import type { AdminSourcingRequest, SourcingCategory, SourcingRequestType, SourcingRequestStatus, Supplier, SourcingRequestInterest } from "@/lib/supabase/types";
+import { Button, Badge, inputClass, labelClass, type BadgeTone } from "@/components/admin/ui";
+
+const DEAL_TONE: Record<SourcingRequestInterest["deal_status"], BadgeTone> = {
+  pending: "neutral",
+  won: "success",
+  lost: "danger",
+};
 
 export default function SourcingRequestEditForm({
   request,
@@ -15,10 +21,11 @@ export default function SourcingRequestEditForm({
 }: {
   request: AdminSourcingRequest;
   categories: SourcingCategory[];
-  interestedSuppliers: Pick<Supplier, "id" | "company_name" | "email" | "phone">[];
+  interestedSuppliers: InterestedSupplierRow[];
   approvedSuppliers: Pick<Supplier, "id" | "company_name" | "email" | "product_categories">[];
 }) {
   const router = useRouter();
+  const [dealPending, startDealTransition] = useTransition();
   const [title, setTitle] = useState(request.title);
   const [description, setDescription] = useState(request.description);
   const [type, setType] = useState<SourcingRequestType>(request.type);
@@ -229,14 +236,39 @@ export default function SourcingRequestEditForm({
 
       <div className="border-t border-gray-100 pt-5">
         <h3 className="font-admin-display text-sm font-semibold text-gray-900">Supplier Interest ({interestedSuppliers.length})</h3>
+        <p className="mt-1 text-xs text-gray-500">
+          Contact happens directly between the customer and supplier, off-platform — mark the outcome here once you know it,
+          since there&apos;s no other way for a completed deal to get recorded.
+        </p>
         {interestedSuppliers.length === 0 ? (
           <p className="mt-2 text-sm text-gray-400">No supplier has expressed interest yet.</p>
         ) : (
           <div className="mt-2 flex flex-col gap-2">
             {interestedSuppliers.map((s) => (
-              <div key={s.id} className="flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2 text-sm">
-                <span className="font-medium text-gray-800">{s.company_name}</span>
-                <span className="text-gray-500">{s.email}{s.phone ? ` — ${s.phone}` : ""}</span>
+              <div key={s.interest_id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-100 px-3 py-2 text-sm">
+                <div>
+                  <span className="font-medium text-gray-800">{s.company_name}</span>{" "}
+                  <span className="text-gray-500">{s.email}{s.phone ? ` — ${s.phone}` : ""}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge tone={DEAL_TONE[s.deal_status]}>{s.deal_status}</Badge>
+                  <select
+                    value={s.deal_status}
+                    onChange={(e) => {
+                      const next = e.target.value as SourcingRequestInterest["deal_status"];
+                      startDealTransition(async () => {
+                        await updateInterestDealStatus(s.interest_id, next);
+                        router.refresh();
+                      });
+                    }}
+                    disabled={dealPending}
+                    className={`${inputClass} w-auto py-1 text-xs`}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="won">Won</option>
+                    <option value="lost">Lost</option>
+                  </select>
+                </div>
               </div>
             ))}
           </div>

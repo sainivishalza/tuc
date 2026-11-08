@@ -24,6 +24,7 @@ import type {
   PlatformSettings,
   PlatformSettingsView,
   Supplier,
+  SourcingRequestInterest,
 } from "@/lib/supabase/types";
 
 const MAX_IMAGES = 6;
@@ -321,22 +322,90 @@ export async function getSourcingRequestById(id: string): Promise<AdminSourcingR
   };
 }
 
+export interface InterestedSupplierRow {
+  interest_id: string;
+  supplier_id: string;
+  company_name: string;
+  email: string;
+  phone: string | null;
+  deal_status: SourcingRequestInterest["deal_status"];
+}
+
 /** Suppliers who've clicked "I'm interested" on this requirement — for the
  * admin detail view, so staff can see engagement even though contact is
- * revealed directly to the supplier rather than routed through staff. */
-export async function getInterestedSuppliers(
-  requestId: string
-): Promise<Pick<Supplier, "id" | "company_name" | "email" | "phone">[]> {
+ * revealed directly to the supplier rather than routed through staff.
+ * Also carries each interest's deal_status so staff can record whether
+ * it actually turned into a deal (see updateInterestDealStatus) — the
+ * platform has no other way to find that out, since the conversation
+ * itself happens off-platform. */
+export async function getInterestedSuppliers(requestId: string): Promise<InterestedSupplierRow[]> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
   const { data: interests } = await supabase
     .from("sourcing_request_interests")
-    .select("supplier_id")
+    .select("id, supplier_id, deal_status")
     .eq("sourcing_request_id", requestId);
-  const ids = (interests ?? []).map((i) => i.supplier_id as string);
-  if (ids.length === 0) return [];
+  if (!interests || interests.length === 0) return [];
+
+  const ids = interests.map((i) => i.supplier_id as string);
   const { data: suppliers } = await supabase.from("suppliers").select("id, company_name, email, phone").in("id", ids);
-  return (suppliers ?? []) as Pick<Supplier, "id" | "company_name" | "email" | "phone">[];
+  const supplierMap = new Map((suppliers ?? []).map((s) => [s.id as string, s]));
+
+  return interests
+    .map((i) => {
+      const s = supplierMap.get(i.supplier_id as string);
+      if (!s) return null;
+      return {
+        interest_id: i.id as string,
+        supplier_id: i.supplier_id as string,
+        company_name: s.company_name as string,
+        email: s.email as string,
+        phone: s.phone as string | null,
+        deal_status: i.deal_status as SourcingRequestInterest["deal_status"],
+      };
+    })
+    .filter((r): r is InterestedSupplierRow => r !== null);
+}
+
+/** Marking an interest "won" also closes the parent request — a deal
+ * going through means the requirement is done, same as a customer or
+ * staff closing it manually. Never auto-reopens a request on "lost" or
+ * "pending", since other suppliers may still be in the running. */
+export async function updateInterestDealStatus(
+  interestId: string,
+  dealStatus: SourcingRequestInterest["deal_status"]
+): Promise<void> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("sourcing_request_interests")
+    .update({ deal_status: dealStatus })
+    .eq("id", interestId)
+    .select("sourcing_request_id")
+    .single();
+  if (error) throw new Error(error.message);
+
+  if (dealStatus === "won" && data?.sourcing_request_id) {
+    await supabase
+      .from("sourcing_requests")
+      .update({ status: "closed", closed_at: new Date().toISOString() })
+      .eq("id", data.sourcing_request_id);
+  }
+
+  revalidateSourcingPaths(data?.sourcing_request_id);
+}
+
+/** A supplier's completed-deal count, for their public profile — the
+ * one piece of real track record the marketplace can show, since it's
+ * staff-confirmed rather than self-reported. */
+export async function getCompletedDealCount(supplierId: string): Promise<number> {
+  const supabase = getSupabaseAdminClient();
+  const { count } = await supabase
+    .from("sourcing_request_interests")
+    .select("*", { count: "exact", head: true })
+    .eq("supplier_id", supplierId)
+    .eq("deal_status", "won");
+  return count ?? 0;
 }
 
 export async function getApprovedSuppliersForPush(): Promise<Pick<Supplier, "id" | "company_name" | "email" | "product_categories">[]> {

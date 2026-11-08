@@ -149,6 +149,11 @@ export interface SourcingRequestInterest {
   id: string;
   sourcing_request_id: string;
   supplier_id: string;
+  /** Staff-entered after the fact — the platform never sees the actual
+   * conversation (contact is revealed directly to the supplier), so
+   * this is the only way a completed deal gets recorded at all. "won"
+   * is what a supplier's public deal-count stat is built from. */
+  deal_status: "pending" | "won" | "lost";
   created_at: string;
 }
 

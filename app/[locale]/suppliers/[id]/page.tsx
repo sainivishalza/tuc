@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ShieldCheck, FileCheck2, MapPin, Tags, PackageX, Star } from "lucide-react";
+import { ArrowLeft, ShieldCheck, FileCheck2, MapPin, Tags, PackageX, Star, CheckCircle2 } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,6 +12,7 @@ import SupplierTierBadge from "@/components/SupplierTierBadge";
 import { getApprovedSupplierById } from "@/lib/actions/suppliers";
 import { getProductsBySupplier } from "@/lib/actions/supplierProducts";
 import { getApprovedReviewsForSupplier } from "@/lib/actions/supplierReviews";
+import { getCompletedDealCount } from "@/lib/actions/sourcingRequests";
 import { localeAlternates } from "@/lib/hreflang";
 import { jsonLdHtml } from "@/lib/jsonLd";
 
@@ -38,11 +39,12 @@ export default async function SupplierDetailPage({
   params: Promise<{ locale: Locale; id: string }>;
 }) {
   const { locale, id } = await params;
-  const [dict, supplier, products, reviewSummary] = await Promise.all([
+  const [dict, supplier, products, reviewSummary, completedDeals] = await Promise.all([
     getDictionary(locale),
     getApprovedSupplierById(id),
     getProductsBySupplier(id),
     getApprovedReviewsForSupplier(id),
+    getCompletedDealCount(id),
   ]);
   const t = dict.suppliers.detail;
 
@@ -128,6 +130,13 @@ export default async function SupplierDetailPage({
                       {t.basedOn} {reviewSummary.count} review{reviewSummary.count === 1 ? "" : "s"}
                     </span>
                   </div>
+                )}
+
+                {completedDeals > 0 && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+                    <CheckCircle2 size={14} />
+                    {completedDeals} deal{completedDeals === 1 ? "" : "s"} completed through this platform
+                  </p>
                 )}
 
                 <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted">
