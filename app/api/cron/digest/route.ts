@@ -3,6 +3,7 @@ import { safeCompare } from "@/lib/adminAuth";
 import { getDailyDigestData } from "@/lib/digest";
 import { notifyDailyDigest } from "@/lib/notify";
 import { sendQuoteRequestFollowUps, sendSourcingRequestFollowUps } from "@/lib/followUp";
+import { recordCronRun } from "@/lib/cronHealth";
 
 // No scheduler runs inside this app — Hostinger's Node hosting doesn't
 // have a Vercel-Cron equivalent, so this route exists to be *called* by
@@ -20,23 +21,30 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
   }
 
-  const data = await getDailyDigestData();
-  await notifyDailyDigest(data);
+  try {
+    const data = await getDailyDigestData();
+    await notifyDailyDigest(data);
 
-  // Rides the same once-a-day cron hit as the digest above rather than
-  // needing its own Hostinger cron job — each function's own
-  // followup_sent_at check means it's safe to call every time this
-  // route fires, not just once.
-  const [quoteFollowUpsSent, sourcingFollowUpsSent] = await Promise.all([
-    sendQuoteRequestFollowUps(),
-    sendSourcingRequestFollowUps(),
-  ]);
+    // Rides the same once-a-day cron hit as the digest above rather than
+    // needing its own Hostinger cron job — each function's own
+    // followup_sent_at check means it's safe to call every time this
+    // route fires, not just once.
+    const [quoteFollowUpsSent, sourcingFollowUpsSent] = await Promise.all([
+      sendQuoteRequestFollowUps(),
+      sendSourcingRequestFollowUps(),
+    ]);
 
-  return NextResponse.json({
-    ok: true,
-    newRequests: data.newRequests.length,
-    openCount: data.openCount,
-    quoteFollowUpsSent,
-    sourcingFollowUpsSent,
-  });
+    await recordCronRun("digest", true);
+    return NextResponse.json({
+      ok: true,
+      newRequests: data.newRequests.length,
+      openCount: data.openCount,
+      quoteFollowUpsSent,
+      sourcingFollowUpsSent,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    await recordCronRun("digest", false, message);
+    return NextResponse.json({ ok: false, message }, { status: 500 });
+  }
 }

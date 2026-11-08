@@ -662,6 +662,19 @@ export interface SupplierReview {
   created_at: string;
 }
 
+/** One row per named cron job (currently "digest" and
+ * "send-scheduled-campaigns") — there is no scheduler inside this app at
+ * all, so these routes only ever run when an external Hostinger Cron Job
+ * calls back in. This is the only way staff can tell that scheduler is
+ * actually still firing, rather than finding out when a customer asks
+ * why they never got a follow-up email. */
+export interface CronRun {
+  name: string;
+  last_run_at: string;
+  last_ok: boolean;
+  last_error: string | null;
+}
+
 /** One message in the in-platform thread between staff and a supplier —
  * an alternative to email/WhatsApp for admin-supplier back-and-forth that
  * stays attached to the supplier's own record. Separate read flags per

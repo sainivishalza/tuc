@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { safeCompare } from "@/lib/adminAuth";
 import { processScheduledCampaigns } from "@/lib/scheduledCampaigns";
+import { recordCronRun } from "@/lib/cronHealth";
 
 // Same shape as app/api/cron/digest/route.ts: no scheduler runs inside
 // this app, so this route exists to be *called* by one — a Hostinger
@@ -17,11 +18,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
   }
 
-  const results = await processScheduledCampaigns();
-
-  return NextResponse.json({
-    ok: true,
-    campaignsProcessed: results.length,
-    results,
-  });
+  try {
+    const results = await processScheduledCampaigns();
+    await recordCronRun("send-scheduled-campaigns", true);
+    return NextResponse.json({
+      ok: true,
+      campaignsProcessed: results.length,
+      results,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    await recordCronRun("send-scheduled-campaigns", false, message);
+    return NextResponse.json({ ok: false, message }, { status: 500 });
+  }
 }
