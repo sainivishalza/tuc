@@ -17,6 +17,7 @@ import {
   XCircle,
   Handshake,
   Package,
+  BarChart3,
 } from "lucide-react";
 import { requireSupplierEmail } from "@/lib/supplierAuth";
 import { getSupplierBySelf } from "@/lib/actions/supplierPortal";
@@ -141,7 +142,7 @@ export default async function SupplierPortalPage() {
         </div>
 
         {supplier.status === "approved" && (
-          <section className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <section className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Link
               href="/supplier-portal/requirements"
               className="glass-strong card group flex items-center gap-4 border-accent/30 bg-accent/5"
@@ -173,6 +174,23 @@ export default async function SupplierPortalPage() {
                 </p>
                 <p className="mt-1 text-sm text-muted">
                   List what you sell — buyers browse the public catalog and find you by product.
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/supplier-portal/analytics"
+              className="glass-strong card group flex items-center gap-4 border-accent/30 bg-accent/5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                <BarChart3 size={22} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display flex items-center gap-1.5 text-base font-semibold">
+                  Your Analytics
+                  <ArrowUpRight size={15} className="shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  See how many buyers are viewing and contacting you, and which of your products get the most interest.
                 </p>
               </div>
             </Link>
