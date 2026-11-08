@@ -39,6 +39,11 @@ export interface QuoteRequest {
   /** Staff-entered deal value once a quote is priced — null until then, never derived or estimated. */
   quoted_value: number | null;
   created_at: string;
+  /** Set once the automated "still with us?" follow-up email has gone
+   * out (lib/followUp.ts) — never null→set twice, so a customer who's
+   * already been reminded doesn't get a second nudge every day it stays
+   * "new". */
+  followup_sent_at: string | null;
 }
 
 /** A live aggregation over quote_requests grouped by email — see the
@@ -111,6 +116,9 @@ export interface SourcingRequest {
   created_at: string;
   updated_at: string;
   closed_at: string | null;
+  /** Set once the automated "no interest yet?" follow-up email has gone
+   * out (lib/followUp.ts) — same never-twice guard as QuoteRequest's. */
+  followup_sent_at: string | null;
 }
 
 /** What the public board/detail page and the submit form may ever see —
