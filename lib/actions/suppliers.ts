@@ -8,6 +8,7 @@ import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { notifyNewSupplierRegistration, notifyReferralApproved } from "@/lib/notify";
 import { BUCKET, validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
+import { parseCsv } from "@/lib/csv";
 import type { Supplier } from "@/lib/supabase/types";
 
 /** Replace-all sync, same simple pattern as a gallery's keep/add list —
@@ -113,6 +114,102 @@ export async function submitSupplierRegistration(
   await notifyNewSupplierRegistration({ companyName, contactName, email });
 
   return { success: true };
+}
+
+export interface BulkSupplierImportResult {
+  imported: number;
+  skipped: number;
+  errors: string[];
+}
+
+const VALID_TIERS: Supplier["tier"][] = ["standard", "gold", "premium"];
+const VALID_STATUSES: Supplier["status"][] = ["pending", "approved", "rejected"];
+
+/** Admin-only bulk onboarding, for seeding many already-known, real
+ * suppliers at once instead of each one going through the public
+ * registration form individually — same "CSV in, skip bad rows, report
+ * counts" shape as bulkImportProducts. Deliberately skips the file-upload
+ * fields entirely (business license, photos, gallery) for the same
+ * reason the product importer skips "at least one photo required": a CSV
+ * row can't carry a file. Status defaults to "pending" — the same review
+ * gate the public form goes through — unless the row's own `status`
+ * column says otherwise, so an admin importing suppliers they've already
+ * vetted can mark them approved on the way in. */
+export async function bulkImportSuppliers(csvText: string): Promise<BulkSupplierImportResult> {
+  await requireAdminAction();
+  const rows = parseCsv(csvText);
+  if (rows.length < 2) {
+    return { imported: 0, skipped: 0, errors: ["No data rows found — the first row must be a header."] };
+  }
+
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const col = (name: string) => header.indexOf(name);
+  const companyCol = col("company_name");
+  const contactCol = col("contact_name");
+  const emailCol = col("email");
+  if (companyCol === -1 || contactCol === -1 || emailCol === -1) {
+    return { imported: 0, skipped: 0, errors: ['Missing one of the required columns: "company_name", "contact_name", "email".'] };
+  }
+
+  const get = (row: string[], name: string): string | undefined => {
+    const j = col(name);
+    return j === -1 ? undefined : row[j]?.trim();
+  };
+
+  const supabase = getSupabaseAdminClient();
+  const { data: existingSuppliers } = await supabase.from("suppliers").select("email");
+  const existingEmails = new Set((existingSuppliers ?? []).map((s) => (s.email as string).toLowerCase()));
+
+  const records: Record<string, unknown>[] = [];
+  const seenInBatch = new Set<string>();
+  let skipped = 0;
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const companyName = row[companyCol]?.trim();
+    const contactName = row[contactCol]?.trim();
+    const email = row[emailCol]?.trim().toLowerCase();
+
+    if (!companyName || !contactName || !email || !email.includes("@")) {
+      skipped++;
+      continue;
+    }
+    if (existingEmails.has(email) || seenInBatch.has(email)) {
+      skipped++;
+      continue;
+    }
+    seenInBatch.add(email);
+
+    const tier = get(row, "tier")?.toLowerCase() as Supplier["tier"] | undefined;
+    const status = get(row, "status")?.toLowerCase() as Supplier["status"] | undefined;
+
+    records.push({
+      company_name: companyName,
+      contact_name: contactName,
+      email,
+      phone: get(row, "phone") || null,
+      product_categories: get(row, "product_categories") || null,
+      business_address: get(row, "business_address") || null,
+      country: get(row, "country") || null,
+      bio: get(row, "bio") || null,
+      notes: get(row, "notes") || null,
+      tier: tier && VALID_TIERS.includes(tier) ? tier : "standard",
+      status: status && VALID_STATUSES.includes(status) ? status : "pending",
+      gallery_urls: [],
+    });
+  }
+
+  if (records.length === 0) {
+    return { imported: 0, skipped, errors: ["No valid rows — every row needs company_name, contact_name, and a unique email."] };
+  }
+
+  const { error } = await supabase.from("suppliers").insert(records);
+  if (error) {
+    return { imported: 0, skipped, errors: [error.message] };
+  }
+
+  revalidateSupplierPaths();
+  return { imported: records.length, skipped, errors: [] };
 }
 
 export async function getApprovedSuppliers(): Promise<
