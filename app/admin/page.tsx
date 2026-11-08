@@ -7,6 +7,7 @@ import { getShipmentKpiCounts } from "@/lib/actions/shipments";
 import { getRecentActivity, type ActivityItem } from "@/lib/actions/dashboard";
 import AdminShell from "@/components/admin/AdminShell";
 import PurgeCacheButton from "@/components/admin/PurgeCacheButton";
+import CronHealthCard from "@/components/admin/CronHealthCard";
 import {
   PageHeader,
   Card,
@@ -64,6 +65,9 @@ export default async function AdminPage() {
         </Suspense>
 
         <div className="flex flex-col gap-4">
+          <Suspense fallback={<Card className="h-32 animate-pulse" />}>
+            <CronHealthCard />
+          </Suspense>
           <PurgeCacheButton />
         </div>
       </div>

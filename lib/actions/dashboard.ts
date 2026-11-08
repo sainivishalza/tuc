@@ -2,6 +2,51 @@
 
 import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
+import type { CronRun } from "@/lib/supabase/types";
+
+/** How long is "too long" before a cron job's silence is worth flagging —
+ * digest/follow-ups ride a once-a-day Hostinger Cron Job (some slack for
+ * a cron that fires at a slightly different time each day); the campaign
+ * sender is meant to fire every ~15 minutes, so even a couple of hours of
+ * silence means it's likely stopped. Both are external schedulers this
+ * app has zero control over once they're set up in hPanel — this is
+ * purely "is the thing that's supposed to call us still calling us." */
+const EXPECTED_INTERVAL_MS: Record<string, number> = {
+  digest: 26 * 60 * 60 * 1000,
+  "send-scheduled-campaigns": 2 * 60 * 60 * 1000,
+};
+const KNOWN_CRON_NAMES = Object.keys(EXPECTED_INTERVAL_MS);
+
+export interface CronRunStatus {
+  name: string;
+  lastRunAt: string | null;
+  lastOk: boolean | null;
+  lastError: string | null;
+  stale: boolean;
+}
+
+/** Reports every known cron job, including ones that have NEVER fired
+ * (no row at all yet) as stale — a cron that was never configured is
+ * exactly as actionable as one that stopped. */
+export async function getCronRunsStatus(): Promise<CronRunStatus[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data } = await supabase.from("cron_runs").select("*").in("name", KNOWN_CRON_NAMES);
+  const byName = new Map((data ?? []).map((r) => [r.name as string, r as CronRun]));
+
+  return KNOWN_CRON_NAMES.map((name) => {
+    const run = byName.get(name);
+    const expectedMs = EXPECTED_INTERVAL_MS[name];
+    const stale = !run || Date.now() - new Date(run.last_run_at).getTime() > expectedMs || !run.last_ok;
+    return {
+      name,
+      lastRunAt: run?.last_run_at ?? null,
+      lastOk: run?.last_ok ?? null,
+      lastError: run?.last_error ?? null,
+      stale,
+    };
+  });
+}
 
 export interface ActivityItem {
   id: string;
