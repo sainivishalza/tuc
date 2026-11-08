@@ -48,6 +48,73 @@ export async function getCronRunsStatus(): Promise<CronRunStatus[]> {
   });
 }
 
+export interface IntegrationStatus {
+  name: string;
+  configured: boolean;
+  detail: string;
+}
+
+/** Every integration on this site "gracefully degrades" when its env var
+ * isn't set — the form still submits, the page still renders, nothing
+ * throws. That's the right behavior for a single missing optional
+ * feature, but it also means a genuinely unconfigured integration looks
+ * identical to a correctly-configured one from the outside: nobody finds
+ * out until a customer asks why they never got a reply, or an admin
+ * notices translations never showed up. This just reads the same
+ * environment variables and settings each integration already checks
+ * for itself, in one place, so that silence is visible instead of
+ * invisible — same reasoning as the cron_runs health check above. */
+export async function getIntegrationsStatus(): Promise<IntegrationStatus[]> {
+  await requireAdminAction();
+  const supabase = getSupabaseAdminClient();
+  const { data: settings } = await supabase
+    .from("platform_settings")
+    .select("ai_provider, ai_api_key, ai_model")
+    .eq("id", "default")
+    .maybeSingle();
+
+  // Mirrors the exact provider/field combinations translateSourcingRequest
+  // itself treats as configured (lib/translateText.ts) — openai_compatible
+  // needs a model name too, not just a key.
+  const aiConfigured =
+    (settings?.ai_provider === "anthropic" && !!settings?.ai_api_key) ||
+    (settings?.ai_provider === "openai_compatible" && !!settings?.ai_api_key && !!settings?.ai_model) ||
+    !!process.env.ANTHROPIC_API_KEY;
+
+  return [
+    {
+      name: "Email sending (Resend)",
+      configured: !!process.env.RESEND_API_KEY && !!process.env.RESEND_FROM_EMAIL,
+      detail: "Every notification, campaign, and invoice email on the site goes through this.",
+    },
+    {
+      name: "New-lead notifications",
+      configured: !!process.env.LEAD_NOTIFICATION_EMAIL,
+      detail: "Where staff actually hear about a new quote, sourcing request, supplier registration, or review.",
+    },
+    {
+      name: "AI translation (zh/ru)",
+      configured: aiConfigured,
+      detail: "Sourcing requests post in English only without this — no error, just no translation.",
+    },
+    {
+      name: "Spam protection (Turnstile)",
+      configured: !!process.env.TURNSTILE_SECRET_KEY,
+      detail: "Public forms (quotes, reviews, registrations) accept submissions with no bot-check without this.",
+    },
+    {
+      name: "Carrier tracking sync (DHL)",
+      configured: !!process.env.DHL_API_KEY,
+      detail: "Shipment status has to be updated by hand instead of syncing automatically without this.",
+    },
+    {
+      name: "CDN cache purge (Hostinger)",
+      configured: !!process.env.HOSTINGER_API_TOKEN,
+      detail: "The \"Purge CDN cache\" button below will fail when clicked without this.",
+    },
+  ];
+}
+
 export interface ActivityItem {
   id: string;
   kind: "quote" | "shipment" | "supplier";

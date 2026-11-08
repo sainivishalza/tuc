@@ -8,6 +8,7 @@ import { getRecentActivity, type ActivityItem } from "@/lib/actions/dashboard";
 import AdminShell from "@/components/admin/AdminShell";
 import PurgeCacheButton from "@/components/admin/PurgeCacheButton";
 import CronHealthCard from "@/components/admin/CronHealthCard";
+import IntegrationsStatusCard from "@/components/admin/IntegrationsStatusCard";
 import {
   PageHeader,
   Card,
@@ -67,6 +68,9 @@ export default async function AdminPage() {
         <div className="flex flex-col gap-4">
           <Suspense fallback={<Card className="h-32 animate-pulse" />}>
             <CronHealthCard />
+          </Suspense>
+          <Suspense fallback={<Card className="h-32 animate-pulse" />}>
+            <IntegrationsStatusCard />
           </Suspense>
           <PurgeCacheButton />
         </div>
