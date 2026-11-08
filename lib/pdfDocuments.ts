@@ -6,7 +6,10 @@ const BRAND_GREEN = "#059669";
 const MUTED = "#5b6b64";
 
 function newDoc(): { doc: PDFKit.PDFDocument; done: Promise<Buffer> } {
-  const doc = new PDFDocument({ margin: 50, size: "A4" });
+  // compress: false — these are one-or-two-page business documents, so
+  // the size saving doesn't matter, and an uncompressed content stream
+  // stays greppable/diffable (including by the unit tests below).
+  const doc = new PDFDocument({ margin: 50, size: "A4", compress: false });
   const chunks: Buffer[] = [];
   doc.on("data", (chunk) => chunks.push(chunk));
   const done = new Promise<Buffer>((resolve, reject) => {
