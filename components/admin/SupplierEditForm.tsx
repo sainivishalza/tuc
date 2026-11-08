@@ -70,6 +70,7 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
   const [country, setCountry] = useState(supplier.country ?? "");
   const [bio, setBio] = useState(supplier.bio ?? "");
   const [rating, setRating] = useState<number | null>(supplier.rating);
+  const [tier, setTier] = useState<Supplier["tier"]>(supplier.tier);
   const [notes, setNotes] = useState(supplier.notes ?? "");
   const [adminNotes, setAdminNotes] = useState(supplier.admin_notes ?? "");
   const [status, setStatus] = useState<Supplier["status"]>(supplier.status);
@@ -94,6 +95,7 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
           country,
           bio,
           rating,
+          tier,
           notes,
           admin_notes: adminNotes,
           status,
@@ -138,6 +140,14 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
         <div>
           <label className={labelClass}>Country</label>
           <input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="China" className={inputClass} />
+        </div>
+        <div>
+          <label className={labelClass}>Trust tier (shown as a badge publicly)</label>
+          <select value={tier} onChange={(e) => setTier(e.target.value as Supplier["tier"])} className={inputClass}>
+            <option value="standard">Standard</option>
+            <option value="gold">Gold</option>
+            <option value="premium">Premium</option>
+          </select>
         </div>
         <div>
           <label className={labelClass}>Rating (1-5, after working with them)</label>

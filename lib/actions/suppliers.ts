@@ -84,13 +84,21 @@ export async function submitSupplierRegistration(
 export async function getApprovedSuppliers(): Promise<
   Pick<
     Supplier,
-    "id" | "company_name" | "product_categories" | "company_photo_url" | "business_license_url" | "visiting_card_url" | "bio" | "gallery_urls"
+    | "id"
+    | "company_name"
+    | "product_categories"
+    | "company_photo_url"
+    | "business_license_url"
+    | "visiting_card_url"
+    | "bio"
+    | "gallery_urls"
+    | "tier"
   >[]
 > {
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase
     .from("suppliers")
-    .select("id, company_name, product_categories, company_photo_url, business_license_url, visiting_card_url, bio, gallery_urls")
+    .select("id, company_name, product_categories, company_photo_url, business_license_url, visiting_card_url, bio, gallery_urls, tier")
     .eq("status", "approved")
     .order("company_name", { ascending: true });
 
@@ -197,6 +205,7 @@ export interface SupplierEditInput {
   country: string;
   bio: string;
   rating: number | null;
+  tier: Supplier["tier"];
   notes: string;
   admin_notes: string;
   status: Supplier["status"];
@@ -219,6 +228,7 @@ export async function updateSupplier(id: string, input: SupplierEditInput, formD
     country: input.country.trim() || null,
     bio: input.bio.trim() || null,
     rating: input.rating,
+    tier: input.tier,
     notes: input.notes.trim() || null,
     admin_notes: input.admin_notes.trim() || null,
     status: input.status,

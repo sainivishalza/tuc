@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
 import SupplierReviewForm from "@/components/SupplierReviewForm";
+import SupplierTierBadge from "@/components/SupplierTierBadge";
 import { getApprovedSupplierById } from "@/lib/actions/suppliers";
 import { getProductsBySupplier } from "@/lib/actions/supplierProducts";
 import { getApprovedReviewsForSupplier } from "@/lib/actions/supplierReviews";
@@ -101,9 +102,12 @@ export default async function SupplierDetailPage({
                   </div>
                 )}
 
-                <div className="mt-5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-accent">
-                  <ShieldCheck size={14} />
-                  {dict.suppliers.directory.verifiedLabel}
+                <div className="mt-5 flex flex-wrap items-center gap-2">
+                  <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-accent">
+                    <ShieldCheck size={14} />
+                    {dict.suppliers.directory.verifiedLabel}
+                  </span>
+                  <SupplierTierBadge tier={supplier.tier} />
                 </div>
 
                 <h1 className="font-display mt-2 text-2xl font-bold sm:text-3xl">{supplier.company_name}</h1>

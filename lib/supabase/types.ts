@@ -417,6 +417,12 @@ export interface Supplier {
   bio: string | null;
   /** Public photo gallery, capped at MAX_GALLERY_IMAGES (lib/supplierFileUpload.ts). */
   gallery_urls: string[];
+  /** Admin-set trust tier, shown as a badge on the directory/profile —
+   * deliberately a manual judgment call rather than an auto-computed
+   * score (years listed, deal count, review average), since there isn't
+   * yet enough real transaction/review history for a formula to mean
+   * anything. Revisit as an automatic rule once that data exists. */
+  tier: "standard" | "gold" | "premium";
   created_at: string;
   updated_at: string;
 }

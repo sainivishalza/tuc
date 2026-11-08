@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ShieldCheck, FileCheck2 } from "lucide-react";
+import SupplierTierBadge from "@/components/SupplierTierBadge";
 import { locales, getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -87,9 +88,12 @@ export default async function SuppliersDirectoryPage({
                       <ShieldCheck size={32} />
                     </div>
                   )}
-                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-accent">
-                    <ShieldCheck size={14} />
-                    {dict.suppliers.directory.verifiedLabel}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-accent">
+                      <ShieldCheck size={14} />
+                      {dict.suppliers.directory.verifiedLabel}
+                    </span>
+                    <SupplierTierBadge tier={s.tier} />
                   </div>
                   <h3 className="font-display text-base font-semibold">{s.company_name}</h3>
                   {s.product_categories && (
