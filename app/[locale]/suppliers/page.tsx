@@ -93,7 +93,7 @@ export default async function SuppliersDirectoryPage({
                       <ShieldCheck size={14} />
                       {dict.suppliers.directory.verifiedLabel}
                     </span>
-                    <SupplierTierBadge tier={s.tier} />
+                    <SupplierTierBadge tier={s.tier} labels={{ gold: dict.suppliers.directory.tierGold, premium: dict.suppliers.directory.tierPremium }} />
                   </div>
                   <h3 className="font-display text-base font-semibold">{s.company_name}</h3>
                   {s.product_categories && (

@@ -47,7 +47,15 @@ function CompareTable({
     { label: t.comparePrice, render: (p) => <PriceLine product={p} fromLabel={t.fromLabel} /> },
     { label: t.compareMoq, render: (p) => p.moq ?? "—" },
     { label: t.compareLeadTime, render: (p) => p.lead_time ?? "—" },
-    { label: t.compareStock, render: (p) => <StockStatusBadge status={p.stock_status} /> },
+    {
+      label: t.compareStock,
+      render: (p) => (
+        <StockStatusBadge
+          status={p.stock_status}
+          labels={{ in_stock: t.stockInStock, made_to_order: t.stockMadeToOrder, out_of_stock: t.stockOutOfStock }}
+        />
+      ),
+    },
     { label: t.compareCustomizable, render: (p) => (p.customizable ? "✓" : "—") },
     { label: t.compareSampleAvailable, render: (p) => (p.sample_available ? "✓" : "—") },
   ];
@@ -245,7 +253,10 @@ export default function ProductsCatalogBoard({
                 {p.category_name && (
                   <span className="w-fit rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-500">{p.category_name}</span>
                 )}
-                <StockStatusBadge status={p.stock_status} />
+                <StockStatusBadge
+                  status={p.stock_status}
+                  labels={{ in_stock: t.stockInStock, made_to_order: t.stockMadeToOrder, out_of_stock: t.stockOutOfStock }}
+                />
               </div>
               <h3 className="font-display line-clamp-2 text-base font-semibold leading-snug">{p.title}</h3>
               <p className="flex items-center gap-1.5 text-xs text-muted">

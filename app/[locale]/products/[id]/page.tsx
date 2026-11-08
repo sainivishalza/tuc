@@ -112,7 +112,14 @@ export default async function ProductDetailPage({
                   {product.category_name && (
                     <span className="rounded-full bg-gray-100 px-2.5 py-1 font-medium text-gray-500">{product.category_name}</span>
                   )}
-                  <StockStatusBadge status={product.stock_status} />
+                  <StockStatusBadge
+                    status={product.stock_status}
+                    labels={{
+                      in_stock: dict.products.catalog.stockInStock,
+                      made_to_order: dict.products.catalog.stockMadeToOrder,
+                      out_of_stock: dict.products.catalog.stockOutOfStock,
+                    }}
+                  />
                   <Link
                     href={`/${locale}/suppliers/${product.supplier_id}`}
                     className="flex items-center gap-1 text-muted hover:text-foreground"
