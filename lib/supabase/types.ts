@@ -264,7 +264,7 @@ export interface CaseStudy {
 export interface EmailTemplate {
   id: string;
   name: string;
-  category: "newsletter" | "announcement" | "promotional" | "invite" | "general";
+  category: "newsletter" | "announcement" | "promotional" | "invite" | "re-engagement" | "general";
   subject: string;
   preheader: string | null;
   headline: string;
@@ -282,6 +282,10 @@ export interface EmailCampaignSegments {
   suppliers?: boolean;
   newsletter?: boolean;
   prospects?: boolean;
+  /** Clients whose last quote request is 60+ days old with nothing still
+   * open — a cold re-engagement audience, distinct from "clients" (every
+   * client regardless of how recently they were active). */
+  dormantClients?: boolean;
 }
 
 /** A manually-managed outreach list — people who are neither a client nor
