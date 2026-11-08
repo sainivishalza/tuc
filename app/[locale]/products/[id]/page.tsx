@@ -9,6 +9,8 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
 import StockStatusBadge from "@/components/StockStatusBadge";
 import SaveProductButton from "@/components/SaveProductButton";
+import PriceTag from "@/components/PriceTag";
+import CurrencySelector from "@/components/CurrencySelector";
 import { getPublicProductById } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
 import { jsonLdHtml } from "@/lib/jsonLd";
@@ -135,7 +137,10 @@ export default async function ProductDetailPage({
 
                 {product.price_tiers.length > 0 && (
                   <div className="mt-6 border-t border-border pt-6">
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t.priceLabel}</p>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted">{t.priceLabel}</p>
+                      <CurrencySelector />
+                    </div>
                     <div className="overflow-hidden rounded-xl border border-border">
                       <table className="w-full text-sm">
                         <thead>
@@ -149,8 +154,7 @@ export default async function ProductDetailPage({
                             <tr key={i} className="border-t border-border">
                               <td className="px-4 py-2">≥ {tier.min_qty}</td>
                               <td className="px-4 py-2 font-medium">
-                                ${tier.price}
-                                {product.price_unit ? ` / ${product.price_unit}` : ""}
+                                <PriceTag amountUsd={tier.price} suffix={product.price_unit ? `/ ${product.price_unit}` : undefined} />
                               </td>
                             </tr>
                           ))}

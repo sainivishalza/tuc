@@ -7,6 +7,8 @@ import { Search, PackageX, Building2, Heart, Scale, X } from "lucide-react";
 import type { PublicSupplierProduct, SourcingCategory } from "@/lib/supabase/types";
 import StockStatusBadge from "@/components/StockStatusBadge";
 import SaveProductButton from "@/components/SaveProductButton";
+import PriceTag from "@/components/PriceTag";
+import CurrencySelector from "@/components/CurrencySelector";
 import { useSavedProducts } from "@/lib/savedProducts";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
@@ -18,10 +20,10 @@ function lowestPrice(product: PublicSupplierProduct): number | null {
   return Math.min(...product.price_tiers.map((t) => t.price));
 }
 
-function formatPrice(product: PublicSupplierProduct, fromLabel: string): string {
+function PriceLine({ product, fromLabel }: { product: PublicSupplierProduct; fromLabel: string }) {
   const low = lowestPrice(product);
-  if (low === null) return "";
-  return `${fromLabel} $${low}${product.price_unit ? ` / ${product.price_unit}` : ""}`;
+  if (low === null) return <>—</>;
+  return <PriceTag amountUsd={low} prefix={fromLabel} suffix={product.price_unit ? `/ ${product.price_unit}` : undefined} />;
 }
 
 /** Side-by-side table for the 2-4 products the visitor picked to compare —
@@ -42,7 +44,7 @@ function CompareTable({
   const rows: { label: string; render: (p: PublicSupplierProduct) => ReactNode }[] = [
     { label: t.compareSupplier, render: (p) => p.supplier_company_name },
     { label: t.compareCategory, render: (p) => p.category_name ?? "—" },
-    { label: t.comparePrice, render: (p) => formatPrice(p, t.fromLabel) || "—" },
+    { label: t.comparePrice, render: (p) => <PriceLine product={p} fromLabel={t.fromLabel} /> },
     { label: t.compareMoq, render: (p) => p.moq ?? "—" },
     { label: t.compareLeadTime, render: (p) => p.lead_time ?? "—" },
     { label: t.compareStock, render: (p) => <StockStatusBadge status={p.stock_status} /> },
@@ -204,6 +206,7 @@ export default function ProductsCatalogBoard({
           <Heart size={13} className={savedOnly ? "fill-current text-accent" : ""} />
           {t.savedOnly}
         </label>
+        <CurrencySelector />
       </div>
 
       {showCompare && compareProducts.length >= 2 && (
@@ -250,7 +253,9 @@ export default function ProductsCatalogBoard({
                 {p.supplier_company_name}
               </p>
               <p className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-3">
-                <span className="text-sm font-semibold text-accent">{formatPrice(p, t.fromLabel)}</span>
+                <span className="text-sm font-semibold text-accent">
+                  <PriceLine product={p} fromLabel={t.fromLabel} />
+                </span>
                 <label
                   onClick={(e) => e.stopPropagation()}
                   className="flex items-center gap-1.5 text-[11px] font-medium text-muted"
