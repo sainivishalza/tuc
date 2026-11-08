@@ -39,6 +39,11 @@ export interface QuoteRequest {
   /** Staff-entered deal value once a quote is priced — null until then, never derived or estimated. */
   quoted_value: number | null;
   created_at: string;
+  /** Set once the automated "still with us?" follow-up email has gone
+   * out (lib/followUp.ts) — never null→set twice, so a customer who's
+   * already been reminded doesn't get a second nudge every day it stays
+   * "new". */
+  followup_sent_at: string | null;
 }
 
 /** A live aggregation over quote_requests grouped by email — see the
@@ -111,6 +116,9 @@ export interface SourcingRequest {
   created_at: string;
   updated_at: string;
   closed_at: string | null;
+  /** Set once the automated "no interest yet?" follow-up email has gone
+   * out (lib/followUp.ts) — same never-twice guard as QuoteRequest's. */
+  followup_sent_at: string | null;
 }
 
 /** What the public board/detail page and the submit form may ever see —
@@ -135,12 +143,18 @@ export interface SupplierVisibleSourcingRequest extends PublicSourcingRequest {
   customer_email: string;
   customer_whatsapp: string | null;
   already_interested: boolean;
+  matches_your_categories: boolean;
 }
 
 export interface SourcingRequestInterest {
   id: string;
   sourcing_request_id: string;
   supplier_id: string;
+  /** Staff-entered after the fact — the platform never sees the actual
+   * conversation (contact is revealed directly to the supplier), so
+   * this is the only way a completed deal gets recorded at all. "won"
+   * is what a supplier's public deal-count stat is built from. */
+  deal_status: "pending" | "won" | "lost";
   created_at: string;
 }
 
@@ -250,7 +264,7 @@ export interface CaseStudy {
 export interface EmailTemplate {
   id: string;
   name: string;
-  category: "newsletter" | "announcement" | "promotional" | "invite" | "general";
+  category: "newsletter" | "announcement" | "promotional" | "invite" | "re-engagement" | "general";
   subject: string;
   preheader: string | null;
   headline: string;
@@ -268,6 +282,10 @@ export interface EmailCampaignSegments {
   suppliers?: boolean;
   newsletter?: boolean;
   prospects?: boolean;
+  /** Clients whose last quote request is 60+ days old with nothing still
+   * open — a cold re-engagement audience, distinct from "clients" (every
+   * client regardless of how recently they were active). */
+  dormantClients?: boolean;
 }
 
 /** A manually-managed outreach list — people who are neither a client nor
@@ -409,6 +427,19 @@ export interface Supplier {
   bio: string | null;
   /** Public photo gallery, capped at MAX_GALLERY_IMAGES (lib/supplierFileUpload.ts). */
   gallery_urls: string[];
+  /** Admin-set trust tier, shown as a badge on the directory/profile —
+   * deliberately a manual judgment call rather than an auto-computed
+   * score (years listed, deal count, review average), since there isn't
+   * yet enough real transaction/review history for a formula to mean
+   * anything. Revisit as an automatic rule once that data exists. */
+  tier: "standard" | "gold" | "premium";
+  /** The supplier who referred this one in, via their own referral link
+   * (?ref=<supplier id> on the public registration page) — null for
+   * anyone who registered on their own. There's no reward automation
+   * (no payment/credit system on this site), so this is purely so staff
+   * and the referrer can see the referral landed; any reward is handled
+   * manually, same as deal_status on sourcing_request_interests. */
+  referred_by_supplier_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -443,6 +474,11 @@ export interface SupplierProduct {
    * moderation gate on this table (deliberately decided against, unlike
    * suppliers/sourcing_requests). */
   status: SupplierProductStatus;
+  /** Separate from `status` (which is a visibility toggle) — this is a
+   * fulfillment signal buyers actually care about when comparing
+   * products: can they ship from stock, or does this need a production
+   * run first. */
+  stock_status: "in_stock" | "made_to_order" | "out_of_stock";
   created_at: string;
   updated_at: string;
 }
@@ -607,6 +643,37 @@ export interface Inquiry {
   locale: string | null;
   path: string | null;
   session_id: string | null;
+  created_at: string;
+}
+
+/** A real customer-submitted review of a supplier — distinct from
+ * Supplier.rating (a single admin-set score after staff has worked with
+ * them) and from Testimonial (a site-wide, not supplier-specific quote
+ * curated for the homepage). This is what actually lets a buyer compare
+ * suppliers against each other on the catalog/directory. */
+export interface SupplierReview {
+  id: string;
+  supplier_id: string;
+  reviewer_name: string;
+  reviewer_email: string;
+  rating: number;
+  comment: string | null;
+  status: "pending" | "approved" | "rejected";
+  created_at: string;
+}
+
+/** One message in the in-platform thread between staff and a supplier —
+ * an alternative to email/WhatsApp for admin-supplier back-and-forth that
+ * stays attached to the supplier's own record. Separate read flags per
+ * side since either party can have unread messages independently of
+ * the other having sent the most recent one. */
+export interface SupplierMessage {
+  id: string;
+  supplier_id: string;
+  sender: "admin" | "supplier";
+  body: string;
+  read_by_admin: boolean;
+  read_by_supplier: boolean;
   created_at: string;
 }
 

@@ -5,6 +5,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { requireSupplierEmailAction } from "@/lib/supplierAuth";
 import { processGalleryUpload } from "@/lib/supplierFileUpload";
+import { parseCsv } from "@/lib/csv";
 import type { SupplierProduct, PublicSupplierProduct, PriceTier } from "@/lib/supabase/types";
 
 function revalidateProductPaths(supplierId?: string, productId?: string) {
@@ -55,6 +56,7 @@ export interface ProductFormInput {
   sample_price: string;
   port_of_shipment: string;
   status: SupplierProduct["status"];
+  stock_status: SupplierProduct["stock_status"];
 }
 
 /** Shared by supplier self-service create/update and the admin edit —
@@ -77,6 +79,7 @@ function buildProductFields(input: ProductFormInput, imageUrls: string[], priceT
     sample_price: input.sample_price.trim() ? Number(input.sample_price) : null,
     port_of_shipment: input.port_of_shipment.trim() || null,
     status: input.status,
+    stock_status: input.stock_status,
   };
 }
 
@@ -129,6 +132,105 @@ export async function createProduct(
 
   revalidateProductPaths(supplierId, data.id as string);
   return { success: true, id: data.id as string };
+}
+
+export interface BulkProductImportResult {
+  imported: number;
+  skipped: number;
+  errors: string[];
+}
+
+const BULK_BOOL_VALUES = ["yes", "true", "1", "y"];
+
+/** CSV bulk import, for a supplier with a large catalog who doesn't want
+ * to add products one at a time. Deliberately skips the single-create
+ * flow's "at least one photo" requirement — there's no practical way to
+ * carry images through a CSV row — imported products start with
+ * image_urls: [] and the existing catalog/detail pages already degrade
+ * to a placeholder icon for that case (see PackageX usage), so this
+ * isn't a new code path to support, just a new way to reach an
+ * already-handled state. Each row only needs a title; every other
+ * column is optional and left out entirely if its header is missing,
+ * matching bulkImportEmailProspects' forgiving-input philosophy. */
+export async function bulkImportProducts(csvText: string): Promise<BulkProductImportResult> {
+  const supplierId = await ownSupplierId();
+  const rows = parseCsv(csvText);
+  if (rows.length < 2) {
+    return { imported: 0, skipped: 0, errors: ["No data rows found — the first row must be a header."] };
+  }
+
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const col = (name: string) => header.indexOf(name);
+  const titleCol = col("title");
+  if (titleCol === -1) {
+    return { imported: 0, skipped: 0, errors: ['Missing required "title" column.'] };
+  }
+
+  const cats = await categoryMap();
+  const nameToId = new Map(Array.from(cats.entries()).map(([id, name]) => [name.toLowerCase(), id]));
+  const get = (row: string[], name: string): string | undefined => {
+    const j = col(name);
+    return j === -1 ? undefined : row[j]?.trim();
+  };
+  const toBool = (v: string | undefined) => !!v && BULK_BOOL_VALUES.includes(v.toLowerCase());
+  const toStockStatus = (v: string | undefined): SupplierProduct["stock_status"] => {
+    const normalized = v?.toLowerCase().replace(/\s+/g, "_");
+    if (normalized === "in_stock" || normalized === "out_of_stock") return normalized;
+    return "made_to_order";
+  };
+  const toNumber = (v: string | undefined): number | null => {
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) && n >= 0 ? n : null;
+  };
+
+  const records: Record<string, unknown>[] = [];
+  let skipped = 0;
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const title = row[titleCol]?.trim();
+    if (!title) {
+      skipped++;
+      continue;
+    }
+
+    const categoryName = get(row, "category")?.toLowerCase();
+    const price = toNumber(get(row, "price"));
+
+    records.push({
+      supplier_id: supplierId,
+      title,
+      description: get(row, "description") || null,
+      category_id: categoryName ? nameToId.get(categoryName) ?? null : null,
+      image_urls: [],
+      price_tiers: price !== null ? [{ min_qty: 1, price }] : [],
+      price_unit: get(row, "price_unit") || null,
+      moq: get(row, "moq") || null,
+      lead_time: get(row, "lead_time") || null,
+      unit: get(row, "unit") || null,
+      customizable: toBool(get(row, "customizable")),
+      customization_notes: null,
+      sample_available: toBool(get(row, "sample_available")),
+      sample_price: toNumber(get(row, "sample_price")),
+      port_of_shipment: get(row, "port_of_shipment") || null,
+      status: "active",
+      stock_status: toStockStatus(get(row, "stock_status")),
+    });
+  }
+
+  if (records.length === 0) {
+    return { imported: 0, skipped, errors: ["No valid rows — every row needs at least a title."] };
+  }
+
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase.from("supplier_products").insert(records);
+  if (error) {
+    return { imported: 0, skipped, errors: [error.message] };
+  }
+
+  revalidateProductPaths(supplierId);
+  return { imported: records.length, skipped, errors: [] };
 }
 
 export async function updateProduct(

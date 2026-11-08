@@ -19,6 +19,7 @@ const categoryTones: Record<EmailTemplate["category"], BadgeTone> = {
   announcement: "purple",
   promotional: "warning",
   invite: "teal",
+  "re-engagement": "indigo",
   general: "neutral",
 };
 

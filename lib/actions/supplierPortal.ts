@@ -5,8 +5,9 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { sendEmail } from "@/lib/email";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
-import { createLoginLinkToken } from "@/lib/supplierAuth";
+import { createLoginLinkToken, requireSupplierEmailAction } from "@/lib/supplierAuth";
 import { validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
+import { syncSupplierCategories } from "@/lib/actions/suppliers";
 import type { Supplier } from "@/lib/supabase/types";
 
 const SITE_URL = "https://theuniquechoice.com";
@@ -110,6 +111,32 @@ export async function getSupplierBySelf(email: string): Promise<Supplier | null>
   return data as Supplier | null;
 }
 
+export interface ReferralRow {
+  id: string;
+  company_name: string;
+  status: Supplier["status"];
+  created_at: string;
+}
+
+/** Self-authenticating (resolves the caller's own supplier id from their
+ * session rather than trusting a passed-in id) since this is an exported
+ * server action any script could otherwise call directly with an
+ * arbitrary supplier id. */
+export async function getMyReferrals(): Promise<ReferralRow[]> {
+  const email = await requireSupplierEmailAction();
+  const supabase = getSupabaseAdminClient();
+  const { data: supplier } = await supabase.from("suppliers").select("id").ilike("email", email).maybeSingle();
+  if (!supplier) return [];
+
+  const { data, error } = await supabase
+    .from("suppliers")
+    .select("id, company_name, status, created_at")
+    .eq("referred_by_supplier_id", supplier.id)
+    .order("created_at", { ascending: false });
+  if (error) return [];
+  return data as ReferralRow[];
+}
+
 export interface SupplierProfileInput {
   company_name: string;
   contact_name: string;
@@ -118,6 +145,7 @@ export interface SupplierProfileInput {
   business_address: string;
   country: string;
   bio: string;
+  category_ids: string[];
   notes: string;
 }
 
@@ -177,5 +205,6 @@ export async function updateOwnSupplierProfile(
   const { error } = await supabase.from("suppliers").update(update).eq("id", existing.id).eq("email", email);
   if (error) return { error: "Something went wrong saving your profile. Please try again." };
 
+  await syncSupplierCategories(existing.id as string, input.category_ids);
   return { message: "Your profile has been updated." };
 }

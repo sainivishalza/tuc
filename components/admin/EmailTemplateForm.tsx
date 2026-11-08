@@ -9,7 +9,7 @@ import { MERGE_TAGS } from "@/lib/mergeTags";
 import type { EmailTemplate } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
 
-const CATEGORIES: EmailTemplate["category"][] = ["newsletter", "announcement", "promotional", "invite", "general"];
+const CATEGORIES: EmailTemplate["category"][] = ["newsletter", "announcement", "promotional", "invite", "re-engagement", "general"];
 
 export default function EmailTemplateForm({ template }: { template?: EmailTemplate }) {
   const router = useRouter();

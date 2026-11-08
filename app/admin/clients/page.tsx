@@ -1,7 +1,7 @@
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getClients } from "@/lib/actions/quoteRequests";
 import AdminShell from "@/components/admin/AdminShell";
-import { PageHeader } from "@/components/admin/ui";
+import { PageHeader, DownloadLink } from "@/components/admin/ui";
 import ClientsTable from "@/components/admin/ClientsTable";
 
 export const metadata = {
@@ -17,6 +17,7 @@ export default async function ClientsPage() {
       <PageHeader
         title="Client Management"
         subtitle={`${clients.length} client${clients.length === 1 ? "" : "s"}, grouped from quote history by email. Click a row for order history and notes.`}
+        action={<DownloadLink href="/api/admin/contract-template" label="Contract Template" />}
       />
       <ClientsTable clients={clients} />
     </AdminShell>

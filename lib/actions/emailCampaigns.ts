@@ -257,6 +257,19 @@ async function collectAudienceEmails(segments: EmailCampaignSegments): Promise<M
       })()
     );
   }
+  if (segments.dormantClients) {
+    queries.push(
+      (async () => {
+        const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
+        const { data } = await supabase
+          .from("admin_clients")
+          .select("email, name")
+          .eq("has_open_quote", false)
+          .lt("last_quote_at", sixtyDaysAgo);
+        (data ?? []).forEach((r) => add((r as { email: string; name: string | null }).email, (r as { name: string | null }).name));
+      })()
+    );
+  }
   await Promise.all(queries);
 
   if (emails.size > 0) {
@@ -319,7 +332,7 @@ export async function createEmailCampaign(
 ): Promise<string> {
   await requireAdminAction();
   if (!name.trim()) throw new Error("Give the campaign a name.");
-  if (!segments.clients && !segments.suppliers && !segments.newsletter && !segments.prospects) {
+  if (!segments.clients && !segments.suppliers && !segments.newsletter && !segments.prospects && !segments.dormantClients) {
     throw new Error("Pick at least one audience.");
   }
   if (scheduledAt && new Date(scheduledAt) <= new Date()) {

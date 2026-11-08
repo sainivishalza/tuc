@@ -6,9 +6,30 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
-import { notifyNewSupplierRegistration } from "@/lib/notify";
+import { notifyNewSupplierRegistration, notifyReferralApproved } from "@/lib/notify";
 import { BUCKET, validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
 import type { Supplier } from "@/lib/supabase/types";
+
+/** Replace-all sync, same simple pattern as a gallery's keep/add list —
+ * this is what actually makes the category-match supplier-notification
+ * email (in sourcingRequests.ts, around "justApproved") and the
+ * supplier/admin matching UI below mean anything; supplier_categories
+ * had no write path at all before this, so every category match query
+ * against it was silently finding zero rows. */
+export async function syncSupplierCategories(supplierId: string, categoryIds: string[]): Promise<void> {
+  const supabase = getSupabaseAdminClient();
+  await supabase.from("supplier_categories").delete().eq("supplier_id", supplierId);
+  const unique = Array.from(new Set(categoryIds.filter(Boolean)));
+  if (unique.length > 0) {
+    await supabase.from("supplier_categories").insert(unique.map((category_id) => ({ supplier_id: supplierId, category_id })));
+  }
+}
+
+export async function getSupplierCategoryIds(supplierId: string): Promise<string[]> {
+  const supabase = getSupabaseAdminClient();
+  const { data } = await supabase.from("supplier_categories").select("category_id").eq("supplier_id", supplierId);
+  return (data ?? []).map((r) => r.category_id as string);
+}
 
 export async function submitSupplierRegistration(
   formData: FormData
@@ -56,6 +77,18 @@ export async function submitSupplierRegistration(
   if (!galleryResult.ok) return { success: false, error: galleryResult.message };
 
   const supabase = getSupabaseAdminClient();
+
+  // The referral link is just ?ref=<supplier id> on the public registration
+  // page — validate it names a real, approved supplier rather than trusting
+  // an arbitrary client-supplied id; any other value is silently dropped so
+  // a bad or stale link never blocks registration.
+  const referredBy = String(formData.get("referred_by") ?? "").trim();
+  let referredBySupplierId: string | null = null;
+  if (referredBy) {
+    const { data: referrer } = await supabase.from("suppliers").select("id").eq("id", referredBy).eq("status", "approved").maybeSingle();
+    if (referrer) referredBySupplierId = referrer.id as string;
+  }
+
   const { error } = await supabase.from("suppliers").insert({
     company_name: companyName,
     contact_name: contactName,
@@ -69,6 +102,7 @@ export async function submitSupplierRegistration(
     visiting_card_url: cardResult?.ok ? cardResult.url : null,
     company_photo_url: photoResult?.ok ? photoResult.url : null,
     gallery_urls: galleryResult.urls,
+    referred_by_supplier_id: referredBySupplierId,
     status: "pending",
   });
 
@@ -84,13 +118,21 @@ export async function submitSupplierRegistration(
 export async function getApprovedSuppliers(): Promise<
   Pick<
     Supplier,
-    "id" | "company_name" | "product_categories" | "company_photo_url" | "business_license_url" | "visiting_card_url" | "bio" | "gallery_urls"
+    | "id"
+    | "company_name"
+    | "product_categories"
+    | "company_photo_url"
+    | "business_license_url"
+    | "visiting_card_url"
+    | "bio"
+    | "gallery_urls"
+    | "tier"
   >[]
 > {
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase
     .from("suppliers")
-    .select("id, company_name, product_categories, company_photo_url, business_license_url, visiting_card_url, bio, gallery_urls")
+    .select("id, company_name, product_categories, company_photo_url, business_license_url, visiting_card_url, bio, gallery_urls, tier")
     .eq("status", "approved")
     .order("company_name", { ascending: true });
 
@@ -161,12 +203,35 @@ function revalidateSupplierPaths() {
 export async function updateSupplierStatus(id: string, status: Supplier["status"]): Promise<void> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
+
+  const { data: existing } = await supabase
+    .from("suppliers")
+    .select("status, company_name, referred_by_supplier_id")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("suppliers")
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", id);
 
   if (error) throw new Error(error.message);
+
+  // Close the loop for the referrer only on the actual pending/rejected ->
+  // approved transition — same "don't re-notify on an unrelated re-save"
+  // reasoning as the sourcing-request category-match email.
+  const justApproved = existing?.status !== "approved" && status === "approved" && existing?.referred_by_supplier_id;
+  if (justApproved) {
+    const { data: referrer } = await supabase
+      .from("suppliers")
+      .select("email")
+      .eq("id", existing!.referred_by_supplier_id as string)
+      .maybeSingle();
+    if (referrer) {
+      await notifyReferralApproved({ referrerEmail: referrer.email as string, referredCompanyName: existing!.company_name as string });
+    }
+  }
+
   revalidateSupplierPaths();
 }
 
@@ -197,6 +262,8 @@ export interface SupplierEditInput {
   country: string;
   bio: string;
   rating: number | null;
+  tier: Supplier["tier"];
+  category_ids: string[];
   notes: string;
   admin_notes: string;
   status: Supplier["status"];
@@ -219,6 +286,7 @@ export async function updateSupplier(id: string, input: SupplierEditInput, formD
     country: input.country.trim() || null,
     bio: input.bio.trim() || null,
     rating: input.rating,
+    tier: input.tier,
     notes: input.notes.trim() || null,
     admin_notes: input.admin_notes.trim() || null,
     status: input.status,
@@ -250,6 +318,7 @@ export async function updateSupplier(id: string, input: SupplierEditInput, formD
   const { error } = await supabase.from("suppliers").update(update).eq("id", id);
   if (error) throw new Error(error.message);
 
+  await syncSupplierCategories(id, input.category_ids);
   revalidateSupplierPaths();
 }
 

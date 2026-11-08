@@ -1,5 +1,6 @@
 import "server-only";
 import { sendEmail } from "@/lib/email";
+import { whatsappLink } from "@/lib/whatsapp";
 import type { ShipmentStatus, QuoteLineItem, QuoteRequest } from "@/lib/supabase/types";
 import { STATUS_LABELS } from "@/lib/shipmentStatus";
 
@@ -434,6 +435,186 @@ export async function notifySourcingRequestInterest(params: {
     subject: `${params.interestCount} supplier${params.interestCount === 1 ? "" : "s"} interested in your requirement`,
     html,
   });
+}
+
+/** Best-effort — never throws. The one automated nudge a customer gets
+ * if their quote request sits at "new" for a few days with no staff
+ * reply — see lib/followUp.ts, which gates how often this can fire per
+ * request. Deliberately short and low-pressure (a check-in, not a sales
+ * push), since this goes out with no human review. */
+export async function notifyQuoteRequestFollowUp(params: {
+  name: string;
+  email: string;
+  product: string | null;
+}): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">Just checking in, ${escapeHtml(params.name)}</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">
+        We received your quote request${params.product ? ` for ${escapeHtml(params.product)}` : ""} a few days ago and wanted
+        to make sure it hasn't fallen through the cracks. If you still need help, just reply to this email or message us
+        directly and we'll get back to you right away.
+      </p>
+      <a href="${whatsappLink(`Hi! Following up on my quote request${params.product ? ` for ${params.product}` : ""}.`)}" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Message us on WhatsApp
+      </a>
+      <p style="font-size: 12px; color: #9ca3af; margin-top: 24px;">
+        If you've already sorted this out elsewhere, no need to reply — we just didn't want to leave you waiting.
+      </p>
+    </div>
+  `;
+
+  await sendAndLog({
+    to: params.email,
+    subject: "Still need help with your quote request?",
+    html,
+  });
+}
+
+/** Best-effort — never throws. Same purpose as notifyQuoteRequestFollowUp,
+ * for a customer whose approved Sourcing Request hasn't drawn a single
+ * supplier's interest yet — the one case where the self-serve board has
+ * silently failed them, since nobody on staff would otherwise notice. */
+export async function notifySourcingRequestFollowUp(params: {
+  customerName: string;
+  customerEmail: string;
+  title: string;
+}): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">Still looking for suppliers, ${escapeHtml(params.customerName)}?</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">
+        Your sourcing request "${escapeHtml(params.title)}" has been live for a few days, but no supplier has reached out
+        yet. If you'd like our team to help find a match directly, just reply to this email or message us on WhatsApp.
+      </p>
+      <a href="${whatsappLink(`Hi! Still looking for a supplier for "${params.title}".`)}" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Message us on WhatsApp
+      </a>
+      <p style="font-size: 12px; color: #9ca3af; margin-top: 24px;">
+        If you've already found what you needed, no need to reply.
+      </p>
+    </div>
+  `;
+
+  await sendAndLog({
+    to: params.customerEmail,
+    subject: `Update on your sourcing request: ${params.title}`,
+    html,
+  });
+}
+
+/** Best-effort — never throws. A review sits in "pending" until an admin
+ * moderates it, so this is what actually makes that review happen
+ * promptly instead of a submission quietly waiting unnoticed — same
+ * reasoning as notifyNewSupplierRegistration. */
+export async function notifyNewSupplierReview(params: {
+  reviewerName: string;
+  rating: number;
+  comment: string | null;
+}): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] new supplier review received but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const stars = "★".repeat(params.rating) + "☆".repeat(5 - params.rating);
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Supplier Review
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">${escapeHtml(params.reviewerName)} left a ${params.rating}-star review</h1>
+      <p style="font-size: 16px; margin: 0 0 12px; color: #f59e0b;">${stars}</p>
+      ${params.comment ? `<p style="font-size: 14px; margin: 0 0 16px;">${escapeHtml(params.comment)}</p>` : ""}
+      <p style="font-size: 14px; margin: 12px 0 0;">Nothing shows on the supplier's public profile until you approve it.</p>
+      <a href="${SITE_URL}/admin/reviews" style="display: inline-block; margin-top: 20px; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Review in admin panel
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({
+    to,
+    subject: `New ${params.rating}-star supplier review from ${params.reviewerName}`,
+    html,
+  });
+}
+
+/** Best-effort — never throws. The in-platform message thread
+ * (supplier_messages) has no polling or realtime layer, so without this
+ * nudge neither side would notice a new message until they happened to
+ * open the admin panel or supplier portal again. */
+export async function notifyAdminNewSupplierMessage(params: { companyName: string }): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] new supplier message received but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Message
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">${escapeHtml(params.companyName)} sent you a message</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">Open their supplier profile in the admin panel to read it and reply.</p>
+      <a href="${SITE_URL}/admin/suppliers" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Open suppliers
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({ to, subject: `New message from ${params.companyName}`, html });
+}
+
+/** Best-effort — never throws. The only automated piece of the referral
+ * program: closing the loop for the referrer once their referral is
+ * actually approved (not just registered) — any reward itself is handled
+ * manually by staff, same as deal_status on sourcing requests. */
+export async function notifyReferralApproved(params: { referrerEmail: string; referredCompanyName: string }): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — Referral Approved
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">${escapeHtml(params.referredCompanyName)} is now a verified supplier</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">
+        Thanks for the referral — the supplier you referred has been reviewed and approved. Our team will be in touch
+        about your referral reward.
+      </p>
+      <a href="${SITE_URL}/supplier-portal/referrals" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View your referrals
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({ to: params.referrerEmail, subject: `Your referral, ${params.referredCompanyName}, was approved`, html });
+}
+
+export async function notifySupplierNewMessage(params: { supplierEmail: string; companyName: string }): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">You have a new message</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">
+        Our team sent you a message in your supplier portal. Sign in to read it and reply.
+      </p>
+      <a href="${SITE_URL}/supplier-portal/messages" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View message
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({ to: params.supplierEmail, subject: `New message from The Unique Choice`, html });
 }
 
 function escapeHtml(text: string): string {

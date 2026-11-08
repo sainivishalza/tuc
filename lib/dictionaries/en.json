@@ -527,7 +527,11 @@
       "galleryHeading": "Photo Gallery",
       "notFound": "Supplier not found.",
       "productsHeading": "Products from this supplier",
-      "contactCta": "Contact this supplier"
+      "contactCta": "Contact this supplier",
+      "reviewsHeading": "Reviews",
+      "noReviews": "No reviews yet — be the first to leave one.",
+      "basedOn": "based on",
+      "writeReview": "Write a review"
     }
   },
   "tools": {
@@ -1086,8 +1090,25 @@
       "searchPlaceholder": "Search products…",
       "filterAllCategories": "All categories",
       "maxPricePlaceholder": "Max price",
+      "inStockOnly": "In stock only",
+      "savedOnly": "Saved only",
+      "saveLabel": "Save",
+      "savedLabel": "Saved",
       "emptyState": "No products match your filters yet.",
-      "fromLabel": "From"
+      "fromLabel": "From",
+      "compareLabel": "Compare",
+      "compareBarText": "{n} selected to compare",
+      "compareClear": "Clear",
+      "compareNowCta": "Compare now",
+      "compareRemove": "Remove from comparison",
+      "compareSupplier": "Supplier",
+      "compareCategory": "Category",
+      "comparePrice": "Price",
+      "compareMoq": "MOQ",
+      "compareLeadTime": "Lead time",
+      "compareStock": "Availability",
+      "compareCustomizable": "Customizable",
+      "compareSampleAvailable": "Sample available"
     },
     "detail": {
       "backLabel": "All products",
@@ -1101,7 +1122,9 @@
       "portLabel": "Port of shipment",
       "customizableLabel": "Customization available",
       "sampleAvailableLabel": "Sample available",
-      "inquireCta": "Message supplier on WhatsApp"
+      "inquireCta": "Message supplier on WhatsApp",
+      "saveLabel": "Save",
+      "savedLabel": "Saved"
     }
   }
 }

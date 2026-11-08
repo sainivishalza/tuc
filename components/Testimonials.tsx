@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Sparkles, MessageCircle, Star } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import type { Testimonial } from "@/lib/supabase/types";
@@ -47,8 +48,8 @@ function AvatarInitials({ name }: { name: string }) {
 function ClientAvatar({ name, logoUrl }: { name: string; logoUrl: string | null }) {
   if (logoUrl) {
     return (
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-white">
-        <img src={logoUrl} alt="" className="h-full w-full object-contain p-1" />
+      <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-white">
+        <Image src={logoUrl} alt="" fill sizes="40px" className="object-contain p-1" />
       </span>
     );
   }

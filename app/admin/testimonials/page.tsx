@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Trash2 } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
 import {
@@ -103,8 +104,8 @@ export default async function TestimonialsAdminPage() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 {t.logo_url ? (
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white">
-                    <img src={t.logo_url} alt="" className="h-full w-full object-contain p-1" />
+                  <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white">
+                    <Image src={t.logo_url} alt="" fill sizes="36px" className="object-contain p-1" />
                   </span>
                 ) : null}
                 <div>

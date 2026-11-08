@@ -59,3 +59,12 @@ export async function requireAdminAction(): Promise<void> {
     throw new Error("Not authenticated");
   }
 }
+
+/** Call at the top of an admin Route Handler (app/api/.../route.ts).
+ * Neither throwing (requireAdminAction) nor redirecting (requireAdminPage)
+ * fits a route handler, which must return a Response either way — this
+ * just reports yes/no so the caller can return its own 401. */
+export async function isAdminRequest(): Promise<boolean> {
+  const token = (await cookies()).get(ADMIN_COOKIE_NAME)?.value;
+  return verifySessionToken(token, process.env.ADMIN_SESSION_SECRET);
+}

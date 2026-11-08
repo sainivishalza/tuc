@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Building2, Mail, UserPlus } from "lucide-react";
+import { Users, Building2, Mail, UserPlus, Clock } from "lucide-react";
 import { createEmailCampaign, getAudienceCount } from "@/lib/actions/emailCampaigns";
 import type { EmailTemplate, EmailCampaignSegments } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
@@ -22,7 +22,13 @@ export default function NewCampaignForm({ templates }: { templates: EmailTemplat
   const router = useRouter();
   const [name, setName] = useState("");
   const [templateId, setTemplateId] = useState(templates[0]?.id ?? "");
-  const [segments, setSegments] = useState<EmailCampaignSegments>({ clients: true, suppliers: false, newsletter: true, prospects: false });
+  const [segments, setSegments] = useState<EmailCampaignSegments>({
+    clients: true,
+    suppliers: false,
+    newsletter: true,
+    prospects: false,
+    dormantClients: false,
+  });
   const [count, setCount] = useState<number | null>(null);
   const [countLoading, setCountLoading] = useState(false);
   const [sendMode, setSendMode] = useState<"now" | "later">("now");
@@ -122,6 +128,11 @@ export default function NewCampaignForm({ templates }: { templates: EmailTemplat
             <input type="checkbox" checked={!!segments.prospects} onChange={() => toggle("prospects")} />
             <UserPlus size={14} className="text-gray-400" />
             Prospects (outreach list — not yet a client or supplier)
+          </label>
+          <label className="flex items-center gap-2.5 rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700">
+            <input type="checkbox" checked={!!segments.dormantClients} onChange={() => toggle("dormantClients")} />
+            <Clock size={14} className="text-gray-400" />
+            Dormant clients (quoted 60+ days ago, nothing still open — good for a re-engagement nudge)
           </label>
         </div>
         <p className="mt-2 text-xs text-gray-500">

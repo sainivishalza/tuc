@@ -1,7 +1,7 @@
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getAllSourcingRequests, getPlatformSettings } from "@/lib/actions/sourcingRequests";
 import AdminShell from "@/components/admin/AdminShell";
-import { PageHeader } from "@/components/admin/ui";
+import { PageHeader, ExportCsvLink } from "@/components/admin/ui";
 import SourcingRequestsTable from "@/components/admin/SourcingRequestsTable";
 import PlatformSettingsCard from "@/components/admin/PlatformSettingsCard";
 
@@ -18,6 +18,7 @@ export default async function SourcingRequestsAdminPage() {
       <PageHeader
         title="Sourcing Requests"
         subtitle={`${requests.length} requirement${requests.length === 1 ? "" : "s"} posted by customers. Approve a request to publish it on the public board and notify matching suppliers.`}
+        action={<ExportCsvLink href="/api/admin/export/sourcing-requests" />}
       />
       <PlatformSettingsCard settings={settings} />
       <SourcingRequestsTable requests={requests} />

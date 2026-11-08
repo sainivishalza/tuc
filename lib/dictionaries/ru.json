@@ -527,7 +527,11 @@
       "galleryHeading": "Фотогалерея",
       "notFound": "Поставщик не найден.",
       "productsHeading": "Продукция этого поставщика",
-      "contactCta": "Связаться с этим поставщиком"
+      "contactCta": "Связаться с этим поставщиком",
+      "reviewsHeading": "Отзывы",
+      "noReviews": "Пока нет отзывов — оставьте первый.",
+      "basedOn": "на основе",
+      "writeReview": "Оставить отзыв"
     }
   },
   "tools": {
@@ -1086,8 +1090,25 @@
       "searchPlaceholder": "Поиск товаров…",
       "filterAllCategories": "Все категории",
       "maxPricePlaceholder": "Макс. цена",
+      "inStockOnly": "Только в наличии",
+      "savedOnly": "Только сохранённые",
+      "saveLabel": "Сохранить",
+      "savedLabel": "Сохранено",
       "emptyState": "Нет товаров, подходящих по вашим фильтрам.",
-      "fromLabel": "От"
+      "fromLabel": "От",
+      "compareLabel": "Сравнить",
+      "compareBarText": "Выбрано для сравнения: {n}",
+      "compareClear": "Очистить",
+      "compareNowCta": "Сравнить сейчас",
+      "compareRemove": "Убрать из сравнения",
+      "compareSupplier": "Поставщик",
+      "compareCategory": "Категория",
+      "comparePrice": "Цена",
+      "compareMoq": "Минимальный заказ",
+      "compareLeadTime": "Срок изготовления",
+      "compareStock": "Наличие",
+      "compareCustomizable": "Настройка",
+      "compareSampleAvailable": "Образец"
     },
     "detail": {
       "backLabel": "Все товары",
@@ -1101,7 +1122,9 @@
       "portLabel": "Порт отправки",
       "customizableLabel": "Возможна настройка",
       "sampleAvailableLabel": "Доступен образец",
-      "inquireCta": "Написать поставщику в WhatsApp"
+      "inquireCta": "Написать поставщику в WhatsApp",
+      "saveLabel": "Сохранить",
+      "savedLabel": "Сохранено"
     }
   }
 }

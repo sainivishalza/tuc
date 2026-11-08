@@ -1,6 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  images: {
+    // Every uploaded photo (supplier docs/gallery, product images, theme
+    // logo, testimonial logos) lives in Supabase Storage's public bucket,
+    // not this app's own origin — next/image refuses to optimize a remote
+    // host unless it's explicitly allow-listed here.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
   // pdfkit loads its font metrics via fs.readFileSync at runtime using
   // paths relative to its own package directory — bundling it into the
   // webpack graph breaks that resolution, so it must run as a plain

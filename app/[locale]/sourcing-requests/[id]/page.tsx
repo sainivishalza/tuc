@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, MapPin, Calendar, Video, Link2 } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
@@ -89,8 +90,7 @@ export default async function SourcingRequestDetailPage({
                   <div className="mt-6 grid grid-cols-3 gap-3">
                     {request.image_urls.map((url) => (
                       <div key={url} className="relative aspect-square overflow-hidden rounded-xl border border-border">
-                        {/* eslint-disable-next-line @next/next/no-img-element -- Supabase-hosted upload, same convention as other user-submitted images in this codebase */}
-                        <img src={url} alt="" className="h-full w-full object-cover" />
+                        <Image src={url} alt="" fill sizes="(max-width: 640px) 50vw, 300px" className="object-cover" />
                       </div>
                     ))}
                   </div>

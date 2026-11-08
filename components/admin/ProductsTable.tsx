@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Search, PackageX } from "lucide-react";
 import type { AdminSupplierProduct } from "@/lib/actions/supplierProducts";
@@ -71,8 +72,9 @@ export default function ProductsTable({ products, initialSearch = "" }: { produc
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           {p.image_urls[0] ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={p.image_urls[0]} alt="" className="h-8 w-8 rounded-md object-cover" />
+                            <div className="relative h-8 w-8 overflow-hidden rounded-md">
+                              <Image src={p.image_urls[0]} alt="" fill sizes="32px" className="object-cover" />
+                            </div>
                           ) : (
                             <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-400">
                               <PackageX size={14} />

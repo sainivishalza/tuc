@@ -2,14 +2,56 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { CheckCircle, Upload, X } from "lucide-react";
 import { updateOwnSupplierProfile } from "@/lib/actions/supplierPortal";
-import type { Supplier } from "@/lib/supabase/types";
+import type { Supplier, SourcingCategory } from "@/lib/supabase/types";
 
 const inputClass =
   "w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 const labelClass = "mb-2 block text-sm font-medium";
 const MAX_GALLERY_IMAGES = 6;
+
+/** Same idea as the admin CategoryCheckboxes (components/admin/SupplierEditForm.tsx) —
+ * kept as its own copy since this form lives in the public "glass" style
+ * system, not the admin one. Feeds supplier_categories, which is what the
+ * category-match notification email and the "matches your categories"
+ * sourcing-requests board badge both read from. */
+function CategoryCheckboxes({
+  categories,
+  selected,
+  onChange,
+}: {
+  categories: SourcingCategory[];
+  selected: Set<string>;
+  onChange: (next: Set<string>) => void;
+}) {
+  function toggle(id: string) {
+    const next = new Set(selected);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    onChange(next);
+  }
+
+  return (
+    <div>
+      <label className={labelClass}>Categories (used to match you to buyer requirements)</label>
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+        {categories.map((c) => (
+          <label key={c.id} className="flex items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-surface">
+            <input
+              type="checkbox"
+              checked={selected.has(c.id)}
+              onChange={() => toggle(c.id)}
+              className="h-4 w-4 rounded accent-accent"
+            />
+            {c.name}
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /** Same remove-then-add-more pattern as the admin GalleryManager
  * (components/admin/SupplierEditForm.tsx) — kept separate since this form
@@ -25,9 +67,8 @@ function GalleryManager({ images }: { images: string[] }) {
       {kept.length > 0 && (
         <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
           {kept.map((url) => (
-            <div key={url} className="group relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" className="h-16 w-full rounded-lg border border-border object-cover" />
+            <div key={url} className="group relative h-16 w-full">
+              <Image src={url} alt="" fill sizes="96px" className="rounded-lg border border-border object-cover" />
               <button
                 type="button"
                 onClick={() => setKept((prev) => prev.filter((u) => u !== url))}
@@ -101,8 +142,17 @@ function FileField({
   );
 }
 
-export default function SupplierProfileForm({ supplier }: { supplier: Supplier }) {
+export default function SupplierProfileForm({
+  supplier,
+  categories,
+  selectedCategoryIds,
+}: {
+  supplier: Supplier;
+  categories: SourcingCategory[];
+  selectedCategoryIds: string[];
+}) {
   const router = useRouter();
+  const [categoryIds, setCategoryIds] = useState<Set<string>>(new Set(selectedCategoryIds));
   const formRef = useRef<HTMLFormElement>(null);
   const [companyName, setCompanyName] = useState(supplier.company_name);
   const [contactName, setContactName] = useState(supplier.contact_name);
@@ -133,6 +183,7 @@ export default function SupplierProfileForm({ supplier }: { supplier: Supplier }
         country,
         bio,
         notes,
+        category_ids: Array.from(categoryIds),
       },
       formData
     );
@@ -201,6 +252,10 @@ export default function SupplierProfileForm({ supplier }: { supplier: Supplier }
             className={`resize-none ${inputClass}`}
           />
         </div>
+      </div>
+
+      <div className="mt-6">
+        <CategoryCheckboxes categories={categories} selected={categoryIds} onChange={setCategoryIds} />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">

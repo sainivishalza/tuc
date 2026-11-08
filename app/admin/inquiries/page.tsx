@@ -2,7 +2,7 @@ import { MessageCircle, TrendingUp, Package, Building2 } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getInquiriesSummary } from "@/lib/actions/inquiries";
 import AdminShell from "@/components/admin/AdminShell";
-import { PageHeader, Card, EmptyState, Badge } from "@/components/admin/ui";
+import { PageHeader, Card, EmptyState, Badge, ExportCsvLink } from "@/components/admin/ui";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -58,6 +58,7 @@ export default async function InquiriesAdminPage() {
       <PageHeader
         title="Inquiries"
         subtitle={`Every "Contact" / "Inquire" click on a product or supplier page, stored in the database (last ${total} inquiries).`}
+        action={<ExportCsvLink href="/api/admin/export/inquiries" />}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

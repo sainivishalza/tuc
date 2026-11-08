@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Building2, PackageX, CheckCircle2 } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
+import StockStatusBadge from "@/components/StockStatusBadge";
+import SaveProductButton from "@/components/SaveProductButton";
+import PriceTag from "@/components/PriceTag";
+import CurrencySelector from "@/components/CurrencySelector";
 import { getPublicProductById } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
+import { jsonLdHtml } from "@/lib/jsonLd";
 
 export const dynamic = "force-dynamic";
 
@@ -35,8 +41,37 @@ export default async function ProductDetailPage({
   const [dict, product] = await Promise.all([getDictionary(locale), getPublicProductById(id)]);
   const t = dict.products.detail;
 
+  const jsonLd = product
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.title,
+        description: product.description || undefined,
+        image: product.image_urls.length > 0 ? product.image_urls : undefined,
+        category: product.category_name || undefined,
+        brand: {
+          "@type": "Brand",
+          name: product.supplier_company_name,
+        },
+        offers:
+          product.price_tiers.length > 0
+            ? {
+                "@type": "AggregateOffer",
+                priceCurrency: "USD",
+                lowPrice: Math.min(...product.price_tiers.map((tier) => tier.price)),
+                highPrice: Math.max(...product.price_tiers.map((tier) => tier.price)),
+                offerCount: product.price_tiers.length,
+                availability: "https://schema.org/InStock",
+              }
+            : undefined,
+      }
+    : null;
+
   return (
     <>
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }} />
+      )}
       <Header dict={dict} locale={locale} />
       <main>
         <section className="relative px-4 pt-28 pb-20 sm:px-6">
@@ -53,13 +88,18 @@ export default async function ProductDetailPage({
                 {product.image_urls.length > 0 ? (
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {product.image_urls.map((url, i) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <div
                         key={url}
-                        src={url}
-                        alt={product.title}
-                        className={`rounded-xl object-cover ${i === 0 ? "col-span-2 h-56 sm:col-span-2" : "h-28"}`}
-                      />
+                        className={`relative w-full overflow-hidden rounded-xl ${i === 0 ? "col-span-2 h-56 sm:col-span-2" : "h-28"}`}
+                      >
+                        <Image
+                          src={url}
+                          alt={product.title}
+                          fill
+                          sizes={i === 0 ? "(max-width: 768px) 100vw, 672px" : "(max-width: 640px) 50vw, 220px"}
+                          className="object-cover"
+                        />
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -72,6 +112,7 @@ export default async function ProductDetailPage({
                   {product.category_name && (
                     <span className="rounded-full bg-gray-100 px-2.5 py-1 font-medium text-gray-500">{product.category_name}</span>
                   )}
+                  <StockStatusBadge status={product.stock_status} />
                   <Link
                     href={`/${locale}/suppliers/${product.supplier_id}`}
                     className="flex items-center gap-1 text-muted hover:text-foreground"
@@ -81,14 +122,25 @@ export default async function ProductDetailPage({
                   </Link>
                 </div>
 
-                <h1 className="font-display mt-3 text-2xl font-bold sm:text-3xl">{product.title}</h1>
+                <div className="mt-3 flex items-start justify-between gap-3">
+                  <h1 className="font-display text-2xl font-bold sm:text-3xl">{product.title}</h1>
+                  <SaveProductButton
+                    productId={product.id}
+                    saveLabel={t.saveLabel}
+                    savedLabel={t.savedLabel}
+                    variant="button"
+                  />
+                </div>
                 {product.description && (
                   <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-muted">{product.description}</p>
                 )}
 
                 {product.price_tiers.length > 0 && (
                   <div className="mt-6 border-t border-border pt-6">
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t.priceLabel}</p>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted">{t.priceLabel}</p>
+                      <CurrencySelector />
+                    </div>
                     <div className="overflow-hidden rounded-xl border border-border">
                       <table className="w-full text-sm">
                         <thead>
@@ -102,8 +154,7 @@ export default async function ProductDetailPage({
                             <tr key={i} className="border-t border-border">
                               <td className="px-4 py-2">≥ {tier.min_qty}</td>
                               <td className="px-4 py-2 font-medium">
-                                ${tier.price}
-                                {product.price_unit ? ` / ${product.price_unit}` : ""}
+                                <PriceTag amountUsd={tier.price} suffix={product.price_unit ? `/ ${product.price_unit}` : undefined} />
                               </td>
                             </tr>
                           ))}

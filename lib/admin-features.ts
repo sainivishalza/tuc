@@ -116,6 +116,14 @@ export const adminFeatures: AdminFeature[] = [
     icon: Package,
   },
   {
+    title: "Supplier Reviews",
+    description:
+      "Real customer reviews of individual suppliers (separate from site-wide Testimonials) — approve to show the rating and comment on that supplier's public profile.",
+    href: "/admin/reviews",
+    status: "live",
+    icon: Star,
+  },
+  {
     title: "Inquiries",
     description:
       "Every \"Contact\" / \"Inquire\" click on a product or supplier page, stored in the database — see which products and suppliers are actually getting interest from visitors.",

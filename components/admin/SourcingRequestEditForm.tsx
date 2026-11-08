@@ -1,10 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { updateSourcingRequest, pushToSuppliers } from "@/lib/actions/sourcingRequests";
-import type { AdminSourcingRequest, SourcingCategory, SourcingRequestType, SourcingRequestStatus, Supplier } from "@/lib/supabase/types";
-import { Button, Badge, inputClass, labelClass } from "@/components/admin/ui";
+import Image from "next/image";
+import {
+  updateSourcingRequest,
+  pushToSuppliers,
+  updateInterestDealStatus,
+  type InterestedSupplierRow,
+  type SupplierForPushRow,
+} from "@/lib/actions/sourcingRequests";
+import type { AdminSourcingRequest, SourcingCategory, SourcingRequestType, SourcingRequestStatus, SourcingRequestInterest } from "@/lib/supabase/types";
+import { Button, Badge, inputClass, labelClass, type BadgeTone } from "@/components/admin/ui";
+
+const DEAL_TONE: Record<SourcingRequestInterest["deal_status"], BadgeTone> = {
+  pending: "neutral",
+  won: "success",
+  lost: "danger",
+};
 
 export default function SourcingRequestEditForm({
   request,
@@ -14,10 +27,11 @@ export default function SourcingRequestEditForm({
 }: {
   request: AdminSourcingRequest;
   categories: SourcingCategory[];
-  interestedSuppliers: Pick<Supplier, "id" | "company_name" | "email" | "phone">[];
-  approvedSuppliers: Pick<Supplier, "id" | "company_name" | "email" | "product_categories">[];
+  interestedSuppliers: InterestedSupplierRow[];
+  approvedSuppliers: SupplierForPushRow[];
 }) {
   const router = useRouter();
+  const [dealPending, startDealTransition] = useTransition();
   const [title, setTitle] = useState(request.title);
   const [description, setDescription] = useState(request.description);
   const [type, setType] = useState<SourcingRequestType>(request.type);
@@ -173,8 +187,9 @@ export default function SourcingRequestEditForm({
             <label className={labelClass}>Uploaded photos</label>
             <div className="flex gap-3">
               {request.image_urls.map((url) => (
-                /* eslint-disable-next-line @next/next/no-img-element -- Supabase-hosted upload, same convention as other admin-reviewed images */
-                <img key={url} src={url} alt="" className="h-20 w-20 rounded-lg border border-gray-200 object-cover" />
+                <div key={url} className="relative h-20 w-20 overflow-hidden rounded-lg border border-gray-200">
+                  <Image src={url} alt="" fill sizes="80px" className="object-cover" />
+                </div>
               ))}
             </div>
           </div>
@@ -227,14 +242,39 @@ export default function SourcingRequestEditForm({
 
       <div className="border-t border-gray-100 pt-5">
         <h3 className="font-admin-display text-sm font-semibold text-gray-900">Supplier Interest ({interestedSuppliers.length})</h3>
+        <p className="mt-1 text-xs text-gray-500">
+          Contact happens directly between the customer and supplier, off-platform — mark the outcome here once you know it,
+          since there&apos;s no other way for a completed deal to get recorded.
+        </p>
         {interestedSuppliers.length === 0 ? (
           <p className="mt-2 text-sm text-gray-400">No supplier has expressed interest yet.</p>
         ) : (
           <div className="mt-2 flex flex-col gap-2">
             {interestedSuppliers.map((s) => (
-              <div key={s.id} className="flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2 text-sm">
-                <span className="font-medium text-gray-800">{s.company_name}</span>
-                <span className="text-gray-500">{s.email}{s.phone ? ` — ${s.phone}` : ""}</span>
+              <div key={s.interest_id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-100 px-3 py-2 text-sm">
+                <div>
+                  <span className="font-medium text-gray-800">{s.company_name}</span>{" "}
+                  <span className="text-gray-500">{s.email}{s.phone ? ` — ${s.phone}` : ""}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge tone={DEAL_TONE[s.deal_status]}>{s.deal_status}</Badge>
+                  <select
+                    value={s.deal_status}
+                    onChange={(e) => {
+                      const next = e.target.value as SourcingRequestInterest["deal_status"];
+                      startDealTransition(async () => {
+                        await updateInterestDealStatus(s.interest_id, next);
+                        router.refresh();
+                      });
+                    }}
+                    disabled={dealPending}
+                    className={`${inputClass} w-auto py-1 text-xs`}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="won">Won</option>
+                    <option value="lost">Lost</option>
+                  </select>
+                </div>
               </div>
             ))}
           </div>
@@ -257,6 +297,7 @@ export default function SourcingRequestEditForm({
               />
               <span className="font-medium text-gray-800">{s.company_name}</span>
               <span className="text-xs text-gray-400">{s.product_categories || "no category listed"}</span>
+              {s.matches_category && <Badge tone="success">Category match</Badge>}
             </label>
           ))}
         </div>
