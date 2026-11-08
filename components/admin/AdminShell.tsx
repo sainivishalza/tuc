@@ -2,6 +2,7 @@ import { getActiveQuoteCount } from "@/lib/actions/quoteRequests";
 import { getPendingSupplierCount } from "@/lib/actions/suppliers";
 import { getPendingSourcingRequestCount } from "@/lib/actions/sourcingRequests";
 import { getPendingReviewCount } from "@/lib/actions/supplierReviews";
+import { getUnreadAdminMessageCount } from "@/lib/actions/supplierMessages";
 import Sidebar from "@/components/admin/Sidebar";
 import TopBar from "@/components/admin/TopBar";
 
@@ -26,11 +27,12 @@ export default async function AdminShell({
    * text-content-width column first. */
   fullWidth?: boolean;
 }) {
-  const [activeQuotes, pendingSuppliers, pendingSourcingRequests, pendingReviews] = await Promise.all([
+  const [activeQuotes, pendingSuppliers, pendingSourcingRequests, pendingReviews, unreadMessages] = await Promise.all([
     getActiveQuoteCount(),
     getPendingSupplierCount(),
     getPendingSourcingRequestCount(),
     getPendingReviewCount(),
+    getUnreadAdminMessageCount(),
   ]);
 
   const notifications = [
@@ -38,6 +40,7 @@ export default async function AdminShell({
     { label: "Suppliers awaiting review", count: pendingSuppliers, href: "/admin/suppliers" },
     { label: "Sourcing requests awaiting review", count: pendingSourcingRequests, href: "/admin/sourcing-requests" },
     { label: "Reviews awaiting moderation", count: pendingReviews, href: "/admin/reviews" },
+    { label: "Unread supplier messages", count: unreadMessages, href: "/admin/suppliers" },
   ];
 
   return (

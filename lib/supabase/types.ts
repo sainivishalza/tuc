@@ -655,6 +655,21 @@ export interface SupplierReview {
   created_at: string;
 }
 
+/** One message in the in-platform thread between staff and a supplier —
+ * an alternative to email/WhatsApp for admin-supplier back-and-forth that
+ * stays attached to the supplier's own record. Separate read flags per
+ * side since either party can have unread messages independently of
+ * the other having sent the most recent one. */
+export interface SupplierMessage {
+  id: string;
+  supplier_id: string;
+  sender: "admin" | "supplier";
+  body: string;
+  read_by_admin: boolean;
+  read_by_supplier: boolean;
+  created_at: string;
+}
+
 export interface AnalyticsEvent {
   id: number;
   event_type: "pageview" | "cta_click";

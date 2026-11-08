@@ -4,7 +4,9 @@ import { Package } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
 import { getSupplierById, getSupplierCategoryIds } from "@/lib/actions/suppliers";
 import { getAllCategories } from "@/lib/actions/sourcingRequests";
+import { getMessagesForSupplier } from "@/lib/actions/supplierMessages";
 import SupplierEditForm from "@/components/admin/SupplierEditForm";
+import SupplierMessageThread from "@/components/admin/SupplierMessageThread";
 import AdminShell from "@/components/admin/AdminShell";
 import { BackLink, PageHeader, Card } from "@/components/admin/ui";
 
@@ -23,7 +25,11 @@ export default async function EditSupplierPage({
 
   if (!supplier) notFound();
 
-  const [categories, selectedCategoryIds] = await Promise.all([getAllCategories(), getSupplierCategoryIds(id)]);
+  const [categories, selectedCategoryIds, messages] = await Promise.all([
+    getAllCategories(),
+    getSupplierCategoryIds(id),
+    getMessagesForSupplier(id),
+  ]);
 
   return (
     <AdminShell current="/admin/suppliers">
@@ -43,6 +49,10 @@ export default async function EditSupplierPage({
 
       <Card className="max-w-3xl">
         <SupplierEditForm supplier={supplier} categories={categories} selectedCategoryIds={selectedCategoryIds} />
+      </Card>
+
+      <Card className="max-w-3xl">
+        <SupplierMessageThread supplierId={id} messages={messages} />
       </Card>
     </AdminShell>
   );

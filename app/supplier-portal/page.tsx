@@ -18,9 +18,11 @@ import {
   Handshake,
   Package,
   BarChart3,
+  MessageSquare,
 } from "lucide-react";
 import { requireSupplierEmail } from "@/lib/supplierAuth";
 import { getSupplierBySelf } from "@/lib/actions/supplierPortal";
+import { getMyUnreadMessageCount } from "@/lib/actions/supplierMessages";
 import { logout } from "@/app/supplier-portal/logout/actions";
 import { whatsappLink } from "@/lib/whatsapp";
 import ServiceIllustration from "@/components/ServiceIllustration";
@@ -104,6 +106,7 @@ export default async function SupplierPortalPage() {
 
   const status = STATUS_CONTENT[supplier.status];
   const StatusIcon = status.icon;
+  const unreadMessages = supplier.status === "approved" ? await getMyUnreadMessageCount() : 0;
 
   return (
     <main className="min-h-screen px-4 py-12 sm:px-6">
@@ -191,6 +194,28 @@ export default async function SupplierPortalPage() {
                 </p>
                 <p className="mt-1 text-sm text-muted">
                   See how many buyers are viewing and contacting you, and which of your products get the most interest.
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/supplier-portal/messages"
+              className="glass-strong card group flex items-center gap-4 border-accent/30 bg-accent/5"
+            >
+              <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                <MessageSquare size={22} />
+                {unreadMessages > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    {unreadMessages}
+                  </span>
+                )}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display flex items-center gap-1.5 text-base font-semibold">
+                  Messages
+                  <ArrowUpRight size={15} className="shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  {unreadMessages > 0 ? `${unreadMessages} unread message${unreadMessages === 1 ? "" : "s"} from our team.` : "Talk to our team directly, in-platform."}
                 </p>
               </div>
             </Link>

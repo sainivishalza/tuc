@@ -547,6 +547,52 @@ export async function notifyNewSupplierReview(params: {
   });
 }
 
+/** Best-effort — never throws. The in-platform message thread
+ * (supplier_messages) has no polling or realtime layer, so without this
+ * nudge neither side would notice a new message until they happened to
+ * open the admin panel or supplier portal again. */
+export async function notifyAdminNewSupplierMessage(params: { companyName: string }): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] new supplier message received but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Message
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">${escapeHtml(params.companyName)} sent you a message</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">Open their supplier profile in the admin panel to read it and reply.</p>
+      <a href="${SITE_URL}/admin/suppliers" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Open suppliers
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({ to, subject: `New message from ${params.companyName}`, html });
+}
+
+export async function notifySupplierNewMessage(params: { supplierEmail: string; companyName: string }): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">You have a new message</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">
+        Our team sent you a message in your supplier portal. Sign in to read it and reply.
+      </p>
+      <a href="${SITE_URL}/supplier-portal/messages" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View message
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({ to: params.supplierEmail, subject: `New message from The Unique Choice`, html });
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
