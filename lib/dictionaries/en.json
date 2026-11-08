@@ -515,7 +515,9 @@
       "title": "Suppliers We've Verified",
       "subtitle": "Every supplier here has submitted a business license, contact details, and company photos for our review before being listed.",
       "emptyState": "New verified suppliers are being added — check back soon.",
-      "verifiedLabel": "Verified"
+      "verifiedLabel": "Verified",
+      "tierGold": "Gold",
+      "tierPremium": "Premium"
     },
     "register": {
       "badge": "For Suppliers",
@@ -1091,6 +1093,9 @@
       "filterAllCategories": "All categories",
       "maxPricePlaceholder": "Max price",
       "inStockOnly": "In stock only",
+      "stockInStock": "In stock",
+      "stockMadeToOrder": "Made to order",
+      "stockOutOfStock": "Out of stock",
       "savedOnly": "Saved only",
       "saveLabel": "Save",
       "savedLabel": "Saved",
