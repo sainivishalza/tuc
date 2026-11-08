@@ -1095,7 +1095,20 @@
       "saveLabel": "Save",
       "savedLabel": "Saved",
       "emptyState": "No products match your filters yet.",
-      "fromLabel": "From"
+      "fromLabel": "From",
+      "compareLabel": "Compare",
+      "compareBarText": "{n} selected to compare",
+      "compareClear": "Clear",
+      "compareNowCta": "Compare now",
+      "compareRemove": "Remove from comparison",
+      "compareSupplier": "Supplier",
+      "compareCategory": "Category",
+      "comparePrice": "Price",
+      "compareMoq": "MOQ",
+      "compareLeadTime": "Lead time",
+      "compareStock": "Availability",
+      "compareCustomizable": "Customizable",
+      "compareSampleAvailable": "Sample available"
     },
     "detail": {
       "backLabel": "All products",

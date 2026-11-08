@@ -1095,7 +1095,20 @@
       "saveLabel": "收藏",
       "savedLabel": "已收藏",
       "emptyState": "暂无符合筛选条件的产品。",
-      "fromLabel": "起"
+      "fromLabel": "起",
+      "compareLabel": "对比",
+      "compareBarText": "已选择 {n} 件商品进行对比",
+      "compareClear": "清除",
+      "compareNowCta": "立即对比",
+      "compareRemove": "从对比中移除",
+      "compareSupplier": "供应商",
+      "compareCategory": "类别",
+      "comparePrice": "价格",
+      "compareMoq": "起订量",
+      "compareLeadTime": "交货周期",
+      "compareStock": "现货状态",
+      "compareCustomizable": "支持定制",
+      "compareSampleAvailable": "提供样品"
     },
     "detail": {
       "backLabel": "所有产品",

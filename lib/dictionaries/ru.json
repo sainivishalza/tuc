@@ -1095,7 +1095,20 @@
       "saveLabel": "Сохранить",
       "savedLabel": "Сохранено",
       "emptyState": "Нет товаров, подходящих по вашим фильтрам.",
-      "fromLabel": "От"
+      "fromLabel": "От",
+      "compareLabel": "Сравнить",
+      "compareBarText": "Выбрано для сравнения: {n}",
+      "compareClear": "Очистить",
+      "compareNowCta": "Сравнить сейчас",
+      "compareRemove": "Убрать из сравнения",
+      "compareSupplier": "Поставщик",
+      "compareCategory": "Категория",
+      "comparePrice": "Цена",
+      "compareMoq": "Минимальный заказ",
+      "compareLeadTime": "Срок изготовления",
+      "compareStock": "Наличие",
+      "compareCustomizable": "Настройка",
+      "compareSampleAvailable": "Образец"
     },
     "detail": {
       "backLabel": "Все товары",
