@@ -10,7 +10,7 @@ import {
   bulkUpdateQuoteStatus,
 } from "@/lib/actions/quoteRequests";
 import { promoteQuoteRequestToSourcingRequest } from "@/lib/actions/sourcingRequests";
-import { Badge, Button, EmptyState, inputClass, type BadgeTone } from "@/components/admin/ui";
+import { Badge, Button, EmptyState, inputClass, DownloadLink, type BadgeTone } from "@/components/admin/ui";
 import Modal from "@/components/admin/Modal";
 
 const STATUS_LABEL: Record<QuoteRequest["status"], string> = {
@@ -327,9 +327,12 @@ function QuoteDetailModal({ quote, onClose }: { quote: QuoteRequest; onClose: ()
         </div>
 
         <div className="flex items-center justify-between gap-2">
-          <Button variant="secondary" onClick={handlePromote} disabled={promoting}>
-            {promoting ? "Promoting…" : "Promote to Sourcing Request"}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={handlePromote} disabled={promoting}>
+              {promoting ? "Promoting…" : "Promote to Sourcing Request"}
+            </Button>
+            {quote.quoted_value !== null && <DownloadLink href={`/api/admin/invoices/${quote.id}`} label="Invoice" />}
+          </div>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={onClose}>
               Cancel

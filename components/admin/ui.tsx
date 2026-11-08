@@ -212,6 +212,20 @@ export function ExportCsvLink({ href }: { href: string }) {
   );
 }
 
+/** Same plain-`<a>`-to-a-Route-Handler shape as ExportCsvLink, generalized
+ * with its own label — for any other admin download (PDFs, etc.). */
+export function DownloadLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      href={href}
+      className={`${BUTTON_BASE} ${BUTTON_SIZES.md} ${BUTTON_VARIANTS.secondary}`}
+    >
+      <Download size={15} />
+      {label}
+    </a>
+  );
+}
+
 export const inputClass =
   "w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 
