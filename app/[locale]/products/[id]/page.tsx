@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
 import StockStatusBadge from "@/components/StockStatusBadge";
+import SaveProductButton from "@/components/SaveProductButton";
 import { getPublicProductById } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
 import { jsonLdHtml } from "@/lib/jsonLd";
@@ -119,7 +120,15 @@ export default async function ProductDetailPage({
                   </Link>
                 </div>
 
-                <h1 className="font-display mt-3 text-2xl font-bold sm:text-3xl">{product.title}</h1>
+                <div className="mt-3 flex items-start justify-between gap-3">
+                  <h1 className="font-display text-2xl font-bold sm:text-3xl">{product.title}</h1>
+                  <SaveProductButton
+                    productId={product.id}
+                    saveLabel={t.saveLabel}
+                    savedLabel={t.savedLabel}
+                    variant="button"
+                  />
+                </div>
                 {product.description && (
                   <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-muted">{product.description}</p>
                 )}

@@ -3,9 +3,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, PackageX, Building2 } from "lucide-react";
+import { Search, PackageX, Building2, Heart } from "lucide-react";
 import type { PublicSupplierProduct, SourcingCategory } from "@/lib/supabase/types";
 import StockStatusBadge from "@/components/StockStatusBadge";
+import SaveProductButton from "@/components/SaveProductButton";
+import { useSavedProducts } from "@/lib/savedProducts";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 
@@ -36,6 +38,8 @@ export default function ProductsCatalogBoard({
   const [categoryFilter, setCategoryFilter] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
+  const [savedOnly, setSavedOnly] = useState(false);
+  const { savedIds } = useSavedProducts();
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -44,13 +48,14 @@ export default function ProductsCatalogBoard({
       if (categoryFilter && p.category_id !== categoryFilter) return false;
       if (q && !p.title.toLowerCase().includes(q) && !(p.description ?? "").toLowerCase().includes(q)) return false;
       if (inStockOnly && p.stock_status !== "in_stock") return false;
+      if (savedOnly && !savedIds.has(p.id)) return false;
       if (max !== null) {
         const low = lowestPrice(p);
         if (low === null || low > max) return false;
       }
       return true;
     });
-  }, [products, search, categoryFilter, priceMax, inStockOnly]);
+  }, [products, search, categoryFilter, priceMax, inStockOnly, savedOnly, savedIds]);
 
   return (
     <div>
@@ -93,6 +98,16 @@ export default function ProductsCatalogBoard({
           />
           {t.inStockOnly}
         </label>
+        <label className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-foreground">
+          <input
+            type="checkbox"
+            checked={savedOnly}
+            onChange={(e) => setSavedOnly(e.target.checked)}
+            className="h-4 w-4 rounded accent-accent"
+          />
+          <Heart size={13} className={savedOnly ? "fill-current text-accent" : ""} />
+          {t.savedOnly}
+        </label>
       </div>
 
       {filtered.length === 0 ? (
@@ -111,10 +126,16 @@ export default function ProductsCatalogBoard({
               {p.image_urls[0] ? (
                 <div className="relative h-40 w-full overflow-hidden rounded-xl">
                   <Image src={p.image_urls[0]} alt={p.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                  <div className="absolute right-2 top-2">
+                    <SaveProductButton productId={p.id} saveLabel={t.saveLabel} savedLabel={t.savedLabel} />
+                  </div>
                 </div>
               ) : (
-                <div className="flex h-40 w-full items-center justify-center rounded-xl bg-surface-2 text-muted">
+                <div className="relative flex h-40 w-full items-center justify-center rounded-xl bg-surface-2 text-muted">
                   <PackageX size={28} />
+                  <div className="absolute right-2 top-2">
+                    <SaveProductButton productId={p.id} saveLabel={t.saveLabel} savedLabel={t.savedLabel} />
+                  </div>
                 </div>
               )}
               <div className="flex flex-wrap items-center gap-1.5">

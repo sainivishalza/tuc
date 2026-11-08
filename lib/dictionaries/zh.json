@@ -1091,6 +1091,9 @@
       "filterAllCategories": "所有类别",
       "maxPricePlaceholder": "最高价格",
       "inStockOnly": "仅显示现货",
+      "savedOnly": "仅显示收藏",
+      "saveLabel": "收藏",
+      "savedLabel": "已收藏",
       "emptyState": "暂无符合筛选条件的产品。",
       "fromLabel": "起"
     },
@@ -1106,7 +1109,9 @@
       "portLabel": "发货港口",
       "customizableLabel": "支持定制",
       "sampleAvailableLabel": "提供样品",
-      "inquireCta": "通过 WhatsApp 联系供应商"
+      "inquireCta": "通过 WhatsApp 联系供应商",
+      "saveLabel": "收藏",
+      "savedLabel": "已收藏"
     }
   }
 }

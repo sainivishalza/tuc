@@ -1091,6 +1091,9 @@
       "filterAllCategories": "All categories",
       "maxPricePlaceholder": "Max price",
       "inStockOnly": "In stock only",
+      "savedOnly": "Saved only",
+      "saveLabel": "Save",
+      "savedLabel": "Saved",
       "emptyState": "No products match your filters yet.",
       "fromLabel": "From"
     },
@@ -1106,7 +1109,9 @@
       "portLabel": "Port of shipment",
       "customizableLabel": "Customization available",
       "sampleAvailableLabel": "Sample available",
-      "inquireCta": "Message supplier on WhatsApp"
+      "inquireCta": "Message supplier on WhatsApp",
+      "saveLabel": "Save",
+      "savedLabel": "Saved"
     }
   }
 }

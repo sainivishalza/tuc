@@ -1091,6 +1091,9 @@
       "filterAllCategories": "Все категории",
       "maxPricePlaceholder": "Макс. цена",
       "inStockOnly": "Только в наличии",
+      "savedOnly": "Только сохранённые",
+      "saveLabel": "Сохранить",
+      "savedLabel": "Сохранено",
       "emptyState": "Нет товаров, подходящих по вашим фильтрам.",
       "fromLabel": "От"
     },
@@ -1106,7 +1109,9 @@
       "portLabel": "Порт отправки",
       "customizableLabel": "Возможна настройка",
       "sampleAvailableLabel": "Доступен образец",
-      "inquireCta": "Написать поставщику в WhatsApp"
+      "inquireCta": "Написать поставщику в WhatsApp",
+      "saveLabel": "Сохранить",
+      "savedLabel": "Сохранено"
     }
   }
 }
