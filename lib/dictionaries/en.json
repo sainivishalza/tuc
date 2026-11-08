@@ -1090,6 +1090,7 @@
       "searchPlaceholder": "Search products…",
       "filterAllCategories": "All categories",
       "maxPricePlaceholder": "Max price",
+      "inStockOnly": "In stock only",
       "emptyState": "No products match your filters yet.",
       "fromLabel": "From"
     },

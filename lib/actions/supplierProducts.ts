@@ -56,6 +56,7 @@ export interface ProductFormInput {
   sample_price: string;
   port_of_shipment: string;
   status: SupplierProduct["status"];
+  stock_status: SupplierProduct["stock_status"];
 }
 
 /** Shared by supplier self-service create/update and the admin edit —
@@ -78,6 +79,7 @@ function buildProductFields(input: ProductFormInput, imageUrls: string[], priceT
     sample_price: input.sample_price.trim() ? Number(input.sample_price) : null,
     port_of_shipment: input.port_of_shipment.trim() || null,
     status: input.status,
+    stock_status: input.stock_status,
   };
 }
 
@@ -171,6 +173,11 @@ export async function bulkImportProducts(csvText: string): Promise<BulkProductIm
     return j === -1 ? undefined : row[j]?.trim();
   };
   const toBool = (v: string | undefined) => !!v && BULK_BOOL_VALUES.includes(v.toLowerCase());
+  const toStockStatus = (v: string | undefined): SupplierProduct["stock_status"] => {
+    const normalized = v?.toLowerCase().replace(/\s+/g, "_");
+    if (normalized === "in_stock" || normalized === "out_of_stock") return normalized;
+    return "made_to_order";
+  };
   const toNumber = (v: string | undefined): number | null => {
     if (!v) return null;
     const n = Number(v);
@@ -208,6 +215,7 @@ export async function bulkImportProducts(csvText: string): Promise<BulkProductIm
       sample_price: toNumber(get(row, "sample_price")),
       port_of_shipment: get(row, "port_of_shipment") || null,
       status: "active",
+      stock_status: toStockStatus(get(row, "stock_status")),
     });
   }
 

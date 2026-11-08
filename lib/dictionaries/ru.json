@@ -1090,6 +1090,7 @@
       "searchPlaceholder": "Поиск товаров…",
       "filterAllCategories": "Все категории",
       "maxPricePlaceholder": "Макс. цена",
+      "inStockOnly": "Только в наличии",
       "emptyState": "Нет товаров, подходящих по вашим фильтрам.",
       "fromLabel": "От"
     },

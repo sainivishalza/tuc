@@ -102,6 +102,7 @@ export default function ProductEditForm({ product, categories }: { product: Admi
   const [samplePrice, setSamplePrice] = useState(product.sample_price?.toString() ?? "");
   const [portOfShipment, setPortOfShipment] = useState(product.port_of_shipment ?? "");
   const [status, setStatus] = useState<SupplierProduct["status"]>(product.status);
+  const [stockStatus, setStockStatus] = useState<SupplierProduct["stock_status"]>(product.stock_status);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -126,6 +127,7 @@ export default function ProductEditForm({ product, categories }: { product: Admi
         sample_price: samplePrice,
         port_of_shipment: portOfShipment,
         status,
+        stock_status: stockStatus,
       }, formData);
       router.push("/admin/products");
       router.refresh();
@@ -215,12 +217,26 @@ export default function ProductEditForm({ product, categories }: { product: Admi
 
       <GalleryManager images={product.image_urls} />
 
-      <div>
-        <label className={labelClass}>Visibility</label>
-        <select value={status} onChange={(e) => setStatus(e.target.value as SupplierProduct["status"])} className={inputClass}>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label className={labelClass}>Visibility</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value as SupplierProduct["status"])} className={inputClass}>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>Stock status</label>
+          <select
+            value={stockStatus}
+            onChange={(e) => setStockStatus(e.target.value as SupplierProduct["stock_status"])}
+            className={inputClass}
+          >
+            <option value="in_stock">In stock</option>
+            <option value="made_to_order">Made to order</option>
+            <option value="out_of_stock">Out of stock</option>
+          </select>
+        </div>
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}

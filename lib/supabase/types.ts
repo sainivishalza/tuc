@@ -462,6 +462,11 @@ export interface SupplierProduct {
    * moderation gate on this table (deliberately decided against, unlike
    * suppliers/sourcing_requests). */
   status: SupplierProductStatus;
+  /** Separate from `status` (which is a visibility toggle) — this is a
+   * fulfillment signal buyers actually care about when comparing
+   * products: can they ship from stock, or does this need a production
+   * run first. */
+  stock_status: "in_stock" | "made_to_order" | "out_of_stock";
   created_at: string;
   updated_at: string;
 }

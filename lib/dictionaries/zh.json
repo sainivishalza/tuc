@@ -1090,6 +1090,7 @@
       "searchPlaceholder": "搜索产品…",
       "filterAllCategories": "所有类别",
       "maxPricePlaceholder": "最高价格",
+      "inStockOnly": "仅显示现货",
       "emptyState": "暂无符合筛选条件的产品。",
       "fromLabel": "起"
     },

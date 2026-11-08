@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
+import StockStatusBadge from "@/components/StockStatusBadge";
 import { getPublicProductById } from "@/lib/actions/supplierProducts";
 import { localeAlternates } from "@/lib/hreflang";
 import { jsonLdHtml } from "@/lib/jsonLd";
@@ -108,6 +109,7 @@ export default async function ProductDetailPage({
                   {product.category_name && (
                     <span className="rounded-full bg-gray-100 px-2.5 py-1 font-medium text-gray-500">{product.category_name}</span>
                   )}
+                  <StockStatusBadge status={product.stock_status} />
                   <Link
                     href={`/${locale}/suppliers/${product.supplier_id}`}
                     className="flex items-center gap-1 text-muted hover:text-foreground"

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Search, PackageX, Building2 } from "lucide-react";
 import type { PublicSupplierProduct, SourcingCategory } from "@/lib/supabase/types";
+import StockStatusBadge from "@/components/StockStatusBadge";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 
@@ -34,6 +35,7 @@ export default function ProductsCatalogBoard({
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [priceMax, setPriceMax] = useState("");
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -41,13 +43,14 @@ export default function ProductsCatalogBoard({
     return products.filter((p) => {
       if (categoryFilter && p.category_id !== categoryFilter) return false;
       if (q && !p.title.toLowerCase().includes(q) && !(p.description ?? "").toLowerCase().includes(q)) return false;
+      if (inStockOnly && p.stock_status !== "in_stock") return false;
       if (max !== null) {
         const low = lowestPrice(p);
         if (low === null || low > max) return false;
       }
       return true;
     });
-  }, [products, search, categoryFilter, priceMax]);
+  }, [products, search, categoryFilter, priceMax, inStockOnly]);
 
   return (
     <div>
@@ -81,6 +84,15 @@ export default function ProductsCatalogBoard({
           placeholder={t.maxPricePlaceholder}
           className="w-36 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none"
         />
+        <label className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-foreground">
+          <input
+            type="checkbox"
+            checked={inStockOnly}
+            onChange={(e) => setInStockOnly(e.target.checked)}
+            className="h-4 w-4 rounded accent-accent"
+          />
+          {t.inStockOnly}
+        </label>
       </div>
 
       {filtered.length === 0 ? (
@@ -105,9 +117,12 @@ export default function ProductsCatalogBoard({
                   <PackageX size={28} />
                 </div>
               )}
-              {p.category_name && (
-                <span className="w-fit rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-500">{p.category_name}</span>
-              )}
+              <div className="flex flex-wrap items-center gap-1.5">
+                {p.category_name && (
+                  <span className="w-fit rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-500">{p.category_name}</span>
+                )}
+                <StockStatusBadge status={p.stock_status} />
+              </div>
               <h3 className="font-display line-clamp-2 text-base font-semibold leading-snug">{p.title}</h3>
               <p className="flex items-center gap-1.5 text-xs text-muted">
                 <Building2 size={12} />

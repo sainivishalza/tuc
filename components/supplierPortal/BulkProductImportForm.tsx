@@ -9,9 +9,9 @@ const inputClass =
   "w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 const labelClass = "mb-2 block text-sm font-medium";
 
-const TEMPLATE_HEADER = "title,description,category,price,price_unit,moq,lead_time,unit,customizable,sample_available,sample_price,port_of_shipment";
+const TEMPLATE_HEADER = "title,description,category,price,price_unit,moq,lead_time,unit,customizable,sample_available,sample_price,port_of_shipment,stock_status";
 const TEMPLATE_EXAMPLE =
-  "Stainless Steel Water Bottle,500ml double-wall insulated,Home & Kitchen,3.50,USD/piece,500 pieces,20 days,piece,yes,yes,15,Shenzhen";
+  "Stainless Steel Water Bottle,500ml double-wall insulated,Home & Kitchen,3.50,USD/piece,500 pieces,20 days,piece,yes,yes,15,Shenzhen,in_stock";
 
 export default function BulkProductImportForm() {
   const router = useRouter();
