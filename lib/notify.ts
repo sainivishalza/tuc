@@ -574,6 +574,30 @@ export async function notifyAdminNewSupplierMessage(params: { companyName: strin
   await sendAndLog({ to, subject: `New message from ${params.companyName}`, html });
 }
 
+/** Best-effort — never throws. The only automated piece of the referral
+ * program: closing the loop for the referrer once their referral is
+ * actually approved (not just registered) — any reward itself is handled
+ * manually by staff, same as deal_status on sourcing requests. */
+export async function notifyReferralApproved(params: { referrerEmail: string; referredCompanyName: string }): Promise<void> {
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — Referral Approved
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">${escapeHtml(params.referredCompanyName)} is now a verified supplier</h1>
+      <p style="font-size: 14px; color: #5b6b64; margin: 0 0 16px;">
+        Thanks for the referral — the supplier you referred has been reviewed and approved. Our team will be in touch
+        about your referral reward.
+      </p>
+      <a href="${SITE_URL}/supplier-portal/referrals" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        View your referrals
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({ to: params.referrerEmail, subject: `Your referral, ${params.referredCompanyName}, was approved`, html });
+}
+
 export async function notifySupplierNewMessage(params: { supplierEmail: string; companyName: string }): Promise<void> {
   const html = `
     <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">

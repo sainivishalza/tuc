@@ -55,6 +55,11 @@ export default function SupplierRegistrationForm({ dict }: { dict: Dictionary })
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const captchaConfigured = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+  // Read straight from the browser URL rather than next/navigation's
+  // useSearchParams — this page is statically generated, and that hook
+  // would force it into a Suspense-gated dynamic render just to read a
+  // referral code that's only ever used once, on submit.
+  const [referredBy] = useState(() => (typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("ref") ?? ""));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,6 +69,7 @@ export default function SupplierRegistrationForm({ dict }: { dict: Dictionary })
     setSubmitting(true);
     const formData = new FormData(formRef.current);
     formData.set("turnstileToken", turnstileToken);
+    if (referredBy) formData.set("referred_by", referredBy);
     const result = await submitSupplierRegistration(formData);
     setSubmitting(false);
     if (!result.success) {

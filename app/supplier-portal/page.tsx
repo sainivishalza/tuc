@@ -19,6 +19,7 @@ import {
   Package,
   BarChart3,
   MessageSquare,
+  Gift,
 } from "lucide-react";
 import { requireSupplierEmail } from "@/lib/supplierAuth";
 import { getSupplierBySelf } from "@/lib/actions/supplierPortal";
@@ -217,6 +218,21 @@ export default async function SupplierPortalPage() {
                 <p className="mt-1 text-sm text-muted">
                   {unreadMessages > 0 ? `${unreadMessages} unread message${unreadMessages === 1 ? "" : "s"} from our team.` : "Talk to our team directly, in-platform."}
                 </p>
+              </div>
+            </Link>
+            <Link
+              href="/supplier-portal/referrals"
+              className="glass-strong card group flex items-center gap-4 border-accent/30 bg-accent/5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                <Gift size={22} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display flex items-center gap-1.5 text-base font-semibold">
+                  Refer a Supplier
+                  <ArrowUpRight size={15} className="shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+                </p>
+                <p className="mt-1 text-sm text-muted">Know another factory we should list? Share your referral link.</p>
               </div>
             </Link>
           </section>

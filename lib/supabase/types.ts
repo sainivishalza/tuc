@@ -433,6 +433,13 @@ export interface Supplier {
    * yet enough real transaction/review history for a formula to mean
    * anything. Revisit as an automatic rule once that data exists. */
   tier: "standard" | "gold" | "premium";
+  /** The supplier who referred this one in, via their own referral link
+   * (?ref=<supplier id> on the public registration page) — null for
+   * anyone who registered on their own. There's no reward automation
+   * (no payment/credit system on this site), so this is purely so staff
+   * and the referrer can see the referral landed; any reward is handled
+   * manually, same as deal_status on sourcing_request_interests. */
+  referred_by_supplier_id: string | null;
   created_at: string;
   updated_at: string;
 }

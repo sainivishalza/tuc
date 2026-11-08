@@ -6,7 +6,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
 import { requireAdminAction } from "@/lib/adminAuth";
 import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
-import { notifyNewSupplierRegistration } from "@/lib/notify";
+import { notifyNewSupplierRegistration, notifyReferralApproved } from "@/lib/notify";
 import { BUCKET, validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
 import type { Supplier } from "@/lib/supabase/types";
 
@@ -77,6 +77,18 @@ export async function submitSupplierRegistration(
   if (!galleryResult.ok) return { success: false, error: galleryResult.message };
 
   const supabase = getSupabaseAdminClient();
+
+  // The referral link is just ?ref=<supplier id> on the public registration
+  // page — validate it names a real, approved supplier rather than trusting
+  // an arbitrary client-supplied id; any other value is silently dropped so
+  // a bad or stale link never blocks registration.
+  const referredBy = String(formData.get("referred_by") ?? "").trim();
+  let referredBySupplierId: string | null = null;
+  if (referredBy) {
+    const { data: referrer } = await supabase.from("suppliers").select("id").eq("id", referredBy).eq("status", "approved").maybeSingle();
+    if (referrer) referredBySupplierId = referrer.id as string;
+  }
+
   const { error } = await supabase.from("suppliers").insert({
     company_name: companyName,
     contact_name: contactName,
@@ -90,6 +102,7 @@ export async function submitSupplierRegistration(
     visiting_card_url: cardResult?.ok ? cardResult.url : null,
     company_photo_url: photoResult?.ok ? photoResult.url : null,
     gallery_urls: galleryResult.urls,
+    referred_by_supplier_id: referredBySupplierId,
     status: "pending",
   });
 
@@ -190,12 +203,35 @@ function revalidateSupplierPaths() {
 export async function updateSupplierStatus(id: string, status: Supplier["status"]): Promise<void> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
+
+  const { data: existing } = await supabase
+    .from("suppliers")
+    .select("status, company_name, referred_by_supplier_id")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("suppliers")
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", id);
 
   if (error) throw new Error(error.message);
+
+  // Close the loop for the referrer only on the actual pending/rejected ->
+  // approved transition — same "don't re-notify on an unrelated re-save"
+  // reasoning as the sourcing-request category-match email.
+  const justApproved = existing?.status !== "approved" && status === "approved" && existing?.referred_by_supplier_id;
+  if (justApproved) {
+    const { data: referrer } = await supabase
+      .from("suppliers")
+      .select("email")
+      .eq("id", existing!.referred_by_supplier_id as string)
+      .maybeSingle();
+    if (referrer) {
+      await notifyReferralApproved({ referrerEmail: referrer.email as string, referredCompanyName: existing!.company_name as string });
+    }
+  }
+
   revalidateSupplierPaths();
 }
 
