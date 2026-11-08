@@ -527,7 +527,11 @@
       "galleryHeading": "Photo Gallery",
       "notFound": "Supplier not found.",
       "productsHeading": "Products from this supplier",
-      "contactCta": "Contact this supplier"
+      "contactCta": "Contact this supplier",
+      "reviewsHeading": "Reviews",
+      "noReviews": "No reviews yet — be the first to leave one.",
+      "basedOn": "based on",
+      "writeReview": "Write a review"
     }
   },
   "tools": {

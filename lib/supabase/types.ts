@@ -618,6 +618,22 @@ export interface Inquiry {
   created_at: string;
 }
 
+/** A real customer-submitted review of a supplier — distinct from
+ * Supplier.rating (a single admin-set score after staff has worked with
+ * them) and from Testimonial (a site-wide, not supplier-specific quote
+ * curated for the homepage). This is what actually lets a buyer compare
+ * suppliers against each other on the catalog/directory. */
+export interface SupplierReview {
+  id: string;
+  supplier_id: string;
+  reviewer_name: string;
+  reviewer_email: string;
+  rating: number;
+  comment: string | null;
+  status: "pending" | "approved" | "rejected";
+  created_at: string;
+}
+
 export interface AnalyticsEvent {
   id: number;
   event_type: "pageview" | "cta_click";

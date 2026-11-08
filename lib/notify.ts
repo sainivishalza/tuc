@@ -509,6 +509,44 @@ export async function notifySourcingRequestFollowUp(params: {
   });
 }
 
+/** Best-effort — never throws. A review sits in "pending" until an admin
+ * moderates it, so this is what actually makes that review happen
+ * promptly instead of a submission quietly waiting unnoticed — same
+ * reasoning as notifyNewSupplierRegistration. */
+export async function notifyNewSupplierReview(params: {
+  reviewerName: string;
+  rating: number;
+  comment: string | null;
+}): Promise<void> {
+  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  if (!to) {
+    console.error("[notify] new supplier review received but LEAD_NOTIFICATION_EMAIL is not set — nobody was notified.");
+    return;
+  }
+
+  const stars = "★".repeat(params.rating) + "☆".repeat(5 - params.rating);
+  const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #0f1c17;">
+      <p style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #059669; margin: 0 0 12px;">
+        The Unique Choice — New Supplier Review
+      </p>
+      <h1 style="font-size: 20px; margin: 0 0 12px;">${escapeHtml(params.reviewerName)} left a ${params.rating}-star review</h1>
+      <p style="font-size: 16px; margin: 0 0 12px; color: #f59e0b;">${stars}</p>
+      ${params.comment ? `<p style="font-size: 14px; margin: 0 0 16px;">${escapeHtml(params.comment)}</p>` : ""}
+      <p style="font-size: 14px; margin: 12px 0 0;">Nothing shows on the supplier's public profile until you approve it.</p>
+      <a href="${SITE_URL}/admin/reviews" style="display: inline-block; margin-top: 20px; background: #059669; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 999px;">
+        Review in admin panel
+      </a>
+    </div>
+  `;
+
+  await sendAndLog({
+    to,
+    subject: `New ${params.rating}-star supplier review from ${params.reviewerName}`,
+    html,
+  });
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")

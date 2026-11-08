@@ -527,7 +527,11 @@
       "galleryHeading": "照片展示",
       "notFound": "未找到该供应商。",
       "productsHeading": "该供应商的产品",
-      "contactCta": "联系该供应商"
+      "contactCta": "联系该供应商",
+      "reviewsHeading": "评价",
+      "noReviews": "暂无评价——成为第一个评价的人。",
+      "basedOn": "基于",
+      "writeReview": "撰写评价"
     }
   },
   "tools": {

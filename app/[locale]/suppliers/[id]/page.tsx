@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ShieldCheck, FileCheck2, MapPin, Tags, PackageX } from "lucide-react";
+import { ArrowLeft, ShieldCheck, FileCheck2, MapPin, Tags, PackageX, Star } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import WhatsAppInquireButton from "@/components/WhatsAppInquireButton";
+import SupplierReviewForm from "@/components/SupplierReviewForm";
 import { getApprovedSupplierById } from "@/lib/actions/suppliers";
 import { getProductsBySupplier } from "@/lib/actions/supplierProducts";
+import { getApprovedReviewsForSupplier } from "@/lib/actions/supplierReviews";
 import { localeAlternates } from "@/lib/hreflang";
 import { jsonLdHtml } from "@/lib/jsonLd";
 
@@ -35,10 +37,11 @@ export default async function SupplierDetailPage({
   params: Promise<{ locale: Locale; id: string }>;
 }) {
   const { locale, id } = await params;
-  const [dict, supplier, products] = await Promise.all([
+  const [dict, supplier, products, reviewSummary] = await Promise.all([
     getDictionary(locale),
     getApprovedSupplierById(id),
     getProductsBySupplier(id),
+    getApprovedReviewsForSupplier(id),
   ]);
   const t = dict.suppliers.detail;
 
@@ -50,6 +53,14 @@ export default async function SupplierDetailPage({
         description: supplier.bio || undefined,
         image: supplier.company_photo_url || undefined,
         address: [supplier.business_address, supplier.country].filter(Boolean).join(", ") || undefined,
+        aggregateRating:
+          reviewSummary.average !== null
+            ? {
+                "@type": "AggregateRating",
+                ratingValue: reviewSummary.average.toFixed(1),
+                reviewCount: reviewSummary.count,
+              }
+            : undefined,
       }
     : null;
 
@@ -96,6 +107,24 @@ export default async function SupplierDetailPage({
                 </div>
 
                 <h1 className="font-display mt-2 text-2xl font-bold sm:text-3xl">{supplier.company_name}</h1>
+
+                {reviewSummary.average !== null && (
+                  <div className="mt-1.5 flex items-center gap-1.5 text-sm">
+                    <span className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <Star
+                          key={n}
+                          size={14}
+                          className={n <= Math.round(reviewSummary.average!) ? "fill-amber-400 text-amber-400" : "text-muted/30"}
+                        />
+                      ))}
+                    </span>
+                    <span className="font-semibold text-foreground">{reviewSummary.average.toFixed(1)}</span>
+                    <span className="text-muted">
+                      {t.basedOn} {reviewSummary.count} review{reviewSummary.count === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                )}
 
                 <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted">
                   {supplier.product_categories && (
@@ -177,6 +206,33 @@ export default async function SupplierDetailPage({
                     </div>
                   </div>
                 )}
+
+                <div className="mt-8 border-t border-border pt-6">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">{t.reviewsHeading}</p>
+                  {reviewSummary.reviews.length === 0 ? (
+                    <p className="text-sm text-muted">{t.noReviews}</p>
+                  ) : (
+                    <div className="flex flex-col gap-4">
+                      {reviewSummary.reviews.map((r) => (
+                        <div key={r.id} className="border-b border-border pb-4 last:border-b-0 last:pb-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-sm font-semibold">{r.reviewer_name}</p>
+                            <span className="flex items-center gap-0.5">
+                              {[1, 2, 3, 4, 5].map((n) => (
+                                <Star key={n} size={12} className={n <= r.rating ? "fill-amber-400 text-amber-400" : "text-muted/30"} />
+                              ))}
+                            </span>
+                          </div>
+                          {r.comment && <p className="mt-1 text-sm text-muted">{r.comment}</p>}
+                          <p className="mt-1 text-xs text-muted/70">{new Date(r.created_at).toLocaleDateString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-5">
+                    <SupplierReviewForm supplierId={supplier.id} writeReviewLabel={t.writeReview} />
+                  </div>
+                </div>
               </div>
             )}
           </div>
