@@ -27,7 +27,7 @@ export default async function EditSourcingRequestPage({
   const [categories, interestedSuppliers, approvedSuppliers] = await Promise.all([
     getAllCategories(),
     getInterestedSuppliers(id),
-    getApprovedSuppliersForPush(),
+    getApprovedSuppliersForPush(request.category_id),
   ]);
 
   return (

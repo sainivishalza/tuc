@@ -203,20 +203,26 @@ export async function getSupplierVisibleSourcingRequests(): Promise<SupplierVisi
   const { data: supplier } = await supabase.from("suppliers").select("id, status").ilike("email", email).maybeSingle();
   if (!supplier || supplier.status !== "approved") return [];
 
-  const [{ data: requests, error }, cats, { data: interests }] = await Promise.all([
+  const [{ data: requests, error }, cats, { data: interests }, { data: myCategories }] = await Promise.all([
     supabase.from("sourcing_requests").select("*").eq("status", "approved").order("created_at", { ascending: false }),
     categoryMap(),
     supabase.from("sourcing_request_interests").select("sourcing_request_id").eq("supplier_id", supplier.id),
+    supabase.from("supplier_categories").select("category_id").eq("supplier_id", supplier.id),
   ]);
   if (error) return [];
 
   const interestedIds = new Set((interests ?? []).map((i) => i.sourcing_request_id as string));
+  const myCategoryIds = new Set((myCategories ?? []).map((c) => c.category_id as string));
 
-  return (requests as SourcingRequest[]).map((r) => ({
+  const mapped = (requests as SourcingRequest[]).map((r) => ({
     ...r,
     category_name: r.category_id ? cats.get(r.category_id) ?? null : null,
     already_interested: interestedIds.has(r.id),
+    matches_your_categories: r.category_id ? myCategoryIds.has(r.category_id) : false,
   }));
+
+  mapped.sort((a, b) => Number(b.matches_your_categories) - Number(a.matches_your_categories));
+  return mapped;
 }
 
 /** Records the click, idempotently (unique constraint — a second click is
@@ -408,16 +414,36 @@ export async function getCompletedDealCount(supplierId: string): Promise<number>
   return count ?? 0;
 }
 
-export async function getApprovedSuppliersForPush(): Promise<Pick<Supplier, "id" | "company_name" | "email" | "product_categories">[]> {
+export interface SupplierForPushRow extends Pick<Supplier, "id" | "company_name" | "email" | "product_categories"> {
+  matches_category: boolean;
+}
+
+/** categoryId, when given (the request's own category), flags and
+ * front-sorts suppliers who've opted into that category via
+ * supplier_categories — so staff hand-picking suppliers to push to see
+ * the likely matches first instead of hunting through an alphabetical list. */
+export async function getApprovedSuppliersForPush(categoryId?: string | null): Promise<SupplierForPushRow[]> {
   await requireAdminAction();
   const supabase = getSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("suppliers")
-    .select("id, company_name, email, product_categories")
-    .eq("status", "approved")
-    .order("company_name", { ascending: true });
+  const [{ data, error }, matchingIds] = await Promise.all([
+    supabase
+      .from("suppliers")
+      .select("id, company_name, email, product_categories")
+      .eq("status", "approved")
+      .order("company_name", { ascending: true }),
+    categoryId
+      ? supabase.from("supplier_categories").select("supplier_id").eq("category_id", categoryId)
+      : Promise.resolve({ data: [] as { supplier_id: string }[] }),
+  ]);
   if (error) throw new Error(error.message);
-  return data as Pick<Supplier, "id" | "company_name" | "email" | "product_categories">[];
+
+  const matchSet = new Set((matchingIds.data ?? []).map((r) => r.supplier_id as string));
+  const rows = (data as Pick<Supplier, "id" | "company_name" | "email" | "product_categories">[]).map((s) => ({
+    ...s,
+    matches_category: matchSet.has(s.id),
+  }));
+  rows.sort((a, b) => Number(b.matches_category) - Number(a.matches_category));
+  return rows;
 }
 
 export interface SourcingRequestEditInput {

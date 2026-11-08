@@ -3,8 +3,14 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { updateSourcingRequest, pushToSuppliers, updateInterestDealStatus, type InterestedSupplierRow } from "@/lib/actions/sourcingRequests";
-import type { AdminSourcingRequest, SourcingCategory, SourcingRequestType, SourcingRequestStatus, Supplier, SourcingRequestInterest } from "@/lib/supabase/types";
+import {
+  updateSourcingRequest,
+  pushToSuppliers,
+  updateInterestDealStatus,
+  type InterestedSupplierRow,
+  type SupplierForPushRow,
+} from "@/lib/actions/sourcingRequests";
+import type { AdminSourcingRequest, SourcingCategory, SourcingRequestType, SourcingRequestStatus, SourcingRequestInterest } from "@/lib/supabase/types";
 import { Button, Badge, inputClass, labelClass, type BadgeTone } from "@/components/admin/ui";
 
 const DEAL_TONE: Record<SourcingRequestInterest["deal_status"], BadgeTone> = {
@@ -22,7 +28,7 @@ export default function SourcingRequestEditForm({
   request: AdminSourcingRequest;
   categories: SourcingCategory[];
   interestedSuppliers: InterestedSupplierRow[];
-  approvedSuppliers: Pick<Supplier, "id" | "company_name" | "email" | "product_categories">[];
+  approvedSuppliers: SupplierForPushRow[];
 }) {
   const router = useRouter();
   const [dealPending, startDealTransition] = useTransition();
@@ -291,6 +297,7 @@ export default function SourcingRequestEditForm({
               />
               <span className="font-medium text-gray-800">{s.company_name}</span>
               <span className="text-xs text-gray-400">{s.product_categories || "no category listed"}</span>
+              {s.matches_category && <Badge tone="success">Category match</Badge>}
             </label>
           ))}
         </div>

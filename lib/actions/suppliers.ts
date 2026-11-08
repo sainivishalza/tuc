@@ -10,6 +10,27 @@ import { notifyNewSupplierRegistration } from "@/lib/notify";
 import { BUCKET, validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
 import type { Supplier } from "@/lib/supabase/types";
 
+/** Replace-all sync, same simple pattern as a gallery's keep/add list —
+ * this is what actually makes the category-match supplier-notification
+ * email (in sourcingRequests.ts, around "justApproved") and the
+ * supplier/admin matching UI below mean anything; supplier_categories
+ * had no write path at all before this, so every category match query
+ * against it was silently finding zero rows. */
+export async function syncSupplierCategories(supplierId: string, categoryIds: string[]): Promise<void> {
+  const supabase = getSupabaseAdminClient();
+  await supabase.from("supplier_categories").delete().eq("supplier_id", supplierId);
+  const unique = Array.from(new Set(categoryIds.filter(Boolean)));
+  if (unique.length > 0) {
+    await supabase.from("supplier_categories").insert(unique.map((category_id) => ({ supplier_id: supplierId, category_id })));
+  }
+}
+
+export async function getSupplierCategoryIds(supplierId: string): Promise<string[]> {
+  const supabase = getSupabaseAdminClient();
+  const { data } = await supabase.from("supplier_categories").select("category_id").eq("supplier_id", supplierId);
+  return (data ?? []).map((r) => r.category_id as string);
+}
+
 export async function submitSupplierRegistration(
   formData: FormData
 ): Promise<{ success: boolean; error?: string }> {
@@ -206,6 +227,7 @@ export interface SupplierEditInput {
   bio: string;
   rating: number | null;
   tier: Supplier["tier"];
+  category_ids: string[];
   notes: string;
   admin_notes: string;
   status: Supplier["status"];
@@ -260,6 +282,7 @@ export async function updateSupplier(id: string, input: SupplierEditInput, formD
   const { error } = await supabase.from("suppliers").update(update).eq("id", id);
   if (error) throw new Error(error.message);
 
+  await syncSupplierCategories(id, input.category_ids);
   revalidateSupplierPaths();
 }
 

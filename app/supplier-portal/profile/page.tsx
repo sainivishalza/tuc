@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { requireSupplierEmail } from "@/lib/supplierAuth";
 import { getSupplierBySelf } from "@/lib/actions/supplierPortal";
+import { getSupplierCategoryIds } from "@/lib/actions/suppliers";
+import { getAllCategories } from "@/lib/actions/sourcingRequests";
 import SupplierProfileForm from "@/components/supplierPortal/SupplierProfileForm";
 
 export const metadata = {
@@ -20,6 +22,8 @@ export default async function SupplierProfilePage() {
     );
   }
 
+  const [categories, selectedCategoryIds] = await Promise.all([getAllCategories(), getSupplierCategoryIds(supplier.id)]);
+
   return (
     <main className="min-h-screen px-4 py-12 sm:px-6">
       <div className="mx-auto max-w-3xl">
@@ -37,7 +41,7 @@ export default async function SupplierProfilePage() {
         </p>
 
         <div className="mt-8">
-          <SupplierProfileForm supplier={supplier} />
+          <SupplierProfileForm supplier={supplier} categories={categories} selectedCategoryIds={selectedCategoryIds} />
         </div>
       </div>
     </main>

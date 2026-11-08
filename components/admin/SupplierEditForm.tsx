@@ -5,8 +5,49 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { updateSupplier } from "@/lib/actions/suppliers";
-import type { Supplier } from "@/lib/supabase/types";
+import type { Supplier, SourcingCategory } from "@/lib/supabase/types";
 import { Button, inputClass, labelClass } from "@/components/admin/ui";
+
+/** Shared by both the admin and self-service edit forms conceptually
+ * (each has its own copy, matching this file's per-file convention) —
+ * this is what actually feeds supplier_categories, which the category-
+ * match supplier-notification email and the "Push to Specific
+ * Suppliers" match sort both read from. */
+function CategoryCheckboxes({
+  categories,
+  selected,
+  onChange,
+}: {
+  categories: SourcingCategory[];
+  selected: Set<string>;
+  onChange: (next: Set<string>) => void;
+}) {
+  function toggle(id: string) {
+    const next = new Set(selected);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    onChange(next);
+  }
+
+  return (
+    <div>
+      <label className={labelClass}>Categories (used to match this supplier to buyer requirements)</label>
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+        {categories.map((c) => (
+          <label key={c.id} className="flex items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-gray-50">
+            <input
+              type="checkbox"
+              checked={selected.has(c.id)}
+              onChange={() => toggle(c.id)}
+              className="h-4 w-4 rounded accent-accent"
+            />
+            {c.name}
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const MAX_GALLERY_IMAGES = 6;
 
@@ -58,8 +99,17 @@ function GalleryManager({ images }: { images: string[] }) {
   );
 }
 
-export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
+export default function SupplierEditForm({
+  supplier,
+  categories,
+  selectedCategoryIds,
+}: {
+  supplier: Supplier;
+  categories: SourcingCategory[];
+  selectedCategoryIds: string[];
+}) {
   const router = useRouter();
+  const [categoryIds, setCategoryIds] = useState<Set<string>>(new Set(selectedCategoryIds));
   const formRef = useRef<HTMLFormElement>(null);
   const [companyName, setCompanyName] = useState(supplier.company_name);
   const [contactName, setContactName] = useState(supplier.contact_name);
@@ -96,6 +146,7 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
           bio,
           rating,
           tier,
+          category_ids: Array.from(categoryIds),
           notes,
           admin_notes: adminNotes,
           status,
@@ -165,6 +216,8 @@ export default function SupplierEditForm({ supplier }: { supplier: Supplier }) {
           </select>
         </div>
       </div>
+
+      <CategoryCheckboxes categories={categories} selected={categoryIds} onChange={setCategoryIds} />
 
       <div>
         <label className={labelClass}>Bio (shown publicly on their directory profile)</label>

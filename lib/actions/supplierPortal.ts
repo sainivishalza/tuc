@@ -7,6 +7,7 @@ import { checkRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { createLoginLinkToken } from "@/lib/supplierAuth";
 import { validateAndUploadFile, processGalleryUpload, IMAGE_TYPES, LICENSE_TYPES } from "@/lib/supplierFileUpload";
+import { syncSupplierCategories } from "@/lib/actions/suppliers";
 import type { Supplier } from "@/lib/supabase/types";
 
 const SITE_URL = "https://theuniquechoice.com";
@@ -118,6 +119,7 @@ export interface SupplierProfileInput {
   business_address: string;
   country: string;
   bio: string;
+  category_ids: string[];
   notes: string;
 }
 
@@ -177,5 +179,6 @@ export async function updateOwnSupplierProfile(
   const { error } = await supabase.from("suppliers").update(update).eq("id", existing.id).eq("email", email);
   if (error) return { error: "Something went wrong saving your profile. Please try again." };
 
+  await syncSupplierCategories(existing.id as string, input.category_ids);
   return { message: "Your profile has been updated." };
 }

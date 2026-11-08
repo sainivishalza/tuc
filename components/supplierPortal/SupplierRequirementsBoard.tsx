@@ -72,7 +72,10 @@ function RequirementCard({ request }: { request: SupplierVisibleSourcingRequest 
 
   return (
     <div className="glass-strong card flex flex-col gap-3">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        {request.matches_your_categories && (
+          <span className="rounded-full bg-accent/10 px-2.5 py-1 text-[11px] font-medium text-accent">Matches your categories</span>
+        )}
         {request.category_name && (
           <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-500">{request.category_name}</span>
         )}

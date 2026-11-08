@@ -143,6 +143,7 @@ export interface SupplierVisibleSourcingRequest extends PublicSourcingRequest {
   customer_email: string;
   customer_whatsapp: string | null;
   already_interested: boolean;
+  matches_your_categories: boolean;
 }
 
 export interface SourcingRequestInterest {

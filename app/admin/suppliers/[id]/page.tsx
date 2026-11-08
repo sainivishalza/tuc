@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Package } from "lucide-react";
 import { requireAdminPage } from "@/lib/adminAuth";
-import { getSupplierById } from "@/lib/actions/suppliers";
+import { getSupplierById, getSupplierCategoryIds } from "@/lib/actions/suppliers";
+import { getAllCategories } from "@/lib/actions/sourcingRequests";
 import SupplierEditForm from "@/components/admin/SupplierEditForm";
 import AdminShell from "@/components/admin/AdminShell";
 import { BackLink, PageHeader, Card } from "@/components/admin/ui";
@@ -22,6 +23,8 @@ export default async function EditSupplierPage({
 
   if (!supplier) notFound();
 
+  const [categories, selectedCategoryIds] = await Promise.all([getAllCategories(), getSupplierCategoryIds(id)]);
+
   return (
     <AdminShell current="/admin/suppliers">
       <BackLink href="/admin/suppliers">Suppliers</BackLink>
@@ -39,7 +42,7 @@ export default async function EditSupplierPage({
       />
 
       <Card className="max-w-3xl">
-        <SupplierEditForm supplier={supplier} />
+        <SupplierEditForm supplier={supplier} categories={categories} selectedCategoryIds={selectedCategoryIds} />
       </Card>
     </AdminShell>
   );
